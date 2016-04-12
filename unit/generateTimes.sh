@@ -4,7 +4,7 @@
 #date -d '2007-011-01 17:30:24' '+%:z'
 #+01:00
 
-for year in {2016..2016}; do
+for year in {2017..2020}; do
  for month in {1..12}; do
   for day in {1..31}; do
     hour=$((RANDOM%24))
