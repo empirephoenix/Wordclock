@@ -30,7 +30,12 @@ tmr.alarm(0, 100, 1, function()
   else
      tmr.stop(0)
      print('IP: ',wifi.sta.getip())
-     
+     -- Initaly set the time
      startTimeupdate()
+     
+     -- Update the time each minute
+     tmr.alarm(1, 60000, 1, function()
+        startTimeupdate()
+     end)
   end
 end)
