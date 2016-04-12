@@ -1,5 +1,5 @@
 -- Example usage of the word clock
-dofile("wordclock.lua")
+dofile("../wordclock.lua")
 
 -- Manually set something
 leds=display_timestat(15,30)
