@@ -1,4 +1,5 @@
--- 
+-- Revese engeeniered code of display_wc_ger.c by Vlad Tepesch
+-- See https://www.mikrocontroller.net/articles/Word_Clock_Variante_1#Download
 
 -- Return the leds to use
 -- the granuality is 5 minutes
