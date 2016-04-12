@@ -1,4 +1,4 @@
-# Ueber Traffic Light
+# ESP Wordclock
 ## Setup
 Generate a wlancfg.lua for your wifi based on the given example wlancfg.lua.example
 
