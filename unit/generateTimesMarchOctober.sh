@@ -9,18 +9,17 @@ TAIL=timetest_tail.template
 # remote the tailing "./" and the extension of this script
 OUTPUT="$(echo "$0" | sed 's;^./;;' | cut -d'.' -f1).lua"
 #rename OUTPUT from generate to test
-OUTPUT="$(echo "$OUTPUT" | sed 's;generate;test')"
+OUTPUT="$(echo "$OUTPUT" | sed 's;generate;test;')"
 
 echo "Generating $OUTPUT ..."
-
 cat $HEAD > $OUTPUT
 # Logic to generate the script
 for year in {2016..2100}; do
  echo "For $year ..."
  for month in 3 10; do
   for day in {1..31}; do
-    hour=$((RANDOM%24))
-    for minutes in {0..24}; do
+    for hour in {0..23}; do
+     minutes=$((RANDOM%60))
      seconds=$((RANDOM%60))
      timestmp="$year-$month-$day $hour:$minutes:$seconds"
      date -d "$timestmp" "+%F %T" >> /dev/null
