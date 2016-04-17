@@ -29,13 +29,15 @@ function getLocalTime(year, month, day, hour, minutes, seconds,dow)
   elseif ((month == 3 and day >= 25 and day <= 31 and hour > 2 and dow == 7) or
           -- Only handle days after the last sunday in this month
           ((month == 3 and day >= 25 and day <= 31 and dow < 7 and ((7-dow + day) > 31))) ) then
+   -- set summer time
    hour = hour + 1
   -- October is not 100% Summer time, ending with the last sunday
-  elseif ((month == 10 and day >= 25 and day <= 31 and hour < 2 and dow == 7) or
+  elseif ((month == 10 and day >= 25 and day <= 31 and hour <= 2 and dow == 7) or
           (month == 10 and day >= 25 and day <= 31 and dow < 7 and ((7-dow + day) <= 31)) or 
            -- Handle all days up to the 25. of october
            (month == 10 and day < 25 )
            )then
+   -- set summer time
    hour = hour + 1
   end
   
