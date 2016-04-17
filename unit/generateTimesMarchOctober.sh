@@ -8,6 +8,8 @@ HEAD=timetest_head.template
 TAIL=timetest_tail.template
 # remote the tailing "./" and the extension of this script
 OUTPUT="$(echo "$0" | sed 's;^./;;' | cut -d'.' -f1).lua"
+#rename OUTPUT from generate to test
+OUTPUT="$(echo "$OUTPUT" | sed 's;generate;test')"
 
 echo "Generating $OUTPUT ..."
 
