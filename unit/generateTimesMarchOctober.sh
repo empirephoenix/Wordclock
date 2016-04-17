@@ -13,7 +13,8 @@ echo "Generating $OUTPUT ..."
 
 cat $HEAD > $OUTPUT
 # Logic to generate the script
-for year in {2016..2018}; do
+for year in {2016..2100}; do
+ echo "For $year ..."
  for month in 3 10; do
   for day in {1..31}; do
     hour=$((RANDOM%24))
