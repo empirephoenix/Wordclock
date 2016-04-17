@@ -1,0 +1,15 @@
+-- Simple unit test to test time zones
+
+dofile("../timecore.lua")
+
+function checkTime(yearIn, monthIn, dayIn, hourIn, minutesIn, secondsIn,dowIn, resultingHourDiff)
+    year, month, day, hour, minutes, seconds = getLocalTime(yearIn, monthIn, dayIn, hourIn, minutesIn, secondsIn, dowIn)
+
+    if not (year == yearIn and monthIn == month and day == dayIn and hour == (hourIn + resultingHourDiff) and minutesIn == minutes and secondsIn == seconds ) then
+        print(yearIn .. "-" .. string.format("%0.2d", monthIn) .. "-" .. string.format("%0.2d", dayIn) .. " " .. string.format("%0.2d", hourIn) .. ":" .. string.format("%0.2d", minutesIn) .. ":" .. string.format("%0.2d", secondsIn) .. " (" .. dowIn .. ".th dayOfWeek) not as expected GMT+" .. resultingHourDiff .. " but GMT+" .. (hour - hourIn) )
+        os.exit(1)
+    else
+        print(yearIn .. "-" .. string.format("%0.2d", monthIn) .. "-" .. string.format("%0.2d", dayIn) .. " " .. string.format("%0.2d", hourIn) .. ":" .. string.format("%0.2d", minutesIn) .. ":" .. string.format("%0.2d", secondsIn) .. " is GMT+" .. resultingHourDiff )
+    end
+end
+
