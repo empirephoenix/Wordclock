@@ -133,8 +133,59 @@ checkWords(leds, expected, 13 , 00)
 -- test the minutes inbetween
 leds=display_timestat(14,01)
 expected={}
+expected.itis=1
 expected.two=1
 expected.min1=1
 expected.clock=1
 checkWords(leds, expected, 14 , 01)
+
+leds=display_timestat(15,02)
+expected={}
+expected.itis=1
+expected.three=1
+expected.min2=1
+expected.clock=1
+checkWords(leds, expected, 15 , 02)
+
+leds=display_timestat(16,03)
+expected={}
+expected.itis=1
+expected.four=1
+expected.min3=1
+expected.clock=1
+checkWords(leds, expected, 16 , 03)
+
+leds=display_timestat(17,04)
+expected={}
+expected.itis=1
+expected.five=1
+expected.min4=1
+expected.clock=1
+checkWords(leds, expected, 17 , 04)
+
+leds=display_timestat(18,06)
+expected={}
+expected.fiveMin=1
+expected.after=1
+expected.min1=1
+expected.six=1
+checkWords(leds, expected, 18 , 06)
+
+leds=display_timestat(19,09)
+expected={}
+expected.fiveMin=1
+expected.after=1
+expected.min4=1
+expected.seven=1
+checkWords(leds, expected, 19 , 09)
+
+leds=display_timestat(20,17)
+expected={}
+expected.quater=1
+expected.after=1
+expected.min2=1
+expected.eight=1
+checkWords(leds, expected, 20 , 17)
+
+
 
