@@ -1,5 +1,6 @@
 dofile("wlancfg.lua")
 dofile("timecore.lua")
+dofile("wordclock.lua")
 print("Initialize Wordclock")
 
 function startTimeupdate()
@@ -61,6 +62,13 @@ function startTimeupdate()
     print(hour)
     print(minutes)
     print(seconds)
+    -- Manually set something
+    leds=display_timestat(hour,minutes)
+    for k,v in pairs(leds) do 
+        if (v == 1) then
+            print(k) 
+        end
+    end
     print("---------------")
     conn:close()
   end)
