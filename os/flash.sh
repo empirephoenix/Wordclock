@@ -30,4 +30,4 @@ if [ $? -ne 0 ]; then
  exit 1
 fi
 
-sudo ./esptool.py --port /dev/$DEVICE write_flash 0x00000 nodemcu_integer_0.9.6-dev_20150704.bin
+sudo ./esptool.py --port /dev/$DEVICE write_flash 0x00000 0x00000.bin 0x10000 0x10000.bin
