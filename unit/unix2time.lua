@@ -9,11 +9,32 @@ EPOCH_YR=1970
 SECS_DAY=86400
 
 ytab = {}
-ytab[0] = {}
-ytab[0][0] = 31 
---31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
-ytab[1] = {}
---{31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
+ytab[0] = {} 
+ytab[1] = {} 
+ytab[0][0] = 31
+ytab[0][1] = 28
+ytab[0][2] = 31
+ytab[0][3] = 30
+ytab[0][4] = 31
+ytab[0][5] = 30
+ytab[0][6] = 31
+ytab[0][7] = 31
+ytab[0][8] = 30
+ytab[0][9] = 31
+ytab[0][10] = 30
+ytab[0][11] = 31
+ytab[1][0] =  31
+ytab[1][1] = 29
+ytab[1][2] = 31
+ytab[1][3] = 30
+ytab[1][4] = 31
+ytab[1][5] = 30
+ytab[1][6] = 31
+ytab[1][7] = 31
+ytab[1][8] = 30
+ytab[1][9] = 31
+ytab[1][10] = 30
+ytab[1][11] = 31
 
 
 leapyear = function(year)
@@ -46,16 +67,16 @@ gettime = function(unixtimestmp)
   local yday = dayno
   local mon = 0
  
-  --isleap=0 if leapyear(year) then isleap=1 end
-  --while (dayno >= ytab[isleap][mon]) 
-  --do
-  --    dayno = dayno - ytab[isleap][mon];
-  --    mon = mon + 1
-  --    isleap=0 if leapyear(year) then isleap=1 end
-  -- end
-  -- mday = dayno + 1
+  isleap=0 if leapyear(year) then isleap=1 end
+  while (dayno >= ytab[isleap][mon]) 
+  do
+      dayno = dayno - ytab[isleap][mon];
+      mon = mon + 1
+      isleap=0 if leapyear(year) then isleap=1 end
+   end
+   mday = dayno + 1
 
-  return year, hour, min, sec
+  return year, mon, mday, hour, min, sec, wday
 end
 
 print( gettime(1462391501) )
