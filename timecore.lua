@@ -18,7 +18,7 @@ local TIMEZONE_OFFSET_WINTER = 1
 --setclockto 3 am;
 --DST=1;
 --}
-function getLocalTime(year, month, day, hour, minutes, seconds,dow)
+function getLocalTime(year, month, day, hour, minutes, second,dow)
   -- Always adapte the timezoneoffset:
   hour = hour + (TIMEZONE_OFFSET_WINTER)
 
@@ -41,7 +41,7 @@ function getLocalTime(year, month, day, hour, minutes, seconds,dow)
    hour = hour + 1
   end
   
-  return year, month, day, hour, minutes, seconds
+  return year, month, day, hour, minutes, second
 end
 
 -- Convert a given month in english abr. to number from 1 to 12.
@@ -117,11 +117,11 @@ ytab[1][10] = 30
 ytab[1][11] = 31
 
 
-leapyear = function(year)
-    return  ( not ((year) % 4) and (((year) % 100) or not ((year) % 400)))
+local leapyear = function(year)
+    return  ( not ((year) % 4 ~= 0) and (((year) % 100 ~= 0) or not ((year) % 400 ~= 0)))
 end
 
-yearsize = function(year)
+local yearsize = function(year)
  if leapyear(year) then
   return 366
  else
@@ -132,9 +132,9 @@ end
 gettime = function(unixtimestmp)
   local year = EPOCH_YR
   local dayclock = math.floor(unixtimestmp % SECS_DAY)
-  local dayno = math.floor(unixtimestmp / SECS_DAY)
+  dayno = math.floor(unixtimestmp / SECS_DAY)
 
-  local sec = dayclock % 60
+  local sec = math.floor(dayclock % 60)
   local min = math.floor( (dayclock % 3600) / 60)
   local hour = math.floor(dayclock / 3600)
   local wday = math.floor( (dayno + 4) % 7) -- Day 0 was a thursday
@@ -144,19 +144,17 @@ gettime = function(unixtimestmp)
     dayno = dayno - yearsize(year);
     year=year + 1
   end
-  local yday = dayno
-  local mon = 0
-
-  isleap=0 if leapyear(year) then isleap=1 end
-  while (dayno >= ytab[isleap][mon])
+  --Day in whole year: local yday = dayno (Not needed)
+  mon = 0
+  isleap = leapyear(year) and 1 or 0
+  while (dayno >= ytab[leapyear(year) and 1 or 0][mon])
   do
-      dayno = dayno - ytab[isleap][mon];
+      dayno = dayno - ytab[leapyear(year) and 1 or 0][mon];
       mon = mon + 1
-      isleap=0 if leapyear(year) then isleap=1 end
    end
    mday = dayno + 1
 
-  return year, mon, mday, hour, min, sec, wday
+  return year, (mon+1), mday, hour, min, sec, wday
 end
 
 
