@@ -146,7 +146,6 @@ gettime = function(unixtimestmp)
   end
   --Day in whole year: local yday = dayno (Not needed)
   mon = 0
-  isleap = leapyear(year) and 1 or 0
   while (dayno >= ytab[leapyear(year) and 1 or 0][mon])
   do
       dayno = dayno - ytab[leapyear(year) and 1 or 0][mon];
