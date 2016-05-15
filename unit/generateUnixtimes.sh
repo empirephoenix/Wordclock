@@ -7,14 +7,23 @@
 #4 
 
 # Usage:
-# Call this script and write the output of stdout into a file.
-# e.g.: ./generateUnixtime.sh > unixtimetest.lua
+# Call this script and generate a new testUnixtime.lua
+# Run the test afterwards like the following:
+# $ lua testUnixtime.lua 
+
+
+# remove the tailing "./" and the extension of this script
+OUTPUT="$(echo "$0" | sed 's;^./;;' | cut -d'.' -f1).lua"
+#rename OUTPUT from generate to test
+OUTPUT="$(echo "$OUTPUT" | sed 's;generate;test;')"
+
+echo "Generating $OUTPUT ..."
 
 # Generate the header
-cat << EOF
+cat << EOF > $OUTPUT
 dofile("../timecore.lua")
 function checkUnixTime(resultYear, resultMonth, resultDay, resultHour, resultMinute, resultSecond, resultDow, unixtime)
- year, month, day, hour, minute, second, dow = gettime(unixtime)
+ year, month, day, hour, minute, second, dow = getUTCtime(unixtime)
 
  if not (year == resultYear and resultMonth == month and day == resultDay and hour == resultHour and minute == resultMinute and second == resultSecond and dow == resultDow) then
         print(resultYear .. "-" .. resultMonth .. "-" .. resultDay .. " " .. resultHour .. ":" .. resultMinute .. ":" .. resultSecond .. " day of week : " .. resultDow .. " not extracted from " .. unixtime) 
@@ -38,15 +47,24 @@ for year in {2016..2020}; do
     timestmp="$year-$month-$day $hour:$minutes:$seconds"
     date -d "$timestmp" "+%F %T" >> /dev/null
     if [ $? -ne 0 ]; then
-     echo "--Time $timestmp is not valid"
+     echo "--Time $timestmp is not valid" >> $OUTPUT
     else
      unixtime=$(date -u -d "$timestmp" '+%s')
      dayofweek=$(date -u -d "$timestmp" '+%w')
      # Generate the lua test command, like: checkTime(2015, 1, 1, 10, 11, 12, 0, 1)
-     echo "checkUnixTime($year, $month, $day, $hour, $minutes, $seconds, $dayofweek, $unixtime)"
-
+     echo "checkUnixTime($year, $month, $day, $hour, $minutes, $seconds, $dayofweek, $unixtime)" >> $OUTPUT
     fi
   done
  done
 done
+
+# Generate the footer
+cat << EOF >> $OUTPUT
+print "Finished with all tests"
+os.exit(0)
+EOF
+
+echo "---------------------------"
+echo "Usage:"
+echo "Call >lua $OUTPUT< in the terminal to execute the test"
 exit 0
