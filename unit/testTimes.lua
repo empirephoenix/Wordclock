@@ -9,7 +9,17 @@ WINTERTIME_OFFSET=1
 -- so resultingHourDiff is 1 in wintertime
 -- and 2 in summertime
 function checkTime(yearIn, monthIn, dayIn, hourIn, minutesIn, secondsIn,dowIn, resultingHourDiff)
-    local summerTime = isSummerTime(yearIn, monthIn, dayIn, hourIn, minutesIn, secondsIn, dowIn)
+    -- Generate a time struct from the given parameter
+    time = {}
+    time.year = yearIn
+    time.month = monthIn
+    time.day = dayIn
+    time.hour = hourIn
+    time.minute = minutesIn
+    time.second = secondsIn
+    time.dow = dowIn
+    -- the test itself
+    local summerTime = isSummerTime(time)
     if ((resultingHourDiff == SUMMERTIME_OFFSET and not (summerTime == true)) or (resultingHourDiff == WINTERTIME_OFFSET and not (summerTime == false))) then
         print(yearIn .. "-" .. string.format("%0.2d", monthIn) .. "-" .. string.format("%0.2d", dayIn) .. " " .. string.format("%0.2d", hourIn) .. ":" .. string.format("%0.2d", minutesIn) .. ":" .. string.format("%0.2d", secondsIn) .. " (dow:" .. dowIn .. ") was not GMT+" .. resultingHourDiff .. "  ( summer time was " .. tostring(summerTime) .. ")" )
         os.exit(1)

@@ -17,30 +17,31 @@
 --}
 
 -- @fn isSummerTime(year, month, day, hour, minute, second,dow)
--- @param year      Current year of day       range (2016 - ...)
--- @param month     Current month of year     range (1 - 12) e.g. 2 is Februrary
--- @param day       Current day in month      range (1 - 31)
--- @param hour      Current hour of day       range (0 - 23)
--- @param minute    Current minute in hour    range (0 - 59)
--- @param second    Current second of minute  range (0 - 59)
--- @param dow       Current day of week       range (1 - 7)   (1 is Monday, 7 is Sunday)
+-- The @param time is a struct containing the following entries:
+-- @var year      Current year of day       range (2016 - ...)
+-- @var month     Current month of year     range (1 - 12) e.g. 2 is Februrary
+-- @var day       Current day in month      range (1 - 31)
+-- @var hour      Current hour of day       range (0 - 23)
+-- @var minute    Current minute in hour    range (0 - 59)
+-- @var second    Current second of minute  range (0 - 59)
+-- @var dow       Current day of week       range (1 - 7)   (1 is Monday, 7 is Sunday)
 -- @return <code>true</code> if we have currently summer time
 -- @return <code>false</code> if we have winter time
-function isSummerTime(year, month, day, hour, minute, second,dow)
+function isSummerTime(time)
   -- we are in 100% in the summer time
-  if (month > 3 and month < 10) then 
+  if (time.month > 3 and time.month < 10) then 
     return true
   -- March is not 100% Summer time, only starting at the last sunday
-  elseif ((month == 3 and day >= 25 and day <= 31 and hour > 2 and dow == 7) or
+  elseif ((time.month == 3 and time.day >= 25 and time.day <= 31 and time.hour > 2 and time.dow == 7) or
           -- Only handle days after the last sunday in this month
-          ((month == 3 and day >= 25 and day <= 31 and dow < 7 and ((7-dow + day) > 31))) ) then
+          ((time.month == 3 and time.day >= 25 and time.day <= 31 and time.dow < 7 and ((7-time.dow + time.day) > 31))) ) then
    -- summer time
    return true
   -- October is not 100% Summer time, ending with the last sunday
-  elseif ((month == 10 and day >= 25 and day <= 31 and (hour < 2 or (hour == 2 and minute== 0 and second == 0)) and dow == 7) or
-          (month == 10 and day >= 25 and day <= 31 and dow < 7 and ((7-dow + day) <= 31)) or 
+  elseif ((time.month == 10 and time.day >= 25 and time.day <= 31 and (time.hour < 2 or (time.hour == 2 and time.minute== 0 and time.second == 0)) and time.dow == 7) or
+          (time.month == 10 and time.day >= 25 and time.day <= 31 and time.dow < 7 and ((7-time.dow + time.day) <= 31)) or 
            -- Handle all days up to the 25. of october
-           (month == 10 and day < 25 )
+           (time.month == 10 and time.day < 25 )
            )then
    -- summer time
    return true
