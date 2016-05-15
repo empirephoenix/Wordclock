@@ -41,6 +41,6 @@ cat $TAIL >> $OUTPUT
 
 echo "---------------------------"
 echo "Usage:"
-echo "Call lua $OUTPUT in the terminal to execute the test"
+echo "Call >lua $OUTPUT< in the terminal to execute the test"
 
 exit 0
