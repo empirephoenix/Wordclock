@@ -131,3 +131,10 @@ function getUTCtime(unixtimestmp)
 end
 
 
+function getTime(unixtimestmp, timezoneoffset)
+    time = getUTCtime(unixtimestmp + (3600 * timezoneoffset))
+    if ( isSummerTime(time) ) then
+        time = getUTCtime(unixtimestmp + (3600 * (timezoneoffset + 1)) )
+    end
+    return time
+end
