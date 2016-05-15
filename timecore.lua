@@ -1,6 +1,3 @@
--- As we are located in central europe, we have GMT+1
-local TIMEZONE_OFFSET_WINTER = 1
-
 --Summer winter time convertion
 --See: https://arduinodiy.wordpress.com/2015/10/13/the-arduino-and-daylight-saving-time/
 --
@@ -18,30 +15,36 @@ local TIMEZONE_OFFSET_WINTER = 1
 --setclockto 3 am;
 --DST=1;
 --}
-function getLocalTime(year, month, day, hour, minutes, second,dow)
-  -- Always adapte the timezoneoffset:
-  hour = hour + (TIMEZONE_OFFSET_WINTER)
 
+-- @fn isSummerTime(year, month, day, hour, minute, second,dow)
+-- @param year      Current year of day       range (2016 - ...)
+-- @param month     Current month of year     range (1 - 12) e.g. 2 is Februrary
+-- @param day       Current day in month      range (1 - 31)
+-- @param hour      Current hour of day       range (0 - 23)
+-- @param minute    Current minute in hour    range (0 - 59)
+-- @param second    Current second of minute  range (0 - 59)
+-- @param dow       Current day of week       range (1 - 7)   (1 is Monday, 7 is Sunday)
+function isSummerTime(year, month, day, hour, minute, second,dow)
   -- we are in 100% in the summer time
   if (month > 3 and month < 10) then 
-    hour = hour + 1
+    return true
   -- March is not 100% Summer time, only starting at the last sunday
   elseif ((month == 3 and day >= 25 and day <= 31 and hour > 2 and dow == 7) or
           -- Only handle days after the last sunday in this month
           ((month == 3 and day >= 25 and day <= 31 and dow < 7 and ((7-dow + day) > 31))) ) then
-   -- set summer time
-   hour = hour + 1
+   -- summer time
+   return true
   -- October is not 100% Summer time, ending with the last sunday
-  elseif ((month == 10 and day >= 25 and day <= 31 and hour <= 2 and dow == 7) or
+  elseif ((month == 10 and day >= 25 and day <= 31 and (hour < 2 or (hour == 2 and minute== 0 and second == 0)) and dow == 7) or
           (month == 10 and day >= 25 and day <= 31 and dow < 7 and ((7-dow + day) <= 31)) or 
            -- Handle all days up to the 25. of october
            (month == 10 and day < 25 )
            )then
-   -- set summer time
-   hour = hour + 1
+   -- summer time
+   return true
   end
-  
-  return year, month, day, hour, minutes, second
+  -- otherwise it must be winter time
+  return false
 end
 
 -- Convert a given month in english abr. to number from 1 to 12.
@@ -129,7 +132,7 @@ local yearsize = function(year)
  end
 end
 
-gettime = function(unixtimestmp)
+function getUTCtime(unixtimestmp)
   local year = EPOCH_YR
   local dayclock = math.floor(unixtimestmp % SECS_DAY)
   dayno = math.floor(unixtimestmp / SECS_DAY)

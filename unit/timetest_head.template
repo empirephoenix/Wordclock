@@ -2,14 +2,18 @@
 
 dofile("../timecore.lua")
 
-function checkTime(yearIn, monthIn, dayIn, hourIn, minutesIn, secondsIn,dowIn, resultingHourDiff)
-    year, month, day, hour, minutes, seconds = getLocalTime(yearIn, monthIn, dayIn, hourIn, minutesIn, secondsIn, dowIn)
+SUMMERTIME_OFFSET=2
+WINTERTIME_OFFSET=1
 
-    if not (year == yearIn and monthIn == month and day == dayIn and hour == (hourIn + resultingHourDiff) and minutesIn == minutes and secondsIn == seconds ) then
-        print(yearIn .. "-" .. string.format("%0.2d", monthIn) .. "-" .. string.format("%0.2d", dayIn) .. " " .. string.format("%0.2d", hourIn) .. ":" .. string.format("%0.2d", minutesIn) .. ":" .. string.format("%0.2d", secondsIn) .. " (" .. dowIn .. ".th dayOfWeek) not as expected GMT+" .. resultingHourDiff .. " but GMT+" .. (hour - hourIn) )
+-- This functions expects to be executed in Germany, 
+-- so resultingHourDiff is 1 in wintertime
+-- and 2 in summertime
+function checkTime(yearIn, monthIn, dayIn, hourIn, minutesIn, secondsIn,dowIn, resultingHourDiff)
+    local summerTime = isSummerTime(yearIn, monthIn, dayIn, hourIn, minutesIn, secondsIn, dowIn)
+    if ((resultingHourDiff == SUMMERTIME_OFFSET and not (summerTime == true)) or (resultingHourDiff == WINTERTIME_OFFSET and not (summerTime == false))) then
+        print(yearIn .. "-" .. string.format("%0.2d", monthIn) .. "-" .. string.format("%0.2d", dayIn) .. " " .. string.format("%0.2d", hourIn) .. ":" .. string.format("%0.2d", minutesIn) .. ":" .. string.format("%0.2d", secondsIn) .. " (dow:" .. dowIn .. ") was not GMT+" .. resultingHourDiff .. "  ( summer time was " .. tostring(summerTime) .. ")" )
         os.exit(1)
     else
-        print(yearIn .. "-" .. string.format("%0.2d", monthIn) .. "-" .. string.format("%0.2d", dayIn) .. " " .. string.format("%0.2d", hourIn) .. ":" .. string.format("%0.2d", minutesIn) .. ":" .. string.format("%0.2d", secondsIn) .. " is GMT+" .. resultingHourDiff )
+        print(yearIn .. "-" .. string.format("%0.2d", monthIn) .. "-" .. string.format("%0.2d", dayIn) .. " " .. string.format("%0.2d", hourIn) .. ":" .. string.format("%0.2d", minutesIn) .. ":" .. string.format("%0.2d", secondsIn) .. " summertime is " .. tostring(summerTime) .. " (GMT+" .. resultingHourDiff .. ")" )
     end
 end
-

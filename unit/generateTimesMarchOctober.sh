@@ -39,4 +39,8 @@ for year in {2016..2100}; do
 done
 cat $TAIL >> $OUTPUT
 
+echo "---------------------------"
+echo "Usage:"
+echo "Call lua $OUTPUT in the terminal to execute the test"
+
 exit 0
