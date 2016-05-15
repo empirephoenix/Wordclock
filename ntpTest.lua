@@ -24,27 +24,8 @@ tmr.alarm(0, 100, 1, function()
 end)
 
 
-EPOCH_YR=1970
---SECS_DAY=(24L * 60L * 60L)
-SECS_DAY=86400
-
-gettime = function(unixtimestmp)
-  local year = EPOCH_YR
-  local dayclock = math.floor(unixtimestmp % SECS_DAY)
-  local dayno = math.floor(unixtimestmp / SECS_DAY)
-
-  local sec = dayclock % 60
-  local min = math.floor( (dayclock % 3600) / 60)
-  local hour = math.floor(dayclock / 3600)
-  local wday = math.floor( (dayno + 4) % 7) -- Day 0 was a thursday
-
-  return  hour, min, sec
-end
-
 tmr.alarm(1, 1000, 1 ,function()
  sec, usec = rtctime.get()
  print("Time : " , sec)
- hour, min, sec = gettime(sec)
- print(hour, " ", min, " ", sec)
 end)
 
