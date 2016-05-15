@@ -50,38 +50,6 @@ function isSummerTime(time)
   return false
 end
 
--- Convert a given month in english abr. to number from 1 to 12.
--- On unknown arguments, zero is returned.
-function convertMonth(str)
- if (str=="Jan") then
-  return 1
- elseif (str == "Feb") then
-  return 2
- elseif (str == "Mar") then
-  return 3
- elseif (str == "Apr") then
-  return 4
- elseif (str == "May") then
-  return 5
- elseif (str == "Jun") then
-  return 6
- elseif (str == "Jul") then
-  return 7
- elseif (str == "Aug") then
-  return 8
- elseif (str == "Sep") then
-  return 9
- elseif (str == "Oct") then
-  return 10
- elseif (str == "Nov") then
-  return 11
- elseif (str == "Dec") then
-  return 12
- else
-  return 0
- end
-end
-
 ----------------------------------------------------------
 -- Here comes some code to extract the year, month, day, hour, minute, second and day of week of a unix timestamp
 
