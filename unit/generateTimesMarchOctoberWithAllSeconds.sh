@@ -14,12 +14,13 @@ OUTPUT="$(echo "$OUTPUT" | sed 's;generate;test;')"
 echo "Generating $OUTPUT ..."
 cat $HEAD > $OUTPUT
 # Logic to generate the script
-for year in 2016 2017 2020; do
+for year in 2016 2017; do
  echo "For $year ..."
  for month in 3 10; do
-  for day in {1..31}; do
-    for hour in {0..23}; do
+  for day in {21..31}; do
+    for hour in {1..3}; do
      for minutes in {0..59}; do
+      echo "$year-$month-$day $hour:$minutes"
       for seconds in {0..59}; do
          timestmp="$year-$month-$day $hour:$minutes:$seconds"
          date -d "$timestmp" "+%F %T" >> /dev/null

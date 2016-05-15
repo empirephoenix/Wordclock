@@ -38,7 +38,7 @@ function isSummerTime(time)
    -- summer time
    return true
   -- October is not 100% Summer time, ending with the last sunday
-  elseif ((time.month == 10 and time.day >= 25 and time.day <= 31 and (time.hour < 2 or (time.hour == 2 and time.minute== 0 and time.second == 0)) and time.dow == 7) or
+  elseif ((time.month == 10 and time.day >= 25 and time.day <= 31 and (time.hour < 2 ) and time.dow == 7) or
           (time.month == 10 and time.day >= 25 and time.day <= 31 and time.dow < 7 and ((7-time.dow + time.day) <= 31)) or 
            -- Handle all days up to the 25. of october
            (time.month == 10 and time.day < 25 )
