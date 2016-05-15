@@ -24,6 +24,8 @@
 -- @param minute    Current minute in hour    range (0 - 59)
 -- @param second    Current second of minute  range (0 - 59)
 -- @param dow       Current day of week       range (1 - 7)   (1 is Monday, 7 is Sunday)
+-- @return <code>true</code> if we have currently summer time
+-- @return <code>false</code> if we have winter time
 function isSummerTime(year, month, day, hour, minute, second,dow)
   -- we are in 100% in the summer time
   if (month > 3 and month < 10) then 
