@@ -1,16 +1,14 @@
 dofile("../timecore.lua")
 function checkUnixTime(resultYear, resultMonth, resultDay, resultHour, resultMinute, resultSecond, resultDow, unixtime)
- year, month, day, hour, minute, second, dow = getUTCtime(unixtime)
+ time = getUTCtime(unixtime)
 
- if not (year == resultYear and resultMonth == month and day == resultDay and hour == resultHour and minute == resultMinute and second == resultSecond and dow == resultDow) then
+ if not (time.year == resultYear and resultMonth == time.month and time.day == resultDay and time.hour == resultHour and time.minute == resultMinute and time.second == resultSecond and time.dow == resultDow) then
         print(resultYear .. "-" .. resultMonth .. "-" .. resultDay .. " " .. resultHour .. ":" .. resultMinute .. ":" .. resultSecond .. " day of week : " .. resultDow .. " not extracted from " .. unixtime) 
         print(year .. "-" .. month .. "-" .. day .. " " .. hour .. ":" .. minute .. ":" .. second .. " day of week : " .. dow .. " found instead") 
         os.exit(1)
     else
         print(resultYear .. "-" .. resultMonth .. "-" .. resultDay .. " " .. resultHour .. ":" .. resultMinute .. ":" .. resultSecond .. " OK") 
     end
-
- 
 end
 checkUnixTime(2016, 1, 1, 16, 27, 0, 5, 1451665620)
 checkUnixTime(2016, 1, 2, 4, 37, 39, 6, 1451709459)

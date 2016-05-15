@@ -142,7 +142,7 @@ function getUTCtime(unixtimestmp)
   local sec = math.floor(dayclock % 60)
   local min = math.floor( (dayclock % 3600) / 60)
   local hour = math.floor(dayclock / 3600)
-  local wday = math.floor( (dayno + 4) % 7) -- Day 0 was a thursday
+  local dow = math.floor( (dayno + 4) % 7) -- Day 0 was a thursday
 
   while (dayno >= yearsize(year))
   do
@@ -158,7 +158,7 @@ function getUTCtime(unixtimestmp)
    end
    mday = dayno + 1
 
-  return year, (mon+1), mday, hour, min, sec, wday
+  return { year = year, month = (mon+1), day = mday, hour = hour, minute = min, second = sec, dow = dow }
 end
 
 
