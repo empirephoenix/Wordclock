@@ -35,6 +35,18 @@ tmr.alarm(1, 1000, 1 ,function()
  print("Local time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second)
 
  words = display_timestat(time.hour, time.minute)
+ -- All Leds are off
+ buf=string.char(0,0,0):rep(110)
+
+ if (words.min4 == 1) then
+    buf=string.char(0,0,50):rep(110)
+  else
+    buf=string.char(0,0,0):rep(110)
+  end
+
+  
+  ws2812.write(4, buf)
+ 
  for key,value in pairs(words) do 
     if (value > 0) then
       print(key,value) 
