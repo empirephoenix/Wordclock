@@ -1,5 +1,6 @@
 dofile("wlancfg.lua")
 dofile("timecore.lua")
+dofile("wordclock.lua")
 
 timezoneoffset=1
 
@@ -32,5 +33,12 @@ tmr.alarm(1, 1000, 1 ,function()
  time = getTime(sec, timezoneoffset)
  print("Time : " , sec)
  print("Local time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second)
+
+ words = display_timestat(time.hour, time.minute)
+ for key,value in pairs(words) do 
+    if (value > 0) then
+      print(key,value) 
+    end
+ end
 end)
 
