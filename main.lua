@@ -10,8 +10,6 @@ tmr.alarm(0, 100, 1, function()
      print("Connecting to AP...")
   else
      tmr.stop(0)
-     -- Switch of the booting lamp
-     gpio.write(5, gpio.LOW)
      print('IP: ',wifi.sta.getip())
 
     --ptbtime1.ptb.de
