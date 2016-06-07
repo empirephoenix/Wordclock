@@ -1,6 +1,8 @@
 -- Revese engeeniered code of display_wc_ger.c by Vlad Tepesch
 -- See https://www.mikrocontroller.net/articles/Word_Clock_Variante_1#Download
 
+-- TODO: Also add the twenty as return value!
+
 -- Return the leds to use
 -- the granuality is 5 minutes
 function display_timestat(hours, minutes, longmode)
@@ -9,8 +11,9 @@ function display_timestat(hours, minutes, longmode)
  end
 
  -- generate an empty return type
- local ret = { itis=0, fiveMin=0, tenMin=0, after=0, before=0, threeHour=0, quater=0, half=0, s=0, 
+ local ret = { itis=0, fiveMin=0, tenMin=0, after=0, before=0, threeHour=0, quater=0, threequater=0, half=0, s=0, 
                one=0, two=0, three=0, four=0, five=0, six=0, seven=0, eight=0, nine=0, ten=0, eleven=0, twelve=0,
+               twenty=0,
                clock=0, sr_nc=0, min1=0, min2=0, min3=0, min4=0 }
 
  -- return black screen if there is no real time given
@@ -59,9 +62,8 @@ function display_timestat(hours, minutes, longmode)
     ret.tenMin=1
     ret.half=1
     ret.after=1
-   elseif (minutes==9) then 
-    ret.quater=1
-    ret.before=1
+   elseif (minutes==9) then
+    ret.threequater=1
    elseif (minutes==10) then 
     ret.tenMin=1
     ret.before=1
