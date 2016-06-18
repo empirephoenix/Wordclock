@@ -9,6 +9,8 @@ if [ $# -ne 1 ]; then
 fi
 
 DEVICE=$1
+#BAUD="--baud 57600"
+#BAUD="--baud 921600"
 
 # check the serial connection
 
@@ -23,11 +25,12 @@ if [ ! -f esptool.py ]; then
  exit 1
 fi
 
-sudo ./esptool.py --port /dev/$DEVICE read_mac
+./esptool.py --port /dev/$DEVICE $BAUD read_mac
 
 if [ $? -ne 0 ]; then
  echo "Error reading the MAC -> set the device into the bootloader!"
  exit 1
 fi
 
-sudo ./esptool.py --port /dev/$DEVICE write_flash 0x00000 nodemcu-master-bit,enduser_setup,file,gpio,node,rtcfifo,rtcmem,rtctime,sntp,spi,tmr,uart,wifi,ws2812-integer.bin
+#./esptool.py --port /dev/$DEVICE $BAUD write_flash 0x00000 nodemcu-master-enduser_setup,file,gpio,net,node,rtcfifo,rtcmem,rtctime,sntp,spi,tmr,uart,wifi,ws2812-integer.bin
+./esptool.py --port /dev/ttyUSB0 $BAUD write_flash 0x00000 0x00000.bin 0x10000 0x10000.bin
