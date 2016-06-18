@@ -1,27 +1,51 @@
 -- Main Module
 function startSetupMode()
     tmr.stop(0)
-    dofile("webserver.lua")
+    tmr.stop(1)
+    -- start the webserver module 
+    mod="webserver"
+    if (file.open(mod ..  ".lua")) then
+      dofile( mod .. ".lua")
+    else
+      dofile(mod .. ".lc")
+    end
+    
     wifi.setmode(wifi.SOFTAP)
-    wifi.ap.config({ssid='clock',pwd='clock'})
-    print("Waiting in access point >clock< for Clients")
+    cfg={}
+    cfg.ssid="wordclock"
+    cfg.pwd="wordclock"
+    wifi.ap.config(cfg)
+    print("Waiting in access point >wordclock< for Clients")
     print("Please visit 192.168.4.1")
     startWebServer()
 end
 
-wifi.setmode(wifi.STATION)
-if ( file.list()["config.lua"] ) then
-    dofile("config.lua")
-else
-    startSetupMode()
+print("Solving dependencies")
+dependModules = { "timecore" , "wordclock", "displayword" }
+for _,mod in pairs(dependModules) do
+    print("Loading " .. mod)
+    if (file.open(mod ..  ".lua")) then
+      dofile( mod .. ".lua")
+    else
+      dofile(mod .. ".lc")
+    end
 end
-dofile("timecore.lua")
-dofile("wordclock.lua")
-dofile("displayword.lua")
 
 ledPin=4
 -- Color is defined as GREEN, RED, BLUE
 color=string.char(0,0,250)
+
+function syncTimeFromInternet()
+--ptbtime1.ptb.de
+    sntp.sync(sntpserverhostname,
+     function(sec,usec,server)
+      print('sync', sec, usec, server)
+     end,
+     function()
+       print('failed!')
+     end
+   )
+end
 
 connect_counter=0
 -- Wait to be connect to the WiFi access point. 
@@ -44,15 +68,7 @@ tmr.alarm(0, 500, 1, function()
         startWebServer()
     end)
     
-    --ptbtime1.ptb.de
-    sntp.sync(sntpserverhostname,
-     function(sec,usec,server)
-      print('sync', sec, usec, server)
-     end,
-     function()
-       print('failed!')
-     end
-   )
+    
   end
   -- when no wifi available, open an accesspoint and ask the user
   if (connect_counter == 300) then -- 300 is 30 sec in 100ms cycle
@@ -87,3 +103,10 @@ tmr.alarm(1, 15000, 1 ,function()
  collectgarbage()
 end)
 
+-- Logic
+if ( file.open("config.lua") ) then
+    wifi.setmode(wifi.STATION)
+    dofile("config.lua")
+else
+    startSetupMode()
+end

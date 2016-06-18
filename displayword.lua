@@ -1,8 +1,8 @@
 -- Module displaying of the words
 function generateLEDs(words, color)
  
- white=string.char(0,0,0)
- buf=color
+ local white=string.char(0,0,0)
+ local buf=color
  -- line 1----------------------------------------------
  if (words.itis == 1) then
     buf=color:rep(2) -- ES

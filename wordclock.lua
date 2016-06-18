@@ -23,7 +23,7 @@ function display_timestat(hours, minutes, longmode)
 
  -- transcode minutes
  local minutesLeds = minutes%5
- minutes=math.floor(minutes/5)
+ local minutes=math.floor(minutes/5)
 
  -- "It is" only display each half hour and each hour
  -- or if longmode is set
