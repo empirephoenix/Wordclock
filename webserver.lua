@@ -15,7 +15,7 @@ function sendWebPage(conn,answertype)
     timezoneoffset=1
   end
   buf="HTTP/1.1 200 OK\nServer: NodeMCU\nContent-Type: text/html\n\n"
-  if (node.heap() < 10000) then
+  if (node.heap() < 8000) then
   buf = buf .. "<h1>Busy, please come later again</h1>"
   else
   buf = buf .. "<html>"
@@ -73,6 +73,7 @@ function startWebServer()
       file.close()
       file.remove(configFile)
       if (file.rename(configFile .. ".new", configFile)) then
+        dofile(configFile) -- load the new values
         sendWebPage(conn,2) -- success
       else
         sendWebPage(conn,3) -- error

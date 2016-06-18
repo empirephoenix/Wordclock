@@ -123,6 +123,6 @@ function display_timestat(hours, minutes, longmode)
  elseif (hours == 12) then
   ret.twelve=1 
  end
- 
+ collectgarbage()
  return ret
 end

@@ -151,5 +151,6 @@ function generateLEDs(words, color)
   else
     buf= buf .. white:rep(1)
   end
+  collectgarbage()
   return buf
 end
