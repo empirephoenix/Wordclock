@@ -1,6 +1,20 @@
 -- Main Module
+function startSetupMode()
+    tmr.stop(0)
+    dofile("webserver.lua")
+    wifi.setmode(wifi.SOFTAP)
+    wifi.ap.config({ssid='clock',pwd='clock'})
+    print("Waiting in access point >clock< for Clients")
+    print("Please visit 192.168.4.1")
+    startWebServer()
+end
+
 wifi.setmode(wifi.STATION)
-dofile("config.lua")
+if ( file.list()["config.lua"] ) then
+    dofile("config.lua")
+else
+    startSetupMode()
+end
 dofile("timecore.lua")
 dofile("wordclock.lua")
 dofile("displayword.lua")
@@ -22,9 +36,15 @@ tmr.alarm(0, 500, 1, function()
        ws2812.write(ledPin, string.char(0,0,0):rep(114))
      end
   else
-     tmr.stop(0)
-     print('IP: ',wifi.sta.getip())
+    tmr.stop(0)
+    print('IP: ',wifi.sta.getip())
 
+    print("Start webserver...")
+    tmr.alarm(2, 2000, 0 ,function()
+        dofile("webserver.lua")
+        startWebServer()
+    end)
+    
     --ptbtime1.ptb.de
     sntp.sync(sntpserverhostname,
      function(sec,usec,server)
@@ -37,13 +57,7 @@ tmr.alarm(0, 500, 1, function()
   end
   -- when no wifi available, open an accesspoint and ask the user
   if (connect_counter == 300) then -- 300 is 30 sec in 100ms cycle
-    tmr.stop(0)
-    wifi.setmode(wifi.SOFTAP)
-    wifi.ap.config({ssid='clock',pwd='clock'})
-    print("Waiting in access point >clock< for Clients")
-    print("Please visit 192.168.4.1")
-    
-    dofile("webserver.lua")
+    startSetupmode()
   end
 end)
 
