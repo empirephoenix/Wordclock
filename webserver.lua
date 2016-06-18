@@ -32,7 +32,7 @@ function sendWebPage(conn,answertype)
   buf = buf .."</table></form>"
   if answertype==2 then
    buf = buf .. "<h2><font color=\"green\">New configuration saved</font></h2\n>"
-  elseif answertype==3 then
+  elseif answertype==3 then 
    buf = buf .. "<h2><font color=\"red\">ERROR</font></h2\n>"
   elseif answertype==4 then
    buf = buf .. "<h2><font color=\"orange\">Not all parameters set</font></h2\n>"
