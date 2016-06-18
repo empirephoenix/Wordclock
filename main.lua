@@ -19,7 +19,6 @@ dofile("timecore.lua")
 dofile("wordclock.lua")
 dofile("displayword.lua")
 
-timezoneoffset=1
 ledPin=4
 -- Color is defined as GREEN, RED, BLUE
 color=string.char(0,0,250)
@@ -81,5 +80,10 @@ tmr.alarm(1, 15000, 1 ,function()
         end
      end
  end
+ -- cleanup
+ ledBuf=nil
+ words=nil
+ time=nil
+ collectgarbage()
 end)
 
