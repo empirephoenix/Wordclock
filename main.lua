@@ -76,8 +76,6 @@ function normalOperation()
     
     tmr.alarm(1, 15000, 1 ,function()
      sec, usec = rtctime.get()
-     -- Include the timezone
-     sec = sec + (timezoneoffset * 3600)
      
      time = getTime(sec, timezoneoffset)
      print("Local time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second)
