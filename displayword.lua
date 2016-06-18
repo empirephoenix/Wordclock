@@ -1,7 +1,6 @@
 -- Module displaying of the words
-function generateLEDs(words)
+function generateLEDs(words, color)
  
- color=string.char(0,0,50)
  white=string.char(0,0,0)
  buf=color
  -- line 1----------------------------------------------
