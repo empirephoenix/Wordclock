@@ -123,7 +123,7 @@ function generateLEDs(words, color)
   else
     buf= buf .. white:rep(3)
  end
- if (words.sechs == 1) then
+ if (words.six == 1) then
     buf= buf .. white:rep(2)
     buf= buf .. color:rep(5) -- SECHS
     buf= buf .. white:rep(1)

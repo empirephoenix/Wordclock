@@ -5,6 +5,7 @@ dofile("displayword.lua")
 
 timezoneoffset=1
 ledPin=4
+-- Color is defined as GREEN, RED, BLUE
 color=string.char(0,0,250)
 
 connect_counter=0
@@ -44,21 +45,23 @@ tmr.alarm(0, 500, 1, function()
   end
 end)
 
-tmr.alarm(1, 5000, 1 ,function()
+tmr.alarm(1, 15000, 1 ,function()
  sec, usec = rtctime.get()
  time = getTime(sec, timezoneoffset)
- print("Time : " , sec)
  print("Local time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second)
 
  words = display_timestat(time.hour, time.minute)
  ledBuf = generateLEDs(words, color)
  -- Write the buffer to the LEDs
  ws2812.write(ledPin, ledBuf)
- 
- for key,value in pairs(words) do 
-    if (value > 0) then
-      print(key,value) 
-    end
+
+ -- Used for debugging
+ if (clockdebug ~= nil) then
+     for key,value in pairs(words) do 
+        if (value > 0) then
+          print(key,value) 
+        end
+     end
  end
 end)
 
