@@ -1,4 +1,6 @@
-dofile("wlancfg.lua")
+-- Main Module
+wifi.setmode(wifi.STATION)
+dofile("config.lua")
 dofile("timecore.lua")
 dofile("wordclock.lua")
 dofile("displayword.lua")
@@ -24,7 +26,7 @@ tmr.alarm(0, 500, 1, function()
      print('IP: ',wifi.sta.getip())
 
     --ptbtime1.ptb.de
-    sntp.sync('ptbtime1.ptb.de',
+    sntp.sync(sntpserverhostname,
      function(sec,usec,server)
       print('sync', sec, usec, server)
      end,
@@ -47,9 +49,11 @@ end)
 
 tmr.alarm(1, 15000, 1 ,function()
  sec, usec = rtctime.get()
+ -- Include the timezone
+ sec = sec + (timezoneoffset * 3600)
+ 
  time = getTime(sec, timezoneoffset)
  print("Local time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second)
-
  words = display_timestat(time.hour, time.minute)
  ledBuf = generateLEDs(words, color)
  -- Write the buffer to the LEDs
