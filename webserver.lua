@@ -20,15 +20,6 @@ function sendWebPage(conn,answertype)
   else
   buf = buf .. "<html>"
   buf = buf .. "<head><title>WordClock Setup Page</title>"
-  if (bennyHack ~= nil) then
-  buf = buf .. "<style type=\"text/css\"> #table-6 { width: 100% border: 1px solid #B0B0B0; } "
-  buf = buf .. "#table-6 tbody { margin: 0; padding: 0; border: 0; outline: 0; font-size: 100%; vertical-align: baseline; background: transparent; } #table-6 thead { text-align: left; } "
-  buf = buf .. "#table-6 thead th { background: -moz-linear-gradient(top, #F0F0F0 0, #DBDBDB 100%);"
-  buf = buf .. " background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #F0F0F0), color-stop(100%, #DBDBDB)); "
-  buf = buf .. "filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F0F0F0', endColorstr='#DBDBDB', GradientType=0); border: 1px solid #B0B0B0; color: #444; font-size: 16px; font-weight: bold; padding: 3px 10px; } "
-  buf = buf .. "#table-6 td { padding: 3px 10px; }"
-  buf = buf .. " #table-6 tr:nth-child(even) { background: #F2F2F2; } </style>"
-  end
   buf = buf .. "</head><body>\n"
   buf = buf .. "<h1>Welcome to the WordClock</h1>Please note that all settings are mandatory<br /><br />"
   buf = buf .."<form action=\"\" method=\"POST\">"
