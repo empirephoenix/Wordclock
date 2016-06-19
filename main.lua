@@ -41,6 +41,31 @@ function syncTimeFromInternet()
    )
 end
 
+function displayTime()
+    sec, usec = rtctime.get()
+             
+     time = getTime(sec, timezoneoffset)
+     print("Local time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second)
+     words = display_timestat(time.hour, time.minute)
+     ledBuf = generateLEDs(words, color)
+     -- Write the buffer to the LEDs
+     ws2812.write(ledPin, ledBuf)
+    
+     -- Used for debugging
+     if (clockdebug ~= nil) then
+         for key,value in pairs(words) do 
+            if (value > 0) then
+              print(key,value) 
+            end
+         end
+     end
+     -- cleanup
+     ledBuf=nil
+     words=nil
+     time=nil
+     collectgarbage()
+end
+
 function normalOperation()
     -- Color is defined as GREEN, RED, BLUE
     color=string.char(0,0,250)
@@ -76,30 +101,10 @@ function normalOperation()
             startWebServer()
         end)
 
+        displayTime()
         -- Start the time Thread
         tmr.alarm(1, 20000, 1 ,function()
-             sec, usec = rtctime.get()
-             
-             time = getTime(sec, timezoneoffset)
-             print("Local time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second)
-             words = display_timestat(time.hour, time.minute)
-             ledBuf = generateLEDs(words, color)
-             -- Write the buffer to the LEDs
-             ws2812.write(ledPin, ledBuf)
-            
-             -- Used for debugging
-             if (clockdebug ~= nil) then
-                 for key,value in pairs(words) do 
-                    if (value > 0) then
-                      print(key,value) 
-                    end
-                 end
-             end
-             -- cleanup
-             ledBuf=nil
-             words=nil
-             time=nil
-             collectgarbage()
+             displayTime()
          end)
         
       end
