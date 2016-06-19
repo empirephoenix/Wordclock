@@ -39,6 +39,10 @@ function startWebServer()
      end
      postRequestData=nil
 
+     --- Do the magic!
+     if (_POST.action ~= nil and _POST.action == "Reboot") then
+        node.restart()
+     end
     
       print("Inform user via Web")
       if (sendWebPage == nil) then
