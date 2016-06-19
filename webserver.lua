@@ -10,8 +10,11 @@ function startWebServer()
    if (payload:find("GET /") ~= nil) then
    --here is code for handling http request from a web-browser
 
-    -- Load the webcontent
-    mydofile("webpage")
+    if (sendWebPage == nil) then
+       print("Loading webpage ...")
+       -- Load the webcontent
+       mydofile("webpage")
+    end
   
     ssid, password, bssid_set, bssid = wifi.sta.getconfig()
     sendWebPage(conn,1)
@@ -20,6 +23,7 @@ function startWebServer()
         -- Clear the webpage generation
         sendWebPage=nil
         print("Clean webpage from RAM")
+        collectgarbage()
     end)
 
     
@@ -65,9 +69,7 @@ function startWebServer()
       if (file.rename(configFile .. ".new", configFile)) then
         print("Successfully")
         dofile(configFile) -- load the new values
-        print("New Config loaded")
         sendWebPage(conn,2) -- success
-        
       else
         print("Error")
         sendWebPage(conn,3) -- error
@@ -79,6 +81,7 @@ function startWebServer()
      end
     
     else
+     print("Hello via telnet")
      --here is code, if the connection is not from a webbrowser, i.e. telnet or nc
      global_c=conn
      function s_output(str)

@@ -1,7 +1,6 @@
 -------------
 --- The webpage for the Webserver
 function sendWebPage(conn,answertype)
-  collectgarbage()
   if (ssid == nil) then
     ssid="Not set"
   end
