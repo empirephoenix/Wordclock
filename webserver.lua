@@ -2,87 +2,82 @@
 
 configFile="config.lua"
 
-
-function sendWebPage(conn,answertype)
-  collectgarbage()
-  if (ssid == nil) then
-    ssid="Not set"
-  end
-  if (sntpserverhostname == nil) then
-    sntpserverhostname="ptbtime1.ptb.de"
-  end
-  if (timezoneoffset == nil) then
-    timezoneoffset=1
-  end
-  local buf="HTTP/1.1 200 OK\nServer: NodeMCU\nContent-Type: text/html\n\n"
-  if (node.heap() < 8000) then
-  buf = buf .. "<h1>Busy, please come later again</h1>"
-  else
-  buf = buf .. "<html>"
-  buf = buf .. "<head><title>WordClock Setup Page</title>"
-  buf = buf .. "</head><body>\n"
-  buf = buf .. "<h1>Welcome to the WordClock</h1>Please note that all settings are mandatory<br /><br />"
-  buf = buf .."<form action=\"\" method=\"POST\">"
-  buf = buf .."<table id=\"table-6\">"
-  buf = buf .."<tr><th>WIFI-SSID</b></th><td><input id=\"ssid\" name=\"ssid\" value=\"" .. ssid .. "\"></td><td>SSID of the wireless network</td></tr>"
-  buf = buf .."<tr><th>WIFI-Password</th><td><input id=\"password\" name=\"password\"></td><td>Password of the wireless network</td></tr>"
-  buf = buf .."<tr><th>SNTP Server</th><td><input id=\"sntpserver\" name=\"sntpserver\" value=\"" .. sntpserverhostname .. "\"></td><td>Server to sync the time with. Only one ntp server is allowed.</tr>"
-  buf = buf .."<tr><th>Offset to UTC time</th><td><input id=\"timezoneoffset\" name=\"timezoneoffset\" value=\"" .. timezoneoffset .. "\"></td><td>Define the offset to UTC time in hours. For example +1 hour for Germany</tr>"
-  buf = buf .. "<tr><td colspan=\"3\"><div align=\"center\"><input type=\"submit\" value=\"Save Configuration\" onclick=\"this.value='Submitting ..';this.disabled='disabled'; this.form.submit();\"></div></td></tr>"
-  buf = buf .."</table></form>"
-  if answertype==2 then
-   buf = buf .. "<h2><font color=\"green\">New configuration saved</font></h2\n>"
-  elseif answertype==3 then 
-   buf = buf .. "<h2><font color=\"red\">ERROR</font></h2\n>"
-  elseif answertype==4 then
-   buf = buf .. "<h2><font color=\"orange\">Not all parameters set</font></h2\n>"
-  end 
-  buf = buf .. "\n</body></html>"
-  end
-  conn:send(buf)
-  buf=nil
-  collectgarbage()
-end
-
 function startWebServer()
  srv=net.createServer(net.TCP)
  srv:listen(80,function(conn)
   conn:on("receive", function(conn,payload)
+   
    if (payload:find("GET /") ~= nil) then
    --here is code for handling http request from a web-browser
+
+    -- Load the webcontent
+    mydofile("webpage")
+  
     ssid, password, bssid_set, bssid = wifi.sta.getconfig()
     sendWebPage(conn,1)
-    conn:on("sent", function(conn) conn:close() end)
+    conn:on("sent", function(conn) 
+        conn:close() 
+        -- Clear the webpage generation
+        sendWebPage=nil
+        print("Clean webpage from RAM")
+    end)
+
+    
    else if (payload:find("POST /") ~=nil) then
      --code for handling the POST-request (updating settings)
      _, postdatastart = payload:find("\r\n\r\n")
      --Next lines catches POST-requests without POST-data....
      if postdatastart==nil then postdatastart = 1 end
-     postRequestData=string.sub(payload,postdatastart+1)
+     local postRequestData=string.sub(payload,postdatastart+1)
      local _POST = {}
      for i, j in string.gmatch(postRequestData, "(%w+)=([^&]+)&*") do
        _POST[i] = j
      end
      postRequestData=nil
-     if ((_POST.ssid~=nil) and (_POST.password~=nil) and (_POST.sntpserver~=nil) and (_POST.timezoneoffset~=nil)) then
 
+    
+      print("Inform user via Web")
+      if (sendWebPage == nil) then
+        print("Loading webpage ...")
+        -- Load the webcontent
+        mydofile("webpage")
+      end
+      
+      conn:on("sent", function(conn) 
+        conn:close() 
+        -- Clear the webpage generation
+        sendWebPage=nil
+        print("Clean webpage from RAM")
+      end)
+     
+     if ((_POST.ssid~=nil) and (_POST.password~=nil) and (_POST.sntpserver~=nil) and (_POST.timezoneoffset~=nil)) then
+      print("New config!")
       -- Safe configuration:
       file.remove(configFile .. ".new")
-      file.open(configFile.. ".new", "w")
+      sec, _ = rtctime.get()
+      file.open(configFile.. ".new", "w+")
       file.write("-- Config\n" .. "wifi.sta.config(\"" .. _POST.ssid .. "\",\"" .. _POST.password .. "\")\n" .. "sntpserverhostname=\"" .. _POST.sntpserver .. "\"\n" .. "timezoneoffset=\"" .. _POST.timezoneoffset .. "\"\n")
+      file.write("print(\"Config from " .. sec .. "\")\n")
       file.close()
+      sec=nil
       file.remove(configFile)
+      print("Rename config")
       if (file.rename(configFile .. ".new", configFile)) then
+        print("Successfully")
         dofile(configFile) -- load the new values
+        print("New Config loaded")
         sendWebPage(conn,2) -- success
+        
       else
+        print("Error")
         sendWebPage(conn,3) -- error
       end
+      
      else
       ssid, password, bssid_set, bssid = wifi.sta.getconfig()
       sendWebPage(conn,4) -- not all parameter set
      end
-     conn:on("sent", function(conn) conn:close() end)
+    
     else
      --here is code, if the connection is not from a webbrowser, i.e. telnet or nc
      global_c=conn
