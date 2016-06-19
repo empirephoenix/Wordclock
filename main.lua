@@ -1,13 +1,5 @@
 -- Main Module
 
-function mydofile(mod)
-    if (file.open(mod ..  ".lua")) then
-      dofile( mod .. ".lua")
-    else
-      dofile(mod .. ".lc")
-    end
-end    
-
 function startSetupMode()
     tmr.stop(0)
     tmr.stop(1)
