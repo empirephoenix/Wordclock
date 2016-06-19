@@ -58,14 +58,23 @@ function startWebServer()
         print("Clean webpage from RAM")
       end)
      
-     if ((_POST.ssid~=nil) and (_POST.password~=nil) and (_POST.sntpserver~=nil) and (_POST.timezoneoffset~=nil)) then
+     if ((_POST.ssid~=nil) and (_POST.sntpserver~=nil) and (_POST.timezoneoffset~=nil)) then
       print("New config!")
+      if (_POST.password==nil) then
+        _, password, _, _ = wifi.sta.getconfig()
+        print("Restoring password : " .. password)
+        _POST.password = password
+        password = nil
+      end
       -- Safe configuration:
       file.remove(configFile .. ".new")
       sec, _ = rtctime.get()
       file.open(configFile.. ".new", "w+")
       file.write("-- Config\n" .. "wifi.sta.config(\"" .. _POST.ssid .. "\",\"" .. _POST.password .. "\")\n" .. "sntpserverhostname=\"" .. _POST.sntpserver .. "\"\n" .. "timezoneoffset=\"" .. _POST.timezoneoffset .. "\"\n")
-      file.write("print(\"Config from " .. sec .. "\")\n")
+      if ( (_POST.red ~= nil) and (_POST.green ~= nil) and (_POST.blue ~= nil) ) then
+        color=string.char(_POST.red, _POST.green, _POST.blue)  
+      end
+      file.write("color=string.char(" .. string.byte(color,1) .. "," .. string.byte(color, 2) .. "," .. string.byte(color, 3) .. ")\n print(\"Config from " .. sec .. "\")\n")
       file.close()
       sec=nil
       file.remove(configFile)

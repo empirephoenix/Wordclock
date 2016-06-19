@@ -67,8 +67,11 @@ function displayTime()
 end
 
 function normalOperation()
-    -- Color is defined as GREEN, RED, BLUE
-    color=string.char(0,0,250)
+    -- use default color, if nothing is defined
+    if (color == nil) then
+        -- Color is defined as GREEN, RED, BLUE
+        color=string.char(0,0,250)
+    end
    
     connect_counter=0
     -- Wait to be connect to the WiFi access point. 
