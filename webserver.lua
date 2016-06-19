@@ -14,7 +14,7 @@ function sendWebPage(conn,answertype)
   if (timezoneoffset == nil) then
     timezoneoffset=1
   end
-  buf="HTTP/1.1 200 OK\nServer: NodeMCU\nContent-Type: text/html\n\n"
+  local buf="HTTP/1.1 200 OK\nServer: NodeMCU\nContent-Type: text/html\n\n"
   if (node.heap() < 8000) then
   buf = buf .. "<h1>Busy, please come later again</h1>"
   else

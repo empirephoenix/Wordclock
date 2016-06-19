@@ -56,13 +56,13 @@ end
 -- Source:
 -- http://www.jbox.dk/sanos/source/lib/time.c.html
 
-YEAR0=1900
+local YEAR0=1900
 
-EPOCH_YR=1970
+local EPOCH_YR=1970
 --SECS_DAY=(24L * 60L * 60L)
-SECS_DAY=86400
+local SECS_DAY=86400
 
-ytab = {}
+local ytab = {}
 ytab[0] = {}
 ytab[1] = {}
 ytab[0][0] = 31
@@ -106,7 +106,7 @@ end
 function getUTCtime(unixtimestmp)
   local year = EPOCH_YR
   local dayclock = math.floor(unixtimestmp % SECS_DAY)
-  dayno = math.floor(unixtimestmp / SECS_DAY)
+  local dayno = math.floor(unixtimestmp / SECS_DAY)
 
   local sec = math.floor(dayclock % 60)
   local min = math.floor( (dayclock % 3600) / 60)
@@ -119,20 +119,20 @@ function getUTCtime(unixtimestmp)
     year=year + 1
   end
   --Day in whole year: local yday = dayno (Not needed)
-  mon = 0
+  local mon = 0
   while (dayno >= ytab[leapyear(year) and 1 or 0][mon])
   do
       dayno = dayno - ytab[leapyear(year) and 1 or 0][mon];
       mon = mon + 1
    end
-   mday = dayno + 1
+   local mday = dayno + 1
 
   return { year = year, month = (mon+1), day = mday, hour = hour, minute = min, second = sec, dow = dow }
 end
 
 
 function getTime(unixtimestmp, timezoneoffset)
-    time = getUTCtime(unixtimestmp + (3600 * timezoneoffset))
+    local time = getUTCtime(unixtimestmp + (3600 * timezoneoffset))
     if ( isSummerTime(time) ) then
         time = getUTCtime(unixtimestmp + (3600 * (timezoneoffset + 1)) )
     end
