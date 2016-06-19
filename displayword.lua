@@ -33,7 +33,12 @@ function generateLEDs(words, color)
  -- line3----------------------------------------------
  --TODO ggf. auch ueber viertel vor abbildbar
  if (words.threequater == 1) then
-    buf= buf .. color:rep(11) -- Dreiviertel
+    if (threequater ~= nil) then
+        buf= buf .. color:rep(11) -- Dreiviertel
+    else
+        buf= buf .. white:rep(4)
+        buf= buf .. color:rep(7) -- VIERTEL
+    end
   elseif (words.quater == 1) then
     buf= buf .. white:rep(4)
     buf= buf .. color:rep(7) -- VIERTEL
@@ -41,7 +46,7 @@ function generateLEDs(words, color)
     buf= buf .. white:rep(11)
  end
  --line 4-------- even row (so inverted) -------------
- if (words.before == 1) then
+ if ((words.before == 1) or (words.threequater == 1 and threequater == nil)) then
     buf=buf .. white:rep(2) 
     buf= buf .. color:rep(3) -- VOR
   else

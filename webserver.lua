@@ -75,6 +75,11 @@ function startWebServer()
         color=string.char(_POST.red, _POST.green, _POST.blue)  
       end
       file.write("color=string.char(" .. string.byte(color,1) .. "," .. string.byte(color, 2) .. "," .. string.byte(color, 3) .. ")\n print(\"Config from " .. sec .. "\")\n")
+      if (_POST.threequater ~= nil) then
+        file.write("threequater=true\n")
+      else
+        file.write("threequater=nil\n") -- unset threequater
+      end
       file.close()
       sec=nil
       file.remove(configFile)
