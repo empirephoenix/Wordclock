@@ -72,7 +72,7 @@ function startWebServer()
       file.open(configFile.. ".new", "w+")
       file.write("-- Config\n" .. "wifi.sta.config(\"" .. _POST.ssid .. "\",\"" .. _POST.password .. "\")\n" .. "sntpserverhostname=\"" .. _POST.sntpserver .. "\"\n" .. "timezoneoffset=\"" .. _POST.timezoneoffset .. "\"\n")
       if ( (_POST.red ~= nil) and (_POST.green ~= nil) and (_POST.blue ~= nil) ) then
-        color=string.char(_POST.red, _POST.green, _POST.blue)  
+        color=string.char(_POST.green, _POST.red, _POST.blue)  
       end
       file.write("color=string.char(" .. string.byte(color,1) .. "," .. string.byte(color, 2) .. "," .. string.byte(color, 3) .. ")\n print(\"Config from " .. sec .. "\")\n")
       if (_POST.threequater ~= nil) then
