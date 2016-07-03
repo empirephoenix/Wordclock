@@ -19,6 +19,16 @@ if [ $# -ne 1 ]; then
 fi
 
 FILES="displayword.lua main.lua timecore.lua webpage.lua webserver.lua wordclock.lua init.lua"
+# Format filesystem first
+echo "Format the complete ESP"
+$LUATOOL -p $DEVICE -w
+if [ $? -ne 0 ]; then
+    echo "STOOOOP"
+    exit 1
+fi
+
+echo 
+echo "Start Flasing ..."
 for f in $FILES; do
     if [ ! -f $f ]; then
         echo "Cannot find $f"
@@ -32,5 +42,8 @@ for f in $FILES; do
         exit 1
     fi
 done
+
+echo "Reboot the ESP"
+$LUATOOL -p $DEVICE -r
 
 exit 0
