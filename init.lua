@@ -1,11 +1,12 @@
 print("Autostart in 10 seconds...")
 
-ledPin=4
+ws2812.init() -- WS2812 LEDs initialized on GPIO2
+
 counter1=0
-ws2812.write(ledPin, string.char(0,0,0):rep(114))
+ws2812.write(string.char(0,0,0):rep(114))
 tmr.alarm(2, 85, 1, function()
     counter1=counter1+1
-    ws2812.write(ledPin, string.char(128,0,0):rep(counter1))     
+    ws2812.write(string.char(128,0,0):rep(counter1))     
 end)
 
 local blacklistfile="init.lua config.lua"

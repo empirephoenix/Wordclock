@@ -1,5 +1,4 @@
 -- Main Module
-ledPin=4
 
 function startSetupMode()
     tmr.stop(0)
@@ -17,7 +16,7 @@ function startSetupMode()
     local color=string.char(0,128,0)
     local white=string.char(0,0,0)
     local ledBuf= white:rep(6) .. color .. white:rep(7) .. color:rep(3) .. white:rep(44) .. color:rep(3) .. white:rep(50)
-    ws2812.write(ledPin, ledBuf)
+    ws2812.write(ledBuf)
     color=nil
     white=nil
     ledBuf=nil
@@ -34,6 +33,7 @@ function syncTimeFromInternet()
     sntp.sync(sntpserverhostname,
      function(sec,usec,server)
       print('sync', sec, usec, server)
+      displayTime()
      end,
      function()
        print('failed!')
@@ -49,7 +49,7 @@ function displayTime()
      words = display_timestat(time.hour, time.minute)
      ledBuf = generateLEDs(words, color)
      -- Write the buffer to the LEDs
-     ws2812.write(ledPin, ledBuf)
+     ws2812.write(ledBuf)
     
      -- Used for debugging
      if (clockdebug ~= nil) then
@@ -80,9 +80,9 @@ function normalOperation()
       if wifi.sta.status() ~= 5 then
          print(connect_counter ..  "/60 Connecting to AP...")
          if (connect_counter % 2 == 0) then
-            ws2812.write(ledPin, string.char((connect_counter % 6)*20,(connect_counter % 5)*20,(connect_counter % 3)*20):rep(114))
+            ws2812.write(string.char((connect_counter % 6)*20,(connect_counter % 5)*20,(connect_counter % 3)*20):rep(114))
          else
-           ws2812.write(ledPin, string.char(0,0,0):rep(114))
+           ws2812.write(string.char(0,0,0):rep(114))
          end
       else
         tmr.stop(0)
@@ -120,7 +120,8 @@ function normalOperation()
     
 end
 
-
+-------------------main program -----------------------------
+ws2812.init() -- WS2812 LEDs initialized on GPIO2
 
 if ( file.open("config.lua") ) then
     --- Normal operation
