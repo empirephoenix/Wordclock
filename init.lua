@@ -1,4 +1,4 @@
-print("Autostart in 10 seconds...")
+print("Autostart in 5 seconds...")
 
 ws2812.init() -- WS2812 LEDs initialized on GPIO2
 
@@ -34,7 +34,7 @@ function mydofile(mod)
 end    
 
 
-tmr.alarm(1, 10000, 0, function()
+tmr.alarm(1, 5000, 0, function()
     tmr.stop(2)
     if (file.open("main.lua")) then    
         recompileAll()

@@ -71,8 +71,14 @@ function startWebServer()
       sec, _ = rtctime.get()
       file.open(configFile.. ".new", "w+")
       file.write("-- Config\n" .. "wifi.sta.config(\"" .. _POST.ssid .. "\",\"" .. _POST.password .. "\")\n" .. "sntpserverhostname=\"" .. _POST.sntpserver .. "\"\n" .. "timezoneoffset=\"" .. _POST.timezoneoffset .. "\"\n")
-      if ( (_POST.red ~= nil) and (_POST.green ~= nil) and (_POST.blue ~= nil) ) then
-        color=string.char(_POST.green, _POST.red, _POST.blue)  
+      if ( _POST.fcolor ~= nil) then
+        -- color=string.char(_POST.green, _POST.red, _POST.blue)  
+        print ("Got fcolor: " .. _POST.fcolor)
+        local hexColor=string.sub(_POST.fcolor, 4)
+        local red = tonumber(string.sub(hexColor, 1, 2), 16)
+        local green = tonumber(string.sub(hexColor, 3, 4), 16)
+        local blue = tonumber(string.sub(hexColor, 5, 6), 16)
+        color=string.char(red, green, blue)
       end
       file.write("color=string.char(" .. string.byte(color,1) .. "," .. string.byte(color, 2) .. "," .. string.byte(color, 3) .. ")\n print(\"Config from " .. sec .. "\")\n")
       if (_POST.threequater ~= nil) then

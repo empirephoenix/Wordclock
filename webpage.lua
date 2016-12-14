@@ -14,7 +14,7 @@ function sendWebPage(conn,answertype)
   if (color == nil) then
     color=string.char(0,0,250)
   end
-  
+  local hexColor = "#" .. string.format("%02x",string.byte(color,1)) .. string.format("%02x",string.byte(color,2)) .. string.format("%02x",string.byte(color,3))
   local buf="HTTP/1.1 200 OK\nServer: NodeMCU\nContent-Type: text/html\n\n"
   if (node.heap() < 8000) then
   buf = buf .. "<h1>Busy, please come later again</h1>"
@@ -28,10 +28,8 @@ function sendWebPage(conn,answertype)
   buf = buf .."<tr><th>WIFI-SSID</b></th><td><input name=\"ssid\" value=\"" .. ssid .. "\"></td><td /></tr>"
   buf = buf .."<tr><th>WIFI-Password</th><td><input name=\"password\"></td><td /></tr>"
   buf = buf .."<tr><th>SNTP Server</th><td><input name=\"sntpserver\" value=\"" .. sntpserverhostname .. "\"></td><td>ntp server to sync the time</tr>"
-  buf = buf .."<tr><th>Offset to UTC time</th><td><input type=\"number\" name=\"timezoneoffset\" value=\"" .. timezoneoffset .. "\"></td><td>Define the offset to UTC time in hours. E.g +1</tr>"
-  buf = buf .."<tr><th>Red</th><td><input type=\"number\" name=\"red\" value=\"" .. string.byte(color,1) .. "\"></td><td /></tr>"
-  buf = buf .."<tr><th>Green</th><td><input type=\"number\" name=\"green\" value=\"" .. string.byte(color,2) .. "\"></td><td /></tr>"
-  buf = buf .."<tr><th>Blue</th><td><input type=\"number\" name=\"blue\" value=\"" .. string.byte(color,3) .. "\"></td><td>All Colors: 0 - 255</td></tr>"
+  buf = buf .."<tr><th>Offset to UTC time</th><td><input type=\"number\" name=\"timezoneoffset\" value=\"" .. timezoneoffset .. "\"></td><td>Define the offset to UTC time in hours. E.g +1</tr>"  
+  buf = buf .."<tr><th>Color</th><td><input type=\"color\" name=\"fcolor\" value=\"" .. hexColor .. "\"></td><td /></tr>"
   buf = buf .."<tr><th>Three quater</th><td><input type=\"checkbox\" name=\"threequater\" ".. (threequater and "checked" or "") .. "></td><td>Dreiviertel Joa/nei</td></tr>"
   buf = buf .. "<tr><td colspan=\"3\"><div align=\"center\"><input type=\"submit\" value=\"Save Configuration\" onclick=\"this.value='Submitting ..';this.disabled='disabled'; this.form.submit();\"></div></td></tr>"
   buf = buf .. "<tr><td colspan=\"3\"><div align=\"center\"><input type=\"submit\" name=\"action\" value=\"Reboot\"></div></td></tr>"
