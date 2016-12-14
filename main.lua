@@ -47,6 +47,17 @@ function displayTime()
      time = getTime(sec, timezoneoffset)
      print("Local time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second)
      words = display_timestat(time.hour, time.minute)
+
+     if ((words.min1 == 1) and (color1 ~= nil)) then
+        color=color1
+     elseif ((words.min2 == 1) and (color2 ~= nil)) then
+        color=color2
+     elseif ((words.min3 == 1) and (color3 ~= nil)) then
+        color=color1
+        elseif ((words.min4 == 1) and (color4 ~= nil)) then
+        color=color4
+     end
+     
      ledBuf = generateLEDs(words, color)
      -- Write the buffer to the LEDs
      ws2812.write(ledBuf)

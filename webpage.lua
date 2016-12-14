@@ -1,6 +1,7 @@
 -------------
 --- The webpage for the Webserver
 function sendWebPage(conn,answertype)
+
   if (ssid == nil) then
     ssid="Not set"
   end
@@ -31,6 +32,28 @@ function sendWebPage(conn,answertype)
   local hexColor2 = "#" .. string.format("%02x",string.byte(color2,1)) .. string.format("%02x",string.byte(color2,2)) .. string.format("%02x",string.byte(color2,3))
   local hexColor3 = "#" .. string.format("%02x",string.byte(color3,1)) .. string.format("%02x",string.byte(color3,2)) .. string.format("%02x",string.byte(color3,3))
   local hexColor4 = "#" .. string.format("%02x",string.byte(color4,1)) .. string.format("%02x",string.byte(color4,2)) .. string.format("%02x",string.byte(color4,3))
+  
+  
+  -- hack for the second part of the page
+  buf=nil
+  if (answertype==10) then
+      buf = "<tr><th>Color 1. Minute</th><td><input type=\"color\" name=\"colorMin1\" value=\"" .. hexColor1 .. "\"></td><td /></tr>"
+      buf = buf .."<tr><th>Color 2. Minute</th><td><input type=\"color\" name=\"colorMin2\" value=\"" .. hexColor2 .. "\"></td><td /></tr>"
+      buf = buf .."<tr><th>Color 3. Minute</th><td><input type=\"color\" name=\"colorMin3\" value=\"" .. hexColor3 .. "\"></td><td /></tr>"
+      buf = buf .."<tr><th>Color 4. Minute</th><td><input type=\"color\" name=\"colorMin4\" value=\"" .. hexColor4 .. "\"></td><td /></tr>"
+      buf = buf .."<tr><th>Three quater</th><td><input type=\"checkbox\" name=\"threequater\" ".. (threequater and "checked" or "") .. "></td><td>Dreiviertel Joa/nei</td></tr>"
+      buf = buf .. "<tr><td colspan=\"3\"><div align=\"center\"><input type=\"submit\" value=\"Save Configuration\" onclick=\"this.value='Submitting ..';this.disabled='disabled'; this.form.submit();\"></div></td></tr>"
+      buf = buf .. "<tr><td colspan=\"3\"><div align=\"center\"><input type=\"submit\" name=\"action\" value=\"Reboot\"></div></td></tr>"
+      buf = buf .."</table></form>"
+      conn:send(buf)
+      buf=nil
+      collectgarbage()
+      -- Code will only be added once the page is loaded
+      endOfPage=true
+      return
+  end
+
+  
   local buf="HTTP/1.1 200 OK\nServer: NodeMCU\nContent-Type: text/html\n\n"
   if (node.heap() < 8000) then
   buf = buf .. "<h1>Busy, please come later again</h1>"
@@ -46,14 +69,7 @@ function sendWebPage(conn,answertype)
   buf = buf .."<tr><th>SNTP Server</th><td><input name=\"sntpserver\" value=\"" .. sntpserverhostname .. "\"></td><td>ntp server to sync the time</tr>"
   buf = buf .."<tr><th>Offset to UTC time</th><td><input type=\"number\" name=\"timezoneoffset\" value=\"" .. timezoneoffset .. "\"></td><td>Define the offset to UTC time in hours. E.g +1</tr>"  
   buf = buf .."<tr><th>Color</th><td><input type=\"color\" name=\"fcolor\" value=\"" .. hexColor .. "\"></td><td /></tr>"
-  --buf = buf .."<tr><th>Color 1. Min</th><td><input type=\"color\" name=\"colM1\" value=\"" .. hexColor1 .. "\"></td><td /></tr>"
-  --buf = buf .."<tr><th>Color 2. Min</th><td><input type=\"color\" name=\"colM2\" value=\"" .. hexColor2 .. "\"></td><td /></tr>"
-  --buf = buf .."<tr><th>Color 3. Min</th><td><input type=\"color\" name=\"colM3\" value=\"" .. hexColor3 .. "\"></td><td /></tr>"
-  --buf = buf .."<tr><th>Color 4. Min</th><td><input type=\"color\" name=\"colM4\" value=\"" .. hexColor4 .. "\"></td><td /></tr>"
-  buf = buf .."<tr><th>Three quater</th><td><input type=\"checkbox\" name=\"threequater\" ".. (threequater and "checked" or "") .. "></td><td>Dreiviertel Joa/nei</td></tr>"
-  buf = buf .. "<tr><td colspan=\"3\"><div align=\"center\"><input type=\"submit\" value=\"Save Configuration\" onclick=\"this.value='Submitting ..';this.disabled='disabled'; this.form.submit();\"></div></td></tr>"
-  buf = buf .. "<tr><td colspan=\"3\"><div align=\"center\"><input type=\"submit\" name=\"action\" value=\"Reboot\"></div></td></tr>"
-  buf = buf .."</table></form>"
+
   if answertype==2 then
    buf = buf .. "<h2><font color=\"green\">New configuration saved</font></h2\n>"
   elseif answertype==3 then 

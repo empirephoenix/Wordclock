@@ -17,13 +17,18 @@ function startWebServer()
     end
   
     ssid, password, bssid_set, bssid = wifi.sta.getconfig()
+    endOfPage=false
     sendWebPage(conn,1)
     conn:on("sent", function(conn) 
-        conn:close() 
-        -- Clear the webpage generation
-        sendWebPage=nil
-        print("Clean webpage from RAM")
-        collectgarbage()
+        if (endOfPage==true) then
+            conn:close() 
+            -- Clear the webpage generation
+            sendWebPage=nil
+            print("Clean webpage from RAM")
+            collectgarbage()
+        else
+            sendWebPage(conn,10)
+        end
     end)
 
     
