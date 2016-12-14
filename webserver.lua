@@ -113,6 +113,11 @@ function startWebServer()
         local blue = tonumber(string.sub(hexColor, 5, 6), 16)
         file.write("color4=string.char(" .. green .. "," .. red .. "," .. blue .. ")\n")
       end
+      if ( _POST.colorMode ~= nil) then
+        file.write("colorMode=true\n")
+      else
+        file.write("colorMode=nil\n") -- unset colorMode
+      end
       time = getTime(sec, timezoneoffset)
       file.write("color=string.char(" .. string.byte(color,1) .. "," .. string.byte(color, 2) .. "," .. string.byte(color, 3) .. ")\n")
       file.write("print(\"Config from " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second .. "\")\n")

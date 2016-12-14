@@ -34,14 +34,23 @@ function sendWebPage(conn,answertype)
   local hexColor4 = "#" .. string.format("%02x",string.byte(color4,1)) .. string.format("%02x",string.byte(color4,2)) .. string.format("%02x",string.byte(color4,3))
   
   
+
+  
+  local buf="HTTP/1.1 200 OK\nServer: NodeMCU\nContent-Type: text/html\n\n"
+  if (node.heap() < 8000) then
+    buf = buf .. "<h1>Busy, please come later again</h1>"
+    endOfPage=true
+  else
+
   -- hack for the second part of the page
   buf=nil
   if (answertype==10) then
-      buf = "<tr><th>Color 1. Minute</th><td><input type=\"color\" name=\"colorMin1\" value=\"" .. hexColor1 .. "\"></td><td /></tr>"
-      buf = buf .."<tr><th>Color 2. Minute</th><td><input type=\"color\" name=\"colorMin2\" value=\"" .. hexColor2 .. "\"></td><td /></tr>"
-      buf = buf .."<tr><th>Color 3. Minute</th><td><input type=\"color\" name=\"colorMin3\" value=\"" .. hexColor3 .. "\"></td><td /></tr>"
-      buf = buf .."<tr><th>Color 4. Minute</th><td><input type=\"color\" name=\"colorMin4\" value=\"" .. hexColor4 .. "\"></td><td /></tr>"
+      buf = "<tr><th>1. Minute Color</th><td><input type=\"color\" name=\"colorMin1\" value=\"" .. hexColor1 .. "\"></td><td /></tr>"
+      buf = buf .."<tr><th>2. Minute Color</th><td><input type=\"color\" name=\"colorMin2\" value=\"" .. hexColor2 .. "\"></td><td /></tr>"
+      buf = buf .."<tr><th>3. Minute Color</th><td><input type=\"color\" name=\"colorMin3\" value=\"" .. hexColor3 .. "\"></td><td /></tr>"
+      buf = buf .."<tr><th>4. Minute Color</th><td><input type=\"color\" name=\"colorMin4\" value=\"" .. hexColor4 .. "\"></td><td /></tr>"
       buf = buf .."<tr><th>Three quater</th><td><input type=\"checkbox\" name=\"threequater\" ".. (threequater and "checked" or "") .. "></td><td>Dreiviertel Joa/nei</td></tr>"
+      --buf = buf .."<tr><th>ColorMode</th><td><input type=\"checkbox\" name=\"threequater\" ".. (colorMode and "checked" or "") .. "></td><td>If checked, words are dark, rest is colored</td></tr>"
       buf = buf .. "<tr><td colspan=\"3\"><div align=\"center\"><input type=\"submit\" value=\"Save Configuration\" onclick=\"this.value='Submitting ..';this.disabled='disabled'; this.form.submit();\"></div></td></tr>"
       buf = buf .. "<tr><td colspan=\"3\"><div align=\"center\"><input type=\"submit\" name=\"action\" value=\"Reboot\"></div></td></tr>"
       buf = buf .."</table></form>"
@@ -52,12 +61,7 @@ function sendWebPage(conn,answertype)
       endOfPage=true
       return
   end
-
   
-  local buf="HTTP/1.1 200 OK\nServer: NodeMCU\nContent-Type: text/html\n\n"
-  if (node.heap() < 8000) then
-  buf = buf .. "<h1>Busy, please come later again</h1>"
-  else
   buf = buf .. "<html>"
   buf = buf .. "<head><title>WordClock Setup Page</title>"
   buf = buf .. "</head><body>\n"
