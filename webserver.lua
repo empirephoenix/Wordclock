@@ -78,9 +78,39 @@ function startWebServer()
         local red = tonumber(string.sub(hexColor, 1, 2), 16)
         local green = tonumber(string.sub(hexColor, 3, 4), 16)
         local blue = tonumber(string.sub(hexColor, 5, 6), 16)
-        color=string.char(red, green, blue)
+        color=string.char(green, red, blue)
       end
-      file.write("color=string.char(" .. string.byte(color,1) .. "," .. string.byte(color, 2) .. "," .. string.byte(color, 3) .. ")\n print(\"Config from " .. sec .. "\")\n")
+      if ( _POST.colorMin1  ~= nil) then
+        local hexColor=string.sub(_POST.colorMin1, 4)
+        local red = tonumber(string.sub(hexColor, 1, 2), 16)
+        local green = tonumber(string.sub(hexColor, 3, 4), 16)
+        local blue = tonumber(string.sub(hexColor, 5, 6), 16)
+        file.write("color1=string.char(" .. green .. "," .. red .. "," .. blue .. ")\n")
+      end
+      if ( _POST.colorMin2  ~= nil) then
+        local hexColor=string.sub(_POST.colorMin2, 4)
+        local red = tonumber(string.sub(hexColor, 1, 2), 16)
+        local green = tonumber(string.sub(hexColor, 3, 4), 16)
+        local blue = tonumber(string.sub(hexColor, 5, 6), 16)
+        file.write("color2=string.char(" .. green .. "," .. red .. "," .. blue .. ")\n")
+      end
+      if ( _POST.colorMin3  ~= nil) then
+        local hexColor=string.sub(_POST.colorMin3, 4)
+        local red = tonumber(string.sub(hexColor, 1, 2), 16)
+        local green = tonumber(string.sub(hexColor, 3, 4), 16)
+        local blue = tonumber(string.sub(hexColor, 5, 6), 16)
+        file.write("color3=string.char(" .. green .. "," .. red .. "," .. blue .. ")\n")
+      end
+      if ( _POST.colorMin4  ~= nil) then
+        local hexColor=string.sub(_POST.colorMin4, 4)
+        local red = tonumber(string.sub(hexColor, 1, 2), 16)
+        local green = tonumber(string.sub(hexColor, 3, 4), 16)
+        local blue = tonumber(string.sub(hexColor, 5, 6), 16)
+        file.write("color4=string.char(" .. green .. "," .. red .. "," .. blue .. ")\n")
+      end
+      time = getTime(sec, timezoneoffset)
+      file.write("color=string.char(" .. string.byte(color,1) .. "," .. string.byte(color, 2) .. "," .. string.byte(color, 3) .. ")\n")
+      file.write("print(\"Config from " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second .. "\")\n")
       if (_POST.threequater ~= nil) then
         file.write("threequater=true\n")
       else

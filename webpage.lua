@@ -14,7 +14,23 @@ function sendWebPage(conn,answertype)
   if (color == nil) then
     color=string.char(0,0,250)
   end
+  if (color1 == nil) then
+    color1=color
+  end
+  if (color2 == nil) then
+    color2=color
+  end
+  if (color3 == nil) then
+    color3=color
+  end
+  if (color4 == nil) then
+    color4=color
+  end
   local hexColor = "#" .. string.format("%02x",string.byte(color,1)) .. string.format("%02x",string.byte(color,2)) .. string.format("%02x",string.byte(color,3))
+  local hexColor1 = "#" .. string.format("%02x",string.byte(color1,1)) .. string.format("%02x",string.byte(color1,2)) .. string.format("%02x",string.byte(color1,3))
+  local hexColor2 = "#" .. string.format("%02x",string.byte(color2,1)) .. string.format("%02x",string.byte(color2,2)) .. string.format("%02x",string.byte(color2,3))
+  local hexColor3 = "#" .. string.format("%02x",string.byte(color3,1)) .. string.format("%02x",string.byte(color3,2)) .. string.format("%02x",string.byte(color3,3))
+  local hexColor4 = "#" .. string.format("%02x",string.byte(color4,1)) .. string.format("%02x",string.byte(color4,2)) .. string.format("%02x",string.byte(color4,3))
   local buf="HTTP/1.1 200 OK\nServer: NodeMCU\nContent-Type: text/html\n\n"
   if (node.heap() < 8000) then
   buf = buf .. "<h1>Busy, please come later again</h1>"
@@ -30,6 +46,10 @@ function sendWebPage(conn,answertype)
   buf = buf .."<tr><th>SNTP Server</th><td><input name=\"sntpserver\" value=\"" .. sntpserverhostname .. "\"></td><td>ntp server to sync the time</tr>"
   buf = buf .."<tr><th>Offset to UTC time</th><td><input type=\"number\" name=\"timezoneoffset\" value=\"" .. timezoneoffset .. "\"></td><td>Define the offset to UTC time in hours. E.g +1</tr>"  
   buf = buf .."<tr><th>Color</th><td><input type=\"color\" name=\"fcolor\" value=\"" .. hexColor .. "\"></td><td /></tr>"
+  --buf = buf .."<tr><th>Color 1. Min</th><td><input type=\"color\" name=\"colM1\" value=\"" .. hexColor1 .. "\"></td><td /></tr>"
+  --buf = buf .."<tr><th>Color 2. Min</th><td><input type=\"color\" name=\"colM2\" value=\"" .. hexColor2 .. "\"></td><td /></tr>"
+  --buf = buf .."<tr><th>Color 3. Min</th><td><input type=\"color\" name=\"colM3\" value=\"" .. hexColor3 .. "\"></td><td /></tr>"
+  --buf = buf .."<tr><th>Color 4. Min</th><td><input type=\"color\" name=\"colM4\" value=\"" .. hexColor4 .. "\"></td><td /></tr>"
   buf = buf .."<tr><th>Three quater</th><td><input type=\"checkbox\" name=\"threequater\" ".. (threequater and "checked" or "") .. "></td><td>Dreiviertel Joa/nei</td></tr>"
   buf = buf .. "<tr><td colspan=\"3\"><div align=\"center\"><input type=\"submit\" value=\"Save Configuration\" onclick=\"this.value='Submitting ..';this.disabled='disabled'; this.form.submit();\"></div></td></tr>"
   buf = buf .. "<tr><td colspan=\"3\"><div align=\"center\"><input type=\"submit\" name=\"action\" value=\"Reboot\"></div></td></tr>"
