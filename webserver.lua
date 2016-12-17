@@ -2,6 +2,42 @@
 
 configFile="config.lua"
 
+sentLines=0
+sendFile=nil
+function sendPage(conn, nameOfFile)
+  if (sentLines > 0) then
+   print("There is a site already sent")
+   return
+  end
+  sendFile=nameOfFile
+
+  if file.open(sendFile, "r") then
+    local line = file.readLine()
+    -- TODO replace the tokens in the line
+    local buf=""
+    while (line ~= nil) do
+        buf = buf .. line
+        sentLines= sentLines+1
+        -- Sent after 1k data
+        if (string.len(buf) >= 1000) then
+            line=nil
+            conn.send(buf)
+        else
+            -- fetch the next line
+            line = file.readLine()
+        end
+    end
+  end
+  
+  conn:on("sent", function(conn) 
+    conn:close() 
+    -- Clear the webpage generation
+    sendWebPage=nil
+    print("Clean webpage from RAM")
+  end)
+
+end
+
 function startWebServer()
  srv=net.createServer(net.TCP)
  srv:listen(80,function(conn)
