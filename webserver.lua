@@ -2,14 +2,13 @@
 
 configFile="config.lua"
 
-sentLines=0
+sentBytes=0
 sendFile=nil
 function sendPage(conn, nameOfFile)
-  if (sentLines > 0) then
+  if (sentBytes <= 0) then
    print("There is a site already sent")
-   return
+   sendFile=nameOfFile
   end
-  sendFile=nameOfFile
 
   if file.open(sendFile, "r") then
     local line = file.readLine()
@@ -17,11 +16,13 @@ function sendPage(conn, nameOfFile)
     local buf=""
     while (line ~= nil) do
         buf = buf .. line
-        sentLines= sentLines+1
+        sentBytes=sentBytes+string.len(line)
         -- Sent after 1k data
         if (string.len(buf) >= 1000) then
             line=nil
             conn.send(buf)
+            -- end the function, this part is sent
+            return 
         else
             -- fetch the next line
             line = file.readLine()
@@ -30,10 +31,14 @@ function sendPage(conn, nameOfFile)
   end
   
   conn:on("sent", function(conn) 
-    conn:close() 
-    -- Clear the webpage generation
-    sendWebPage=nil
-    print("Clean webpage from RAM")
+    if (sentBytes == 0) then
+        conn:close() 
+        -- Clear the webpage generation
+        sendWebPage=nil
+        print("Clean webpage from RAM")
+    else 
+
+    end
   end)
 
 end
