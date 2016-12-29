@@ -62,7 +62,7 @@ function startWebServer()
    --here is code for handling http request from a web-browser
 
     if (sendPage ~= nil) then
-       print("Loading webpage ...")
+       print("Sending webpage.html ...")
        -- Load the sendPagewebcontent
        sendPage(conn, "webpage.html")
     end
