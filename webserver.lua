@@ -45,7 +45,7 @@ function sendPage(conn, nameOfFile, replaceMap)
         buf = buf .. line
         
         -- Sent after 1k data
-        if (string.len(buf) >= 1000) then
+        if (string.len(buf) >= 700) then
             line=nil
             conn:send(buf)
             -- end the function, this part is sent
@@ -80,6 +80,7 @@ function startWebServer()
        replaceMap["$SSID"]="33C3"
        replaceMap["$SNTPSERVER"]="time.server23.org"
        replaceMap["$TIMEOFFSET"]="1"
+       replaceMap["$THREEQUATER"]="checked"
        
        sendPage(conn, "webpage.html", replaceMap)
     end
