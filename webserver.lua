@@ -29,6 +29,9 @@ function sendPage(conn, nameOfFile, replaceMap)
     local line = file.readline()
     
     while (line ~= nil) do
+        -- increase the amount of sent bytes
+        sentBytes=sentBytes+string.len(line)
+        
         -- all placeholder begin with a $, so search for it in the current line
         if (line:find("$") ~= nil) then
             -- Replace the placeholder with the dynamic content
@@ -41,8 +44,6 @@ function sendPage(conn, nameOfFile, replaceMap)
         end
         buf = buf .. line
         
-        -- increase the amount of sent bytes
-        sentBytes=sentBytes+string.len(line)
         -- Sent after 1k data
         if (string.len(buf) >= 1000) then
             line=nil
