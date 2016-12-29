@@ -8,22 +8,26 @@ function sendPage(conn, nameOfFile)
   conn:on("sent", function(conn) 
     if (sentBytes == 0) then
         conn:close() 
-        -- Clear the webpage generation
-        sendWebPage=nil
-        print("Clean webpage from RAM")
+        print("Page sent")
     else 
-        print("Send the next part of the file")
         sendPage(conn, nameOfFile)
     end
   end)
 
   if file.open(nameOfFile, "r") then
+    local buf=""
+    if (sentBytes <= 0) then
+        buf=buf .. "HTTP/1.1 200 OK\r\n"
+        buf=buf .. "Content-Type: text/html\r\n"
+        buf=buf .. "Connection: close\r\n"
+        buf=buf .. "Date: Thu, 29 Dec 2016 20:18:20 GMT\r\n"
+        buf=buf .. "\r\n\r\n"
+    end
     -- amount of sent bytes is always zero at the beginning (so no problem)
     file.seek("set", sentBytes)
     
     local line = file.readline()
     -- TODO replace the tokens in the line
-    local buf=""
     while (line ~= nil) do
         buf = buf .. line
         -- increase the amount of sent bytes
@@ -31,7 +35,6 @@ function sendPage(conn, nameOfFile)
         -- Sent after 1k data
         if (string.len(buf) >= 500) then
             line=nil
-            print("Send 500 bytes")
             conn:send(buf)
             -- end the function, this part is sent
             return 
@@ -93,8 +96,9 @@ function startWebServer()
     
   conn:on("disconnection", function(c)
           node.output(nil)        -- un-register the redirect output function, output goes to serial
-          -- Reset Sent webpage
-          sendPage = nil
+          
+          --reset amount of sent bytes, as we reached the end
+          sentBytes=0
        end)
  end)
 
