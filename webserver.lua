@@ -3,14 +3,14 @@
 configFile="config.lua"
 
 sentBytes=0
-function sendPage(conn, nameOfFile)
+function sendPage(conn, nameOfFile, replaceMap)
   
   conn:on("sent", function(conn) 
     if (sentBytes == 0) then
         conn:close() 
         print("Page sent")
     else 
-        sendPage(conn, nameOfFile)
+        sendPage(conn, nameOfFile, replaceMap)
     end
   end)
 
@@ -27,13 +27,24 @@ function sendPage(conn, nameOfFile)
     file.seek("set", sentBytes)
     
     local line = file.readline()
-    -- TODO replace the tokens in the line
+    
     while (line ~= nil) do
+        -- all placeholder begin with a $, so search for it in the current line
+        if (line:find("$") ~= nil) then
+            -- Replace the placeholder with the dynamic content
+            if (replaceMap ~= nil) then
+                for key,value in pairs(replaceMap) 
+                do 
+                    line = string.gsub(line, key, value)
+                end
+            end
+        end
         buf = buf .. line
+        
         -- increase the amount of sent bytes
         sentBytes=sentBytes+string.len(line)
         -- Sent after 1k data
-        if (string.len(buf) >= 500) then
+        if (string.len(buf) >= 1000) then
             line=nil
             conn:send(buf)
             -- end the function, this part is sent
@@ -64,7 +75,12 @@ function startWebServer()
     if (sendPage ~= nil) then
        print("Sending webpage.html ...")
        -- Load the sendPagewebcontent
-       sendPage(conn, "webpage.html")
+       replaceMap = {}
+       replaceMap["$SSID"]="33C3"
+       replaceMap["$SNTPSERVER"]="time.server23.org"
+       replaceMap["$TIMEOFFSET"]="1"
+       
+       sendPage(conn, "webpage.html", replaceMap)
     end
     
    else if (payload:find("POST /") ~=nil) then
