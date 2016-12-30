@@ -203,6 +203,7 @@ function startWebServer()
             file.write("threequater=nil\n") -- unset threequater
         end
         file.close()
+        collectgarbage()
         sec=nil
         file.remove(configFile)
         print("Rename config")
