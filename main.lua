@@ -42,8 +42,11 @@ function syncTimeFromInternet()
 end
 
 function displayTime()
-    sec, usec = rtctime.get()
-             
+     sec, usec = rtctime.get()
+     -- Handle lazy programmer:
+     if (timezoneoffset == nil) then
+        timezoneoffset=0
+     end
      time = getTime(sec, timezoneoffset)
      print("Local time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second)
      words = display_timestat(time.hour, time.minute)
@@ -110,8 +113,8 @@ function normalOperation()
         tmr.alarm(2, 500, 0 ,function()
             syncTimeFromInternet()
         end)
-        print("Start webserver...")
         tmr.alarm(3, 2000, 0 ,function()
+            print("Start webserver...")
             mydofile("webserver")
             startWebServer()
         end)
