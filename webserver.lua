@@ -4,12 +4,13 @@ configFile="config.lua"
 
 sentBytes=0
 function sendPage(conn, nameOfFile, replaceMap)
-  
+  print("Sending " .. nameOfFile .. " " .. sentBytes .. "B already")
   conn:on("sent", function(conn) 
     if (sentBytes == 0) then
         conn:close() 
         print("Page sent")
-    else 
+    else
+        print("Next") 
         sendPage(conn, nameOfFile, replaceMap)
     end
   end)
@@ -48,6 +49,7 @@ function sendPage(conn, nameOfFile, replaceMap)
         if (string.len(buf) >= 700) then
             line=nil
             conn:send(buf)
+            print("Sent part of " .. sentBytes .. "B")
             -- end the function, this part is sent
             return 
         else
@@ -59,6 +61,7 @@ function sendPage(conn, nameOfFile, replaceMap)
     sentBytes=0
     -- send the rest
     conn:send(buf)
+    print("Sent rest")
   end
   
 end
@@ -209,14 +212,19 @@ function startWebServer()
         print("Rename config")
         if (file.rename(configFile .. ".new", configFile)) then
             print("Successfully")
-            dofile(configFile) -- load the new values
-            replaceMap=fillDynamicMap()
-            replaceMap["$ADDITIONAL_LINE"]="<h2><font color=\"green\">New configuration saved</font></h2>"
-            sendPage(conn, "webpage.html", replaceMap)
+            tmr.alarm(3, 5, 0 ,function()
+                dofile(configFile) -- load the new values
+                replaceMap=fillDynamicMap()
+                replaceMap["$ADDITIONAL_LINE"]="<h2><font color=\"green\">New configuration saved</font></h2>"
+                print("Send success to client")
+                sendPage(conn, "webpage.html", replaceMap)
+            end)
         else
-            replaceMap=fillDynamicMap()
-            replaceMap["$ADDITIONAL_LINE"]="<h2><font color=\"red\">ERROR</font></h2>"
-            sendPage(conn, "webpage.html", replaceMap)
+            tmr.alarm(3, 5, 0 ,function()
+                replaceMap=fillDynamicMap()
+                replaceMap["$ADDITIONAL_LINE"]="<h2><font color=\"red\">ERROR</font></h2>"
+                sendPage(conn, "webpage.html", replaceMap)
+            end)
         end
   else
       replaceMap=fillDynamicMap()
@@ -231,7 +239,7 @@ function startWebServer()
       if(global_c~=nil)
         then global_c:send(str)
       end
-     end
+     end    
      node.output(s_output, 0)
      global_c:on("receive",function(c,l)
        node.input(l)
@@ -247,6 +255,7 @@ function startWebServer()
    end)
     
   conn:on("disconnection", function(c)
+          print("Goodbye")
           node.output(nil)        -- un-register the redirect output function, output goes to serial
           
           --reset amount of sent bytes, as we reached the end
