@@ -17,10 +17,15 @@ function recompileAll()
       if (string.find(k, ".lc", -3)) then
         print ("Skipping " .. k)
       elseif  (string.find(blacklistfile, k) == nil) then
-        print("Compiling and deleting " .. k)
-        node.compile(k)
-        -- remove the lua file
-        file.remove(k)
+        -- Only look at lua files
+        if (string.find(k, ".lua") ~= nil) then
+            print("Compiling and deleting " .. k)
+            node.compile(k)
+            -- remove the lua file
+            file.remove(k)
+        else
+            print("No code: " .. k)
+        end
       end
     end
 end
