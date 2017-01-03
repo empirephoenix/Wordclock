@@ -4,11 +4,13 @@ configFile="config.lua"
 
 sentBytes=0
 function sendPage(conn, nameOfFile, replaceMap)
+  collectgarbage()
   print("Sending " .. nameOfFile .. " " .. sentBytes .. "B already")
   conn:on("sent", function(conn) 
     if (sentBytes == 0) then
         conn:close() 
         print("Page sent")
+        collectgarbage()
     else
         print("Next") 
         sendPage(conn, nameOfFile, replaceMap)
@@ -160,7 +162,7 @@ function startWebServer()
         file.remove(configFile .. ".new")
         sec, _ = rtctime.get()
         file.open(configFile.. ".new", "w+")
-        file.write("-- Config\n" .. "wifi.sta.config(\"" .. _POST.ssid .. "\",\"" .. _POST.password .. "\")\n" .. "sntpserverhostname=\"" .. _POST.sntpserver .. "\"\n" .. "timezoneoffset=\"" .. _POST.timezoneoffset .. "\"\n")
+        file.write("-- Config\n" .. "wifi.sta.config(\"" .. _POST.ssid .. "\",[[" .. _POST.password .. "]])\n" .. "sntpserverhostname=\"" .. _POST.sntpserver .. "\"\n" .. "timezoneoffset=\"" .. _POST.timezoneoffset .. "\"\n")
         if ( _POST.fcolor ~= nil) then
             -- color=string.char(_POST.green, _POST.red, _POST.blue)  
             print ("Got fcolor: " .. _POST.fcolor)
