@@ -97,14 +97,16 @@ function fillDynamicMap()
     if (color4 == nil) then
         color4=color
     end
+    if (colorBg == nil) then
+        colorBg=string.char(0,0,0) -- black is the default background color
+    end
     local hexColor = "#" .. string.format("%02x",string.byte(color,1)) .. string.format("%02x",string.byte(color,2)) .. string.format("%02x",string.byte(color,3))
     local hexColor1 = "#" .. string.format("%02x",string.byte(color1,1)) .. string.format("%02x",string.byte(color1,2)) .. string.format("%02x",string.byte(color1,3))
     local hexColor2 = "#" .. string.format("%02x",string.byte(color2,1)) .. string.format("%02x",string.byte(color2,2)) .. string.format("%02x",string.byte(color2,3))
     local hexColor3 = "#" .. string.format("%02x",string.byte(color3,1)) .. string.format("%02x",string.byte(color3,2)) .. string.format("%02x",string.byte(color3,3))
     local hexColor4 = "#" .. string.format("%02x",string.byte(color4,1)) .. string.format("%02x",string.byte(color4,2)) .. string.format("%02x",string.byte(color4,3))
-    
+    local hexColorBg = "#" .. string.format("%02x",string.byte(colorBg,1)) .. string.format("%02x",string.byte(colorBg,2)) .. string.format("%02x",string.byte(colorBg,3))
 
-    
     replaceMap["$SSID"]=ssid
     replaceMap["$SNTPSERVER"]=sntpserverhostname
     replaceMap["$TIMEOFFSET"]=timezoneoffset
@@ -115,6 +117,8 @@ function fillDynamicMap()
     replaceMap["$HEXCOLOR2"]=hexColor2
     replaceMap["$HEXCOLOR3"]=hexColor3
     replaceMap["$HEXCOLOR4"]=hexColor4
+    replaceMap["$HEXCOLORBG"]=hexColorBg
+    colorBg
     return replaceMap   
 end
 
@@ -209,6 +213,15 @@ function startWebServer()
             file.write("color4=string.char(" .. red .. "," .. green .. "," .. blue .. ")\n")
             -- fill the current values
             color4=string.char(red, green, blue)
+        end
+        if ( _POST.bcolor  ~= nil) then
+            local hexColor=string.sub(_POST.bcolor, 4)
+            local red = tonumber(string.sub(hexColor, 1, 2), 16)
+            local green = tonumber(string.sub(hexColor, 3, 4), 16)
+            local blue = tonumber(string.sub(hexColor, 5, 6), 16)
+            file.write("colorBg=string.char(" .. red .. "," .. green .. "," .. blue .. ")\n")
+            -- fill the current values
+            colorBg=string.char(red, green, blue)
         end
         if (getTime ~= nil) then
             time = getTime(sec, timezoneoffset)
