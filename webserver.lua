@@ -170,7 +170,7 @@ function startWebServer()
             local red = tonumber(string.sub(hexColor, 1, 2), 16)
             local green = tonumber(string.sub(hexColor, 3, 4), 16)
             local blue = tonumber(string.sub(hexColor, 5, 6), 16)
-            file.write("color=string.char(" .. green .. "," .. red .. "," .. blue .. ")\n")
+            file.write("color=string.char(" .. red .. "," .. green .. "," .. blue .. ")\n")
             -- fill the current values
             color=string.char(red, green, blue)
         end
