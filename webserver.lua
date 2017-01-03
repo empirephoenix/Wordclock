@@ -118,7 +118,6 @@ function fillDynamicMap()
     replaceMap["$HEXCOLOR3"]=hexColor3
     replaceMap["$HEXCOLOR4"]=hexColor4
     replaceMap["$HEXCOLORBG"]=hexColorBg
-    colorBg
     return replaceMap   
 end
 
