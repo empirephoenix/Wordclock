@@ -5,7 +5,7 @@ configFile="config.lua"
 sentBytes=0
 function sendPage(conn, nameOfFile, replaceMap)
   collectgarbage()
-  print("Sending " .. nameOfFile .. " " .. sentBytes .. "B already")
+  print("Sending " .. nameOfFile .. " " .. sentBytes .. "B already; " .. node.heap() .. "B in heap")
   conn:on("sent", function(conn) 
     if (sentBytes == 0) then
         conn:close() 
@@ -68,7 +68,7 @@ function sendPage(conn, nameOfFile, replaceMap)
   
 end
 
-function fillDynamicMap()
+function fillDynamicMap()    
     replaceMap = {}
     ssid, _ = wifi.sta.getconfig()
 
@@ -110,7 +110,7 @@ function fillDynamicMap()
     replaceMap["$TIMEOFFSET"]=timezoneoffset
     replaceMap["$THREEQUATER"]=(threequater and "checked" or "")
     replaceMap["$ADDITIONAL_LINE"]=""
-    replaceMap["$HEXCOLOR"]=hexColor
+    replaceMap["$HEXCOLORFG"]=hexColor
     replaceMap["$HEXCOLOR1"]=hexColor1
     replaceMap["$HEXCOLOR2"]=hexColor2
     replaceMap["$HEXCOLOR3"]=hexColor3
@@ -125,7 +125,7 @@ function startWebServer()
    
    if (payload:find("GET /") ~= nil) then
    --here is code for handling http request from a web-browser
-
+    
     if (sendPage ~= nil) then
        print("Sending webpage.html ...")
        -- Load the sendPagewebcontent
@@ -170,45 +170,58 @@ function startWebServer()
             local red = tonumber(string.sub(hexColor, 1, 2), 16)
             local green = tonumber(string.sub(hexColor, 3, 4), 16)
             local blue = tonumber(string.sub(hexColor, 5, 6), 16)
-            color=string.char(green, red, blue)
+            file.write("color=string.char(" .. green .. "," .. red .. "," .. blue .. ")\n")
+            -- fill the current values
+            color=string.char(red, green, blue)
         end
         if ( _POST.colorMin1  ~= nil) then
             local hexColor=string.sub(_POST.colorMin1, 4)
             local red = tonumber(string.sub(hexColor, 1, 2), 16)
             local green = tonumber(string.sub(hexColor, 3, 4), 16)
             local blue = tonumber(string.sub(hexColor, 5, 6), 16)
-            file.write("color1=string.char(" .. green .. "," .. red .. "," .. blue .. ")\n")
+            file.write("color1=string.char(" .. red .. "," .. green .. "," .. blue .. ")\n")
+            -- fill the current values
+            color1=string.char(red, green, blue)
         end
         if ( _POST.colorMin2  ~= nil) then
             local hexColor=string.sub(_POST.colorMin2, 4)
             local red = tonumber(string.sub(hexColor, 1, 2), 16)
             local green = tonumber(string.sub(hexColor, 3, 4), 16)
             local blue = tonumber(string.sub(hexColor, 5, 6), 16)
-            file.write("color2=string.char(" .. green .. "," .. red .. "," .. blue .. ")\n")
+            file.write("color2=string.char(" .. red .. "," .. green .. "," .. blue .. ")\n")
+            -- fill the current values
+            color2=string.char(red, green, blue)
         end
         if ( _POST.colorMin3  ~= nil) then
             local hexColor=string.sub(_POST.colorMin3, 4)
             local red = tonumber(string.sub(hexColor, 1, 2), 16)
             local green = tonumber(string.sub(hexColor, 3, 4), 16)
             local blue = tonumber(string.sub(hexColor, 5, 6), 16)
-            file.write("color3=string.char(" .. green .. "," .. red .. "," .. blue .. ")\n")
+            file.write("color3=string.char(" .. red .. "," .. green .. "," .. blue .. ")\n")
+            -- fill the current values
+            color3=string.char(red, green, blue)
         end
         if ( _POST.colorMin4  ~= nil) then
             local hexColor=string.sub(_POST.colorMin4, 4)
             local red = tonumber(string.sub(hexColor, 1, 2), 16)
             local green = tonumber(string.sub(hexColor, 3, 4), 16)
             local blue = tonumber(string.sub(hexColor, 5, 6), 16)
-            file.write("color4=string.char(" .. green .. "," .. red .. "," .. blue .. ")\n")
+            file.write("color4=string.char(" .. red .. "," .. green .. "," .. blue .. ")\n")
+            -- fill the current values
+            color4=string.char(red, green, blue)
         end
-        file.write("color=string.char(" .. string.byte(color,1) .. "," .. string.byte(color, 2) .. "," .. string.byte(color, 3) .. ")\n")
         if (getTime ~= nil) then
             time = getTime(sec, timezoneoffset)
             file.write("print(\"Config from " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second .. "\")\n")
         end
         if (_POST.threequater ~= nil) then
             file.write("threequater=true\n")
+            -- fill the current values
+            threequater=true
         else
             file.write("threequater=nil\n") -- unset threequater
+            -- fill the current values
+            threequater=nil
         end
         file.close()
         collectgarbage()
@@ -217,15 +230,14 @@ function startWebServer()
         print("Rename config")
         if (file.rename(configFile .. ".new", configFile)) then
             print("Successfully")
-            tmr.alarm(3, 5, 0 ,function()
-                dofile(configFile) -- load the new values
+            tmr.alarm(3, 20, 0 ,function()
                 replaceMap=fillDynamicMap()
                 replaceMap["$ADDITIONAL_LINE"]="<h2><font color=\"green\">New configuration saved</font></h2>"
                 print("Send success to client")
                 sendPage(conn, "webpage.html", replaceMap)
             end)
         else
-            tmr.alarm(3, 5, 0 ,function()
+            tmr.alarm(3, 20, 0 ,function()
                 replaceMap=fillDynamicMap()
                 replaceMap["$ADDITIONAL_LINE"]="<h2><font color=\"red\">ERROR</font></h2>"
                 sendPage(conn, "webpage.html", replaceMap)
