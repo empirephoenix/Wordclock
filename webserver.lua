@@ -145,6 +145,7 @@ function startWebServer()
      --- Do the magic!
      if (_POST.action ~= nil and _POST.action == "Reboot") then
         node.restart()
+        return
      end
 
     if ((_POST.ssid~=nil) and (_POST.sntpserver~=nil) and (_POST.timezoneoffset~=nil)) then
@@ -197,9 +198,11 @@ function startWebServer()
             local blue = tonumber(string.sub(hexColor, 5, 6), 16)
             file.write("color4=string.char(" .. green .. "," .. red .. "," .. blue .. ")\n")
         end
-        time = getTime(sec, timezoneoffset)
         file.write("color=string.char(" .. string.byte(color,1) .. "," .. string.byte(color, 2) .. "," .. string.byte(color, 3) .. ")\n")
-        file.write("print(\"Config from " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second .. "\")\n")
+        if (getTime ~= nil) then
+            time = getTime(sec, timezoneoffset)
+            file.write("print(\"Config from " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second .. "\")\n")
+        end
         if (_POST.threequater ~= nil) then
             file.write("threequater=true\n")
         else
