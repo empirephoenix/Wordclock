@@ -1,3 +1,4 @@
+uart.setup(0, 115200, 8, 0, 1, 1 )
 print("Autostart in 5 seconds...")
 
 ws2812.init() -- WS2812 LEDs initialized on GPIO2
