@@ -10,7 +10,7 @@ tmr.alarm(2, 85, 1, function()
     ws2812.write(string.char(128,0,0):rep(counter1))     
 end)
 
-local blacklistfile="init.lua config.lua"
+local blacklistfile="init.lua config.lua config.lua.new"
 function recompileAll()
     -- compile all files
     l = file.list();
