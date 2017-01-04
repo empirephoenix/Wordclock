@@ -45,9 +45,8 @@ function display_timestat(hours, minutes, longmode)
     ret.quater=1
     ret.after=1
    elseif (minutes==4) then
-    ret.tenMin=1
-    ret.half=1
-    ret.before=1
+    ret.twenty=1
+    ret.after=1
    elseif (minutes==5) then
     ret.fiveMin=1
     ret.half=1
