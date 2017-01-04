@@ -58,9 +58,8 @@ function display_timestat(hours, minutes, longmode)
     ret.half=1
     ret.after=1
    elseif (minutes==8) then 
-    ret.tenMin=1
-    ret.half=1
-    ret.after=1
+    ret.twenty=1
+    ret.before=1
    elseif (minutes==9) then
     ret.threequater=1
    elseif (minutes==10) then 
@@ -71,7 +70,7 @@ function display_timestat(hours, minutes, longmode)
     ret.before=1
    end
 
-   if (minutes >= 4) then
+   if (minutes > 4) then
     hours=hours+1
    end
  else
