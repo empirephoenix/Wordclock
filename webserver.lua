@@ -108,7 +108,6 @@ function fillDynamicMap()
     local hexColorBg = "#" .. string.format("%02x",string.byte(colorBg,2)) .. string.format("%02x",string.byte(colorBg,1)) .. string.format("%02x",string.byte(colorBg,3))
 
     replaceMap["$SSID"]=ssid
-    replaceMap["$SNTPSERVER"]=sntpserverhostname
     replaceMap["$TIMEOFFSET"]=timezoneoffset
     replaceMap["$THREEQUATER"]=(threequater and "checked" or "")
     replaceMap["$ADDITIONAL_LINE"]=""
@@ -163,9 +162,8 @@ function startWebServer()
         end
         -- Safe configuration:
         file.remove(configFile .. ".new")
-        sec, _ = rtctime.get()
         file.open(configFile.. ".new", "w+")
-        file.write("-- Config\n" .. "wifi.sta.config(\"" .. _POST.ssid .. "\",[[" .. _POST.password .. "]])\n" .. "sntpserverhostname=\"" .. _POST.sntpserver .. "\"\n" .. "timezoneoffset=\"" .. _POST.timezoneoffset .. "\"\n")
+        file.write("-- Config\n" .. "wifi.sta.config(\"" .. _POST.ssid .. "\",[[" .. _POST.password .. "]])\n" .. "timezoneoffset=\"" .. _POST.timezoneoffset .. "\"\n")
         if ( _POST.fcolor ~= nil) then
             -- color=string.char(_POST.green, _POST.red, _POST.blue)  
             print ("Got fcolor: " .. _POST.fcolor)
@@ -221,10 +219,6 @@ function startWebServer()
             file.write("colorBg=string.char(" .. green .. "," .. red .. "," .. blue .. ")\n")
             -- fill the current values
             colorBg=string.char(green, red, blue)
-        end
-        if (getTime ~= nil) then
-            time = getTime(sec, timezoneoffset)
-            file.write("print(\"Config from " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second .. "\")\n")
         end
         if (_POST.threequater ~= nil) then
             file.write("threequater=true\n")

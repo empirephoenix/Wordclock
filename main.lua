@@ -27,28 +27,12 @@ function startSetupMode()
     collectgarbage()
 end
 
-
-function syncTimeFromInternet()
-    sntp.sync(sntpserverhostname,
-     function(sec,usec,server)
-      print('sync', sec, usec, server)
-      displayTime()
-     end,
-     function()
-       print('failed!')
-     end
-   )
-end
-
 function displayTime()
-     sec, usec = rtctime.get()
      -- Handle lazy programmer:
      if (timezoneoffset == nil) then
         timezoneoffset=0
      end
-     time = getTime(sec, timezoneoffset)
-     print("Local time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second)
-
+     
      getTimeViaHTTP("ccc-mannheim.de", function(time) 
         if ( isSummerTime(time) ) then
             -- in summer add the timezone offset and the extra hour for the summer time
@@ -58,38 +42,38 @@ function displayTime()
             time.hour = time.hour + timezoneoffset
         end
         print("HTTP time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second)
-    end)
-     
-     words = display_timestat(time.hour, time.minute)
 
-     if ((words.min1 == 1) and (color1 ~= nil)) then
-        color=color1
-     elseif ((words.min2 == 1) and (color2 ~= nil)) then
-        color=color2
-     elseif ((words.min3 == 1) and (color3 ~= nil)) then
-        color=color1
-        elseif ((words.min4 == 1) and (color4 ~= nil)) then
-        color=color4
-     end
-     
-     ledBuf = generateLEDs(words, color, colorMode)
-     
-     -- Write the buffer to the LEDs
-     ws2812.write(ledBuf)
-    
-     -- Used for debugging
-     if (clockdebug ~= nil) then
-         for key,value in pairs(words) do 
-            if (value > 0) then
-              print(key,value) 
-            end
+         words = display_timestat(time.hour, time.minute)
+         if ((words.min1 == 1) and (color1 ~= nil)) then
+            color=color1
+         elseif ((words.min2 == 1) and (color2 ~= nil)) then
+            color=color2
+         elseif ((words.min3 == 1) and (color3 ~= nil)) then
+            color=color1
+            elseif ((words.min4 == 1) and (color4 ~= nil)) then
+            color=color4
          end
-     end
-     -- cleanup
-     ledBuf=nil
-     words=nil
-     time=nil
-     collectgarbage()
+         
+         ledBuf = generateLEDs(words, color, colorMode)
+         
+         -- Write the buffer to the LEDs
+         ws2812.write(ledBuf)
+        
+         -- Used for debugging
+         if (clockdebug ~= nil) then
+             for key,value in pairs(words) do 
+                if (value > 0) then
+                  print(key,value) 
+                end
+             end
+         end
+         -- cleanup
+         ledBuf=nil
+         words=nil
+         time=nil
+         collectgarbage()
+    end)
+    
 end
 
 function normalOperation()
@@ -121,10 +105,7 @@ function normalOperation()
             mydofile(mod)
         end
         
-        tmr.alarm(2, 500, 0 ,function()
-            syncTimeFromInternet()
-        end)
-        tmr.alarm(3, 2000, 0 ,function()
+        tmr.alarm(3, 5000, 0 ,function()
             print("Start webserver...")
             mydofile("webserver")
             startWebServer()
