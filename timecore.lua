@@ -163,7 +163,7 @@ function getTimeViaHTTP(httpServer, callback)
     
     httpconn=net.createConnection(net.TCP, 0)
     httpconn:on("disconnection", function(con)
-        print("[HTTP] Connection closed")
+        --print("[HTTP] Connection closed")
         httpRequestRunning=false
         if (callback ~= nil) then
             callback({ year = gYear, month = gMon, day = gDay, hour = gHour, minute = gMin, second = gSec, dow = gDow })
@@ -233,8 +233,8 @@ function getTimeViaHTTP(httpServer, callback)
       -- Wait for connection before sending.
       httpconn:send("GET / HTTP/1.1\r\nAccept: */*\r\n\r\n")
       httpRequestRunning=true
-      print("[HTTP] Started request " .. httpServer)
+      --print("[HTTP] Started request " .. httpServer)
     end)
-    print("[HTTP] Connecting to " .. httpServer)
+    --print("[HTTP] Connecting to " .. httpServer)
 end
 
