@@ -192,6 +192,7 @@ function getTimeViaHTTP(httpServer, callback)
             else
                 gDow=0
             end
+            gDay=day
             -- decode month
             if ( month == "Jan" ) then
                 gMon=1
@@ -220,7 +221,6 @@ function getTimeViaHTTP(httpServer, callback)
             else
                 gMon=0
             end
-            
             gYear=year
             gHour=hour
             gMin=min

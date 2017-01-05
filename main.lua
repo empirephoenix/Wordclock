@@ -29,7 +29,6 @@ end
 
 
 function syncTimeFromInternet()
---ptbtime1.ptb.de
     sntp.sync(sntpserverhostname,
      function(sec,usec,server)
       print('sync', sec, usec, server)
@@ -49,6 +48,11 @@ function displayTime()
      end
      time = getTime(sec, timezoneoffset)
      print("Local time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second)
+
+     getTimeViaHTTP("heise.de", function(time) 
+        print("HTTP time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second)
+    end)
+     
      words = display_timestat(time.hour, time.minute)
 
      if ((words.min1 == 1) and (color1 ~= nil)) then
