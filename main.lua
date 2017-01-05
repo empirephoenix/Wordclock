@@ -49,7 +49,14 @@ function displayTime()
      time = getTime(sec, timezoneoffset)
      print("Local time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second)
 
-     getTimeViaHTTP("heise.de", function(time) 
+     getTimeViaHTTP("ccc-mannheim.de", function(time) 
+        if ( isSummerTime(time) ) then
+            -- in summer add the timezone offset and the extra hour for the summer time
+            time.hour = time.hour + 1 + timezoneoffset
+        else
+            -- in winter only add the offset
+            time.hour = time.hour + timezoneoffset
+        end
         print("HTTP time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second)
     end)
      
