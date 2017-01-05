@@ -117,6 +117,15 @@ function fillDynamicMap()
     replaceMap["$HEXCOLOR3"]=hexColor3
     replaceMap["$HEXCOLOR4"]=hexColor4
     replaceMap["$HEXCOLORBG"]=hexColorBg
+
+    if (gTime ~= nil) then
+        replaceMap["$TIME_HOUR"]=gTime.hour
+        replaceMap["$TIME_MIN"]=gTime.minute
+    else
+        replaceMap["$TIME_HOUR"]=""
+        replaceMap["$TIME_MIN"]=""
+    end
+    
     return replaceMap   
 end
 
@@ -152,7 +161,7 @@ function startWebServer()
         return
      end
 
-    if ((_POST.ssid~=nil) and (_POST.sntpserver~=nil) and (_POST.timezoneoffset~=nil)) then
+    if ((_POST.ssid~=nil) and (_POST.timezoneoffset~=nil)) then
         print("New config!")
         if (_POST.password==nil) then
             _, password, _, _ = wifi.sta.getconfig()
@@ -160,6 +169,9 @@ function startWebServer()
             _POST.password = password
             password = nil
         end
+        -- update the variable in the memory:
+        timezoneoffset=_POST.timezoneoffset
+        
         -- Safe configuration:
         file.remove(configFile .. ".new")
         file.open(configFile.. ".new", "w+")
@@ -172,7 +184,7 @@ function startWebServer()
             local green = tonumber(string.sub(hexColor, 3, 4), 16)
             local blue = tonumber(string.sub(hexColor, 5, 6), 16)
             file.write("color=string.char(" .. green .. "," .. red .. "," .. blue .. ")\n")
-            -- fill the current values
+            -- update the variable in the memory:
             color=string.char(green, red, blue)
         end
         if ( _POST.colorMin1  ~= nil) then
@@ -181,7 +193,7 @@ function startWebServer()
             local green = tonumber(string.sub(hexColor, 3, 4), 16)
             local blue = tonumber(string.sub(hexColor, 5, 6), 16)
             file.write("color1=string.char(" .. green .. "," .. red .. "," .. blue .. ")\n")
-            -- fill the current values
+            -- update the variable in the memory:
             color1=string.char(green, red, blue)
         end
         if ( _POST.colorMin2  ~= nil) then
@@ -190,7 +202,7 @@ function startWebServer()
             local green = tonumber(string.sub(hexColor, 3, 4), 16)
             local blue = tonumber(string.sub(hexColor, 5, 6), 16)
             file.write("color2=string.char(" .. green .. "," .. red .. "," .. blue .. ")\n")
-            -- fill the current values
+            -- update the variable in the memory:
             color2=string.char(green, red, blue)
         end
         if ( _POST.colorMin3  ~= nil) then
@@ -199,7 +211,7 @@ function startWebServer()
             local green = tonumber(string.sub(hexColor, 3, 4), 16)
             local blue = tonumber(string.sub(hexColor, 5, 6), 16)
             file.write("color3=string.char(" .. green .. "," .. red .. "," .. blue .. ")\n")
-            -- fill the current values
+            -- update the variable in the memory:
             color3=string.char(green, red, blue)
         end
         if ( _POST.colorMin4  ~= nil) then
@@ -208,7 +220,7 @@ function startWebServer()
             local green = tonumber(string.sub(hexColor, 3, 4), 16)
             local blue = tonumber(string.sub(hexColor, 5, 6), 16)
             file.write("color4=string.char(" .. green .. "," .. red .. "," .. blue .. ")\n")
-            -- fill the current values
+            -- update the variable in the memory:
             color4=string.char(green, red, blue)
         end
         if ( _POST.bcolor  ~= nil) then
@@ -217,18 +229,23 @@ function startWebServer()
             local green = tonumber(string.sub(hexColor, 3, 4), 16)
             local blue = tonumber(string.sub(hexColor, 5, 6), 16)
             file.write("colorBg=string.char(" .. green .. "," .. red .. "," .. blue .. ")\n")
-            -- fill the current values
+            -- update the variable in the memory:
             colorBg=string.char(green, red, blue)
         end
         if (_POST.threequater ~= nil) then
             file.write("threequater=true\n")
-            -- fill the current values
+            -- update the variable in the memory:
             threequater=true
         else
             file.write("threequater=nil\n") -- unset threequater
-            -- fill the current values
+            -- update the variable in the memory:
             threequater=nil
         end
+        
+        if (gTime ~= nil) then
+            file.write("print(\"Config from " .. gTime.year .. "-" .. gTime.month .. "-" .. gTime.day .. " " .. gTime.hour .. ":" .. gTime.minute .. ":" .. gTime.second .. "\")\n")
+        end
+
         file.close()
         collectgarbage()
         sec=nil

@@ -1,5 +1,8 @@
 -- Main Module
 
+-- The last fetched time
+gTime=nil
+
 function startSetupMode()
     tmr.stop(0)
     tmr.stop(1)
@@ -32,7 +35,9 @@ function displayTime()
      if (timezoneoffset == nil) then
         timezoneoffset=0
      end
-     
+     -- Reset the time
+     gTime=nil
+     -- Fetch the new one
      getTimeViaHTTP("ccc-mannheim.de", function(time) 
         if ( isSummerTime(time) ) then
             -- in summer add the timezone offset and the extra hour for the summer time
@@ -42,7 +47,8 @@ function displayTime()
             time.hour = time.hour + timezoneoffset
         end
         print("HTTP time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second)
-
+        gTime=time
+        
          words = display_timestat(time.hour, time.minute)
          if ((words.min1 == 1) and (color1 ~= nil)) then
             color=color1
