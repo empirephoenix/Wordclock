@@ -36,6 +36,17 @@ function checkWords(leds, expected, hour, min)
   print(hour .. ":" .. min)
 end
 
+function checkCharacter(words, expected)
+    if (words == nil or expected == nil) then
+     print("Not all parameter set to checkCharacter")
+     os.exit(1)
+    end
+    if (words ~= expected) then
+        print("Not all character found. Expected " .. expected .. ", but found " .. words)
+        os.exit(1)
+    end
+end
+
 print ""
 print "----------- Unit tests -------------"
 -- Unit tests
@@ -45,6 +56,7 @@ expected.itis=1
 expected.one=1
 expected.clock=1
 checkWords(leds, expected, 1, 0)
+checkCharacter(display_countwords_de(leds), 12)
 
 leds=display_timestat(2,5)
 expected={}
@@ -52,6 +64,7 @@ expected.two=1
 expected.fiveMin=1
 expected.after=1
 checkWords(leds, expected, 2 , 5)
+checkCharacter(display_countwords_de(leds), 12)
 
 leds=display_timestat(3,10)
 expected={}
