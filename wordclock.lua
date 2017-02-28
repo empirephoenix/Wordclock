@@ -62,7 +62,13 @@ function display_timestat(hours, minutes, longmode)
     ret.twenty=1
     ret.before=1
    elseif (minutes==9) then
-    ret.threequater=1
+    -- Hande if three quater or quater before is displayed
+    if (threequater ~= nil) then
+        ret.threequater=1
+    else
+        ret.quater = 1
+        ret.before = 1
+    end
    elseif (minutes==10) then 
     ret.tenMin=1
     ret.before=1
@@ -125,3 +131,4 @@ function display_timestat(hours, minutes, longmode)
  collectgarbage()
  return ret
 end
+
