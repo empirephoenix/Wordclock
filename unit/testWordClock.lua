@@ -1,6 +1,7 @@
 -- Example usage of the word clock
 dofile("../wordclock.lua")
 
+print "------- Manual test ----"
 -- Manually set something
 leds=display_timestat(15,30)
 for k,v in pairs(leds) do 
@@ -8,6 +9,7 @@ for k,v in pairs(leds) do
         print(k) 
     end
 end
+print "---------------------"
 
 function checkWords(leds, expected, hour, min)
   for k, v in pairs(leds) do
@@ -34,6 +36,8 @@ function checkWords(leds, expected, hour, min)
   print(hour .. ":" .. min)
 end
 
+print ""
+print "----------- Unit tests -------------"
 -- Unit tests
 leds=display_timestat(1,0)
 expected={}
