@@ -69,10 +69,9 @@ checkWords(leds, expected, 4 , 15)
 
 leds=display_timestat(5,20)
 expected={}
-expected.six=1
-expected.tenMin=1
-expected.before=1
-expected.half=1
+expected.five=1
+expected.twenty=1
+expected.after=1
 checkWords(leds, expected, 5 , 20)
 
 leds=display_timestat(6,25)
@@ -101,9 +100,8 @@ checkWords(leds, expected, 8 , 35)
 leds=display_timestat(9,40)
 expected={}
 expected.ten=1
-expected.half=1
-expected.tenMin=1
-expected.after=1
+expected.twenty=1
+expected.before=1
 checkWords(leds, expected, 9 , 40)
 
 leds=display_timestat(10,45)
