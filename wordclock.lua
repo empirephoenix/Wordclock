@@ -144,11 +144,11 @@ function display_countwords_de(words)
    if (words.fiveMin == 1) then
     amount = amount + 4
    end
+   if (words.tenMin == 1) then
+    amount = amount + 4
+   end
    if (words.twenty == 1) then
     amount = amount + 7
-   end
-   if (words.ten == 1) then
-    amount = amount + 4
    end
    if (words.threequater == 1) then
     amount = amount + 11
