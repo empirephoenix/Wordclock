@@ -45,7 +45,7 @@ function generateLEDs(words, color)
     buf= buf .. space:rep(11)
  end
  --line 4-------- even row (so inverted) -------------
- if ((words.before == 1) or (words.threequater == 1)) then
+ if (words.before == 1) then
     buf=buf .. space:rep(2) 
     buf= buf .. color:rep(3) -- VOR
   else
