@@ -50,11 +50,11 @@ function displayTime()
      time = getTime(sec, timezoneoffset)
      words = display_timestat(time.hour, time.minute)
 
-     
+     local charactersOfTime = display_countwords_de(words)
      ledBuf = generateLEDs(words, color, color1, color2, color3, color4, 
-			display_countwords_de(words))
+			    charactersOfTime)
      
-     print("Local time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second)
+     print("Local time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second .. " in " .. charactersOfTime .. " chars")
      
      -- Write the buffer to the LEDs
      ws2812.write(ledBuf)
