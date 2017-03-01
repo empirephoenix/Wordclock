@@ -35,7 +35,6 @@ function drawLEDs(data, numberNewChars)
     for i=1,numberNewChars do
         if (tmpBuf == nil) then
             tmpBuf = updateColor(data)
-            print("inited tmpBuf" .. tostring(tmpBuf))
         else
             tmpBuf=tmpBuf .. updateColor(data)
         end
