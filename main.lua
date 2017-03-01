@@ -88,7 +88,11 @@ function normalOperation()
       if wifi.sta.status() ~= 5 then
          print(connect_counter ..  "/60 Connecting to AP...")
          if (connect_counter % 2 == 0) then
-            ws2812.write(string.char((connect_counter % 6)*20,(connect_counter % 5)*20,(connect_counter % 3)*20):rep(114))
+            local wlanColor=string.char((connect_counter % 6)*20,(connect_counter % 5)*20,(connect_counter % 3)*20)
+            local space=string.char(0,0,0)
+            local buf=space:rep(6) .. wlanColor .. space:rep(4)
+            buf= buf .. space:rep(3) .. wlanColor:rep(3)
+            ws2812.write(buf)
          else
            ws2812.write(string.char(0,0,0):rep(114))
          end
