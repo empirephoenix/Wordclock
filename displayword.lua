@@ -1,5 +1,5 @@
 -- Module displaying of the words
-function generateLEDs(words, color)
+function generateLEDs(words, color, colorMin1, colorMin2, colorMin3, colorMin4, characters)
  
  local space=string.char(0,0,0)
  -- update the background color, if set
