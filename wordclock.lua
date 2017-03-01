@@ -13,8 +13,8 @@ function display_timestat(hours, minutes, longmode)
 
  -- generate an empty return type
  local ret = { itis=0, fiveMin=0, tenMin=0, after=0, before=0, threeHour=0, quater=0, threequater=0, half=0, s=0, 
-               one=0, two=0, three=0, four=0, five=0, six=0, seven=0, eight=0, nine=0, ten=0, eleven=0, twelve=0,
-               twenty=0,
+               one=0, oneLong=0, two=0, three=0, four=0, five=0, six=0, seven=0, eight=0, nine=0, ten=0, eleven=0, twelve=0,
+               twenty=0, 
                clock=0, sr_nc=0, min1=0, min2=0, min3=0, min4=0 }
 
  -- return black screen if there is no real time given
@@ -104,7 +104,11 @@ function display_timestat(hours, minutes, longmode)
  end
  
  if (hours == 1) then
-  ret.one=1
+  if (ret.before == 1) then
+    ret.oneLong = 1
+  else
+    ret.one=1
+  end
  elseif (hours == 2) then
   ret.two=1
  elseif (hours == 3) then
@@ -172,6 +176,9 @@ function display_countwords_de(words)
     amount = amount + 6
    end
    if (words.one == 1) then
+    amount = amount + 3
+   end
+   if (words.oneLong == 1) then
     amount = amount + 4
    end
    if (words.two == 1) then

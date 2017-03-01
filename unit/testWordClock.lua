@@ -56,7 +56,7 @@ expected.itis=1
 expected.one=1
 expected.clock=1
 checkWords(leds, expected, 1, 0)
-checkCharacter(display_countwords_de(leds), 12)
+checkCharacter(display_countwords_de(leds), 11)
 
 leds=display_timestat(2,5)
 expected={}
@@ -142,7 +142,7 @@ checkCharacter(display_countwords_de(leds), 12)
 
 leds=display_timestat(12,55)
 expected={}
-expected.one=1
+expected.oneLong=1
 expected.fiveMin=1
 expected.before=1
 checkWords(leds, expected, 12 , 55)
@@ -164,6 +164,7 @@ expected.two=1
 expected.min1=1
 expected.clock=1
 checkWords(leds, expected, 14 , 01)
+checkCharacter(display_countwords_de(leds), 12)
 
 leds=display_timestat(15,02)
 expected={}
@@ -172,6 +173,7 @@ expected.three=1
 expected.min2=1
 expected.clock=1
 checkWords(leds, expected, 15 , 02)
+checkCharacter(display_countwords_de(leds), 12)
 
 leds=display_timestat(16,03)
 expected={}
@@ -180,6 +182,7 @@ expected.four=1
 expected.min3=1
 expected.clock=1
 checkWords(leds, expected, 16 , 03)
+checkCharacter(display_countwords_de(leds), 12)
 
 leds=display_timestat(17,04)
 expected={}
@@ -188,6 +191,7 @@ expected.five=1
 expected.min4=1
 expected.clock=1
 checkWords(leds, expected, 17 , 04)
+checkCharacter(display_countwords_de(leds), 12)
 
 leds=display_timestat(18,06)
 expected={}
@@ -196,6 +200,7 @@ expected.after=1
 expected.min1=1
 expected.six=1
 checkWords(leds, expected, 18 , 06)
+checkCharacter(display_countwords_de(leds), 13)
 
 leds=display_timestat(19,09)
 expected={}
@@ -204,6 +209,7 @@ expected.after=1
 expected.min4=1
 expected.seven=1
 checkWords(leds, expected, 19 , 09)
+checkCharacter(display_countwords_de(leds), 14)
 
 leds=display_timestat(20,17)
 expected={}
@@ -212,6 +218,7 @@ expected.after=1
 expected.min2=1
 expected.eight=1
 checkWords(leds, expected, 20 , 17)
+checkCharacter(display_countwords_de(leds), 15)
 
 
 
