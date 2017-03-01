@@ -61,7 +61,7 @@ function displayTime()
         color=color4
      end
      
-     ledBuf = generateLEDs(words, color, colorMode)
+     ledBuf = generateLEDs(words, color)
      
      -- Write the buffer to the LEDs
      ws2812.write(ledBuf)
