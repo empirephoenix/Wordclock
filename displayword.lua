@@ -2,19 +2,19 @@
 
 function updateColor(data)
     if (data.usedCharacters <= data.charsPerMinute) then 
-        if (data.words.min1 == 1) then
+        if (data.words.min1 == 1 or data.words.min2 == 1 or data.words.min3 == 1 or data.words.min4 == 1) then
             return data.colorMin1
         else
             return data.colorFg
         end
     elseif (data.usedCharacters <= data.charsPerMinute*2) then 
-        if (data.words.min2 == 1) then
+        if (data.words.min2 == 1 or data.words.min3 == 1 or data.words.min4 == 1) then
             return data.colorMin2
         else
             return data.colorFg
         end
     elseif (data.usedCharacters <= data.charsPerMinute*3) then 
-        if (data.words.min3 == 1) then
+        if (data.words.min3 == 1 or data.words.min4 == 1) then
             return data.colorMin3
         else
             return data.colorFg
