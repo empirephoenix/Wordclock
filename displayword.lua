@@ -74,9 +74,13 @@ function generateLEDs(words, color)
  if (words.seven == 1) then
     buf= buf .. color:rep(6) -- SIEBEN
     buf= buf .. space:rep(5)
-  elseif (words.one == 1) then
+ elseif (words.oneLong == 1) then
     buf= buf .. space:rep(5)
     buf= buf .. color:rep(4) -- EINS
+    buf= buf .. space:rep(2)
+ elseif (words.one == 1) then
+    buf= buf .. space:rep(6)
+    buf= buf .. color:rep(3) -- EIN
     buf= buf .. space:rep(2)
  elseif (words.two == 1) then
     buf= buf .. space:rep(7)
