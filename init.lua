@@ -2,12 +2,12 @@ uart.setup(0, 115200, 8, 0, 1, 1 )
 print("Autostart in 5 seconds...")
 
 ws2812.init() -- WS2812 LEDs initialized on GPIO2
-
+MAXLEDS=110
 counter1=0
 ws2812.write(string.char(0,0,0):rep(114))
 tmr.alarm(2, 85, 1, function()
     counter1=counter1+1
-    ws2812.write(string.char(128,0,0):rep(counter1))     
+    ws2812.write(string.char(128,0,0):rep(counter1) .. string.char(0,0,0):rep(MAXLEDS - (counter1*2)) .. string.char(0,0,64):rep(counter1))
 end)
 
 local blacklistfile="init.lua config.lua config.lua.new"
