@@ -7,7 +7,8 @@ counter1=0
 ws2812.write(string.char(0,0,0):rep(114))
 tmr.alarm(2, 85, 1, function()
     counter1=counter1+1
-    ws2812.write(string.char(128,0,0):rep(counter1) .. string.char(0,0,0):rep(MAXLEDS - (counter1*2)) .. string.char(0,0,64):rep(counter1))
+    spaceLeds = math.max(MAXLEDS - (counter1*2), 0)
+    ws2812.write(string.char(128,0,0):rep(counter1) .. string.char(0,0,0):rep(spaceLeds) .. string.char(0,0,64):rep(counter1))
 end)
 
 local blacklistfile="init.lua config.lua config.lua.new"
@@ -54,3 +55,4 @@ tmr.alarm(1, 5000, 0, function()
         print("No Main file found")
     end
 end)
+print("Init file end reached")
