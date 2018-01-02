@@ -1,10 +1,14 @@
 package de.c3ma.ollo.mockup;
 
+import java.io.File;
+
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.OneArgFunction;
 import org.luaj.vm2.lib.TwoArgFunction;
 import org.luaj.vm2.lib.ZeroArgFunction;
+
+import de.c3ma.ollo.mockup.ui.WS2812Layout;
 
 /**
  * created at 28.12.2017 - 23:34:04<br />
@@ -14,6 +18,8 @@ import org.luaj.vm2.lib.ZeroArgFunction;
  * @author ollo<br />
  */
 public class ESP8266Ws2812 extends TwoArgFunction {
+
+    private static WS2812Layout layout = null;
 
     @Override
     public LuaValue call(LuaValue modname, LuaValue env) {
@@ -42,20 +48,29 @@ public class ESP8266Ws2812 extends TwoArgFunction {
         public LuaValue call(LuaValue arg) {
             if (arg.isstring()) {
                 int length = arg.checkstring().rawlen();
-                System.out.println("[WS2812] write length:" + length);
                 if ((length % 3) == 0) {
                     byte[] array = arg.toString().getBytes();
                     for (int i = 0; i < length; i+=3) {
-                        /*System.out.println(
-                                array[i+0] + " " 
-                                + array[i+1] + " "
-                                + array[i+2]
-                                );*/
+                        if (ESP8266Ws2812.layout != null) {
+                            ESP8266Ws2812.layout.updateLED(i/3, array[i+0], array[i+1], array[i+2]);
+                        }
                     }
+                }
+
+                if (ESP8266Ws2812.layout == null) {
+                    System.out.println("[WS2812] write length:" + length);
+                } else {
+                    /*ESP8266Ws2812.layout.update(ESP8266Ws2812.layout.getGraphics());*/
+                    ESP8266Ws2812.layout.repaint();
                 }
             }
             return LuaValue.valueOf(true);
         }
-        
+    }
+
+    public void setLayout(File file) {
+        if (ESP8266Ws2812.layout == null) {
+            ESP8266Ws2812.layout = WS2812Layout.parse(file);
+        }
     }
 }

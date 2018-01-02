@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
+import javax.management.RuntimeErrorException;
+
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.jse.JsePlatform;
@@ -33,11 +35,12 @@ public class WS2812Simulation implements LuaSimulation {
     private ESP8266File espFile = new ESP8266File();
     private ESP8266Node espNode = new ESP8266Node(this);
     private DoFileFunction doFile = new DoFileFunction(globals);
+    private ESP8266Ws2812 ws2812 = new ESP8266Ws2812();
     private String scriptName;
         
     public WS2812Simulation(File sourceFolder) {
         globals.load(new ESP8266Uart());
-        globals.load(new ESP8266Ws2812());
+        globals.load(ws2812);
         globals.load(espTmr);
         globals.load(espFile);
         globals.load(espNode);
@@ -76,17 +79,30 @@ public class WS2812Simulation implements LuaSimulation {
             return;
         }
         
-        if (args.length == 1) {
+        if (args.length >= 1) {
             File f = new File(args[0]);
             if (f.exists()) {
                 WS2812Simulation simu = new WS2812Simulation(f.getParentFile());
                 System.out.println("File : " + f.getAbsolutePath());
+                
+                if (args.length >= 2) {
+                    simu.setWS2812Layout(new File(args[1]));
+                }
+                
                 simu.callScript(f.getName());
             }    
         } else {
             printUsage();
         }
         
+    }
+
+    private void setWS2812Layout(File file) {
+        if (file.exists()) {
+            ws2812.setLayout(file);
+        } else {
+            throw new RuntimeException("WS2812 Layout: " + file.getAbsolutePath() + " does not exists");
+        }
     }
 
     private static void printUsage() {
