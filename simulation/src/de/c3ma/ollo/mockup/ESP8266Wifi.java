@@ -26,8 +26,15 @@ public class ESP8266Wifi extends TwoArgFunction {
         env.checkglobals();
         final LuaTable wifi = new LuaTable();
         wifi.set("setmode", new SetModeFunction());
-        wifi.set("ap", new ApFunction());
+        final LuaTable ap = new LuaTable();
+        ap.set("config", new ConfigFunction());
+        wifi.set("ap", ap);
+        final LuaTable sta = new LuaTable();
+        sta.set("status", new StatusFunction());
+        sta.set("getip", new GetIpFunction());
+        wifi.set("sta", sta);
         wifi.set("SOFTAP", "SOFTAP");
+        wifi.set("STATION", "STATION");
         env.set("wifi", wifi);
         env.get("package").get("loaded").set("wifi", wifi);        
         return wifi;
@@ -44,25 +51,30 @@ public class ESP8266Wifi extends TwoArgFunction {
         
     }
     
-    private class ApFunction extends TwoArgFunction {
-
-        @Override
-        public LuaValue call(LuaValue modname, LuaValue env) {
-            final LuaTable ap = new LuaTable();
-            ap.set("config", new ConfigFunction());
-            env.set("ap", ap);
-            env.get("package").get("loaded").set("wifi.ap", ap); 
-            return ap;
-        }
-        
-    }
-    
     private class ConfigFunction extends OneArgFunction {
 
         @Override
         public LuaValue call(LuaValue arg) {
             System.out.println("[Wifi] config");
             return LuaValue.valueOf(true);
+        }
+        
+    }
+    
+    private class StatusFunction extends ZeroArgFunction {
+
+        @Override
+        public LuaValue call() {
+            return LuaValue.valueOf(5);
+        }
+        
+    }
+    
+    private class GetIpFunction extends ZeroArgFunction {
+
+        @Override
+        public LuaValue call() {
+            return LuaValue.valueOf("127.0.0.1");
         }
         
     }

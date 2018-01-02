@@ -10,7 +10,9 @@ import org.luaj.vm2.lib.jse.JsePlatform;
 
 import de.c3ma.ollo.mockup.DoFileFunction;
 import de.c3ma.ollo.mockup.ESP8266File;
+import de.c3ma.ollo.mockup.ESP8266Net;
 import de.c3ma.ollo.mockup.ESP8266Node;
+import de.c3ma.ollo.mockup.ESP8266Time;
 import de.c3ma.ollo.mockup.ESP8266Tmr;
 import de.c3ma.ollo.mockup.ESP8266Uart;
 import de.c3ma.ollo.mockup.ESP8266Wifi;
@@ -40,6 +42,8 @@ public class WS2812Simulation implements LuaSimulation {
         globals.load(espFile);
         globals.load(espNode);
         globals.load(new ESP8266Wifi());
+        globals.load(new ESP8266Net());
+        globals.load(new ESP8266Time());
         globals.set("dofile", doFile);
         
         try {
