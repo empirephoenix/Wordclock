@@ -154,13 +154,14 @@ public class WS2812Layout extends JFrame {
             super(""+character);
             setFont(new Font("Dialog", Font.BOLD, 24));
             setHorizontalAlignment(CENTER);
+            //FIXME: Background color is not updated:
             this.setBackground(Color.BLACK);
         }
         
         public void setColor(int red, int green, int blue) {
             this.setForeground(new Color(red, green, blue));
-            this.update(this.getGraphics());
-            //this.repaint();
+            //FIXME changing the color is not working
+            this.repaint();
             System.out.println( this.toString());
         }
         
