@@ -172,7 +172,7 @@ public class WS2812Layout extends JFrame {
             } else {
                 sb.append("" + this.getText());
             }
-            sb.append(Integer.toHexString(this.getForeground().getRed()) + 
+            sb.append("|" + Integer.toHexString(this.getForeground().getRed()) + 
                     " " + Integer.toHexString(this.getForeground().getGreen()) +
                     " " + Integer.toHexString(this.getForeground().getBlue()));
             

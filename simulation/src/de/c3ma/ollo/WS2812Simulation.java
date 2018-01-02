@@ -88,8 +88,24 @@ public class WS2812Simulation implements LuaSimulation {
                 if (args.length >= 2) {
                     simu.setWS2812Layout(new File(args[1]));
                 }
-                
-                simu.callScript(f.getName());
+                try {
+                    if (args.length >= 3) {
+                        File additionalFile = new File(args[2]);
+                        if (additionalFile.exists() && (simu.doFile != null)) {
+                            
+                            Files.copy(additionalFile.toPath(), 
+                                    new File(simu.doFile.getWorkingDirectory() + File.separator + additionalFile.getName()).toPath());
+                            System.out.println("Integrate " + additionalFile.getName() + " into simulation");
+                        } else {
+                            System.err.println("Script " + args[2] + " cannot be found");
+                            System.exit(1);
+                        }
+                    }
+                    
+                    simu.callScript(f.getName());
+                } catch (IOException e) {
+                    System.err.println("[Nodemcu] " + e.getMessage());
+                }
             }    
         } else {
             printUsage();

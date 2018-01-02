@@ -43,4 +43,12 @@ public class DoFileFunction extends OneArgFunction {
         this.workingDir = workingDir;
     }
 
+    public String getWorkingDirectory() {
+        if (workingDir != null) {
+            return workingDir.getAbsolutePath();
+        } else {
+            return null;
+        }
+    }
+
 }
