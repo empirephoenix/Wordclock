@@ -184,6 +184,10 @@ public class WS2812Layout extends JFrame {
 		if (mElements != null) {
 			int i = (index / mColumn);
 			int j = (index % mColumn);
+			// Swap each second row
+			if (i % 2 == 1) {
+				j = (mColumn-1) - j;
+			}
 			if ((i < mElements.length) && (j < mElements[i].length) && (mElements[i][j] != null)) {
 				Element curlbl = mElements[i][j];
 				curlbl.setColor(r, g, b);

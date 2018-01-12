@@ -61,8 +61,8 @@ public class ESP8266Ws2812 extends TwoArgFunction {
 							for (int i = 0; i < length; i += 3) {
 								if (ESP8266Ws2812.layout != null) {
 									int r = array[i + 0]+(Byte.MIN_VALUE*-1);
-									int g = array[i + 1]+(Byte.MIN_VALUE*-1);
-									int b = array[i + 2]+(Byte.MIN_VALUE*-1);
+									int b = array[i + 1]+(Byte.MIN_VALUE*-1);
+									int g = array[i + 2]+(Byte.MIN_VALUE*-1);
 									ESP8266Ws2812.layout.updateLED(i / 3, r, g, b);
 								}
 							}
