@@ -9,5 +9,5 @@ package de.c3ma.ollo;
  */
 public interface LuaSimulation {
 
-    public void reboottriggered();
+    public void rebootTriggered();
 }

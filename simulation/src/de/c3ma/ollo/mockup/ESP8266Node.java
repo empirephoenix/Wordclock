@@ -67,7 +67,7 @@ public class ESP8266Node extends TwoArgFunction {
         @Override
         public LuaValue call() {
             System.out.println("[Node] Restart");
-            nodemcuSimu.reboottriggered();
+            nodemcuSimu.rebootTriggered();
             return LuaValue.valueOf(false);
         }
         

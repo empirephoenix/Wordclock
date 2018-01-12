@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 import javax.management.RuntimeErrorException;
+import javax.swing.SwingUtilities;
 
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaValue;
@@ -30,127 +31,130 @@ import de.c3ma.ollo.mockup.ESP8266Ws2812;
  */
 public class WS2812Simulation implements LuaSimulation {
 
-    private Globals globals = JsePlatform.standardGlobals();
-    private ESP8266Tmr espTmr = new ESP8266Tmr();
-    private ESP8266File espFile = new ESP8266File();
-    private ESP8266Node espNode = new ESP8266Node(this);
-    private DoFileFunction doFile = new DoFileFunction(globals);
-    private ESP8266Ws2812 ws2812 = new ESP8266Ws2812();
-    private String scriptName;
-        
-    public WS2812Simulation(File sourceFolder) {
-        globals.load(new ESP8266Uart());
-        globals.load(ws2812);
-        globals.load(espTmr);
-        globals.load(espFile);
-        globals.load(espNode);
-        globals.load(new ESP8266Wifi());
-        globals.load(new ESP8266Net());
-        globals.load(new ESP8266Time());
-        globals.set("dofile", doFile);
-        
-        try {
-            File tempFile = File.createTempFile("NodemcuSimuFile", "");
-            File tempDir = new File(tempFile.getParent() + File.separator + "Nodemcu" + System.currentTimeMillis());
-            tempDir.mkdir();
-            
-            
-            System.out.println("[Nodemcu] Directory is " + tempDir.getAbsolutePath());
-            
-            // Copy all files into the temporary folder
-            for (File f : sourceFolder.listFiles()) {
-                Files.copy(f.toPath(), new File(tempDir.getAbsolutePath() + File.separator + f.getName()).toPath());
-            } 
+	private Globals globals = JsePlatform.standardGlobals();
+	private ESP8266Tmr espTmr = new ESP8266Tmr();
+	private ESP8266File espFile = new ESP8266File();
+	private ESP8266Node espNode = new ESP8266Node(this);
+	private DoFileFunction doFile = new DoFileFunction(globals);
+	private ESP8266Ws2812 ws2812 = new ESP8266Ws2812();
+	private String scriptName;
 
-            espFile.setWorkingDirectory(tempDir);
-            espNode.setWorkingDirectory(tempDir);
-            doFile.setWorkingDirectory(tempDir);
-        } catch (IOException e) {
-            System.err.println("[Nodemcu] " + e.getMessage());
-            espFile = null;
-            espNode = null;
-        }
-    }
-    
-    public static void main(String[] args) {
-                
-        if (args.length == 0) {
-            printUsage();
-            return;
-        }
-        
-        if (args.length >= 1) {
-            File f = new File(args[0]);
-            if (f.exists()) {
-                WS2812Simulation simu = new WS2812Simulation(f.getParentFile());
-                System.out.println("File : " + f.getAbsolutePath());
-                
-                if (args.length >= 2) {
-                    simu.setWS2812Layout(new File(args[1]));
-                }
-                try {
-                    if (args.length >= 3) {
-                        File additionalFile = new File(args[2]);
-                        if (additionalFile.exists() && (simu.doFile != null)) {
-                            
-                            Files.copy(additionalFile.toPath(), 
-                                    new File(simu.doFile.getWorkingDirectory() + File.separator + additionalFile.getName()).toPath());
-                            System.out.println("Integrate " + additionalFile.getName() + " into simulation");
-                        } else {
-                            System.err.println("Script " + args[2] + " cannot be found");
-                            System.exit(1);
-                        }
-                    }
-                    
-                    simu.callScript(f.getName());
-                } catch (IOException e) {
-                    System.err.println("[Nodemcu] " + e.getMessage());
-                }
-            }    
-        } else {
-            printUsage();
-        }
-        
-    }
+	public WS2812Simulation(File sourceFolder) {
+		globals.load(new ESP8266Uart());
+		globals.load(ws2812);
+		globals.load(espTmr);
+		globals.load(espFile);
+		globals.load(espNode);
+		globals.load(new ESP8266Wifi());
+		globals.load(new ESP8266Net());
+		globals.load(new ESP8266Time());
+		globals.set("dofile", doFile);
 
-    private void setWS2812Layout(File file) {
-        if (file.exists()) {
-            ws2812.setLayout(file);
-        } else {
-            throw new RuntimeException("WS2812 Layout: " + file.getAbsolutePath() + " does not exists");
-        }
-    }
+		try {
+			File tempFile = File.createTempFile("NodemcuSimuFile", "");
+			File tempDir = new File(tempFile.getParent() + File.separator + "Nodemcu" + System.currentTimeMillis());
+			tempDir.mkdir();
 
-    private static void printUsage() {
-        System.out.println("Usage:");
-        System.out.println("one argument required: file to execute.");
-        System.out.println(".e.g: init.lua");
-    }
+			System.out.println("[Nodemcu] Directory is " + tempDir.getAbsolutePath());
 
-    @Override
-    public void reboottriggered() {
-        System.out.println("=================== Reboot in Simulation -> call it again =================");
-        this.espTmr.stopAllTimer();
-        try {
-            Thread.sleep(200);
-            if (this.scriptName != null) {
-                System.out.println("Reexecuting...");
-                callScript(this.scriptName);
-            }
-        } catch (InterruptedException e) {
-            
-        }
-        
-    }
+			// Copy all files into the temporary folder
+			for (File f : sourceFolder.listFiles()) {
+				Files.copy(f.toPath(), new File(tempDir.getAbsolutePath() + File.separator + f.getName()).toPath());
+			}
 
-    private void callScript(String filename) {
-        this.scriptName=filename;
-        
-        if ((espFile != null) && (espFile.getFileInWorkingDir(filename) != null)) {
-            LuaValue chunk = globals.loadfile(espFile.getFileInWorkingDir(filename).getAbsolutePath());
-            chunk.call();   
-        } else {
-            throw new RuntimeException("Copy into temporary folder failed; script not available");
-        }
-    }
+			espFile.setWorkingDirectory(tempDir);
+			espNode.setWorkingDirectory(tempDir);
+			doFile.setWorkingDirectory(tempDir);
+		} catch (IOException e) {
+			System.err.println("[Nodemcu] " + e.getMessage());
+			espFile = null;
+			espNode = null;
+		}
+	}
+
+	public static void main(String[] args) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				if (args.length == 0) {
+					printUsage();
+					return;
+				}
+
+				if (args.length >= 1) {
+					File f = new File(args[0]);
+					if (f.exists()) {
+						WS2812Simulation simu = new WS2812Simulation(f.getParentFile());
+						System.out.println("File : " + f.getAbsolutePath());
+
+						if (args.length >= 2) {
+							simu.setWS2812Layout(new File(args[1]));
+						}
+						try {
+							if (args.length >= 3) {
+								File additionalFile = new File(args[2]);
+								if (additionalFile.exists() && (simu.doFile != null)) {
+
+									Files.copy(additionalFile.toPath(), new File(simu.doFile.getWorkingDirectory()
+											+ File.separator + additionalFile.getName()).toPath());
+									System.out.println("Integrate " + additionalFile.getName() + " into simulation");
+								} else {
+									System.err.println("Script " + args[2] + " cannot be found");
+									System.exit(1);
+								}
+							}
+
+							simu.callScript(f.getName());
+						} catch (IOException e) {
+							System.err.println("[Nodemcu] " + e.getMessage());
+						}
+					}
+				} else {
+					printUsage();
+				}
+
+			}
+		});
+	}
+
+	private void setWS2812Layout(File file) {
+		if (file.exists()) {
+			ws2812.setLayout(file);
+		} else {
+			throw new RuntimeException("WS2812 Layout: " + file.getAbsolutePath() + " does not exists");
+		}
+	}
+
+	private static void printUsage() {
+		System.out.println("Usage:");
+		System.out.println("one argument required: file to execute.");
+		System.out.println(".e.g: init.lua");
+	}
+
+	@Override
+	public void rebootTriggered() {
+		System.out.println("=================== Reboot in Simulation -> call it again =================");
+		this.espTmr.stopAllTimer();
+		try {
+			Thread.sleep(200);
+			if (this.scriptName != null) {
+				System.out.println("Reexecuting...");
+				callScript(this.scriptName);
+			}
+		} catch (InterruptedException e) {
+
+		}
+
+	}
+
+	private void callScript(String filename) {
+		this.scriptName = filename;
+
+		if ((espFile != null) && (espFile.getFileInWorkingDir(filename) != null)) {
+			LuaValue chunk = globals.loadfile(espFile.getFileInWorkingDir(filename).getAbsolutePath());
+			chunk.call();
+		} else {
+			throw new RuntimeException("Copy into temporary folder failed; script not available");
+		}
+	}
 }

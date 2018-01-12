@@ -4,6 +4,5 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="libs/luaj-jme-3.0.1.jar" sourcepath="libs/luaj-3.0.1/src"/>
 	<classpathentry kind="lib" path="libs/luaj-jse-3.0.1.jar"/>
-	<classpathentry kind="lib" path="libs/luaj-sources-3.0.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
