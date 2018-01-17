@@ -72,7 +72,7 @@ public class WS2812Simulation implements LuaSimulation {
 		}
 	}
 
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -100,8 +100,17 @@ public class WS2812Simulation implements LuaSimulation {
 									System.out.println("Integrate " + additionalFile.getName() + " into simulation");
 								} else {
 									System.err.println("Script " + args[2] + " cannot be found");
+									printUsage();
 									System.exit(1);
 								}
+							}
+							if (args.length >= 4) {
+							    try {
+							        ESP8266Tmr.gTimingFactor = Integer.parseInt(args[3]);
+							    } catch (NumberFormatException nfe) {
+							        System.err.println("Timing factor not parsable: " + nfe.getMessage());
+							        printUsage();
+							    }
 							}
 
 							simu.callScript(f.getName());
@@ -128,7 +137,7 @@ public class WS2812Simulation implements LuaSimulation {
 	private static void printUsage() {
 		System.out.println("Usage:");
 		System.out.println("one argument required: file to execute.");
-		System.out.println(".e.g: init.lua");
+		System.out.println(".e.g: init.lua (ws2812 layout configuration) (additional LUA script) (timing speedup factor)");
 	}
 
 	@Override

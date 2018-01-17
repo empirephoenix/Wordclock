@@ -21,6 +21,8 @@ public class ESP8266Tmr extends TwoArgFunction {
     private static final int MAXTHREADS = 7;
     
     private static LuaThreadTmr[] allThreads = new LuaThreadTmr[MAXTHREADS];
+
+    public static int gTimingFactor = 1;
     
     @Override
     public LuaValue call(LuaValue modname, LuaValue env) {
@@ -77,13 +79,14 @@ public class ESP8266Tmr extends TwoArgFunction {
                     System.err.println("[TMR] Timer" + timerNumer + " stopped");
                 }
                 
-                allThreads[timerNumer] = new LuaThreadTmr(timerNumer, code, (endlessloop == 1), delay);
+                /* The cycletime is at least 1 ms */
+                allThreads[timerNumer] = new LuaThreadTmr(timerNumer, code, (endlessloop == 1), Math.max(delay / gTimingFactor, 1));
                 allThreads[timerNumer].start();
             }
             return LuaValue.valueOf(true);
         }
     }
-
+    
     public void stopAllTimer() {
         for (int i = 0; i < allThreads.length; i++) {
             stopTmr(i);

@@ -52,9 +52,9 @@ public class ESP8266Ws2812 extends TwoArgFunction {
 		public LuaValue call(LuaValue arg) {
 			if (arg.isstring()) {
 				LuaString jstring = arg.checkstring();
-				int length = jstring.rawlen();
+				final int length = jstring.rawlen();
 				if ((length % 3) == 0) {
-					byte[] array = jstring.m_bytes;
+					final byte[] array = jstring.m_bytes;
 					SwingUtilities.invokeLater(new Runnable() {
 						@Override
 						public void run() {
