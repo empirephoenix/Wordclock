@@ -82,6 +82,7 @@ public class WS2812Layout extends JFrame {
 		contentPane.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 2));
 
 		JPanel ledPanel = new JPanel();
+		ledPanel.setBackground(Color.BLACK);
 		ledPanel.setLayout(new GridLayout(this.mRow, this.mColumn, 10, 10));
 		for (int i = 0; i < this.mRow; i++) {
 			for (int j = 0; j < this.mColumn; j++) {
@@ -159,9 +160,7 @@ public class WS2812Layout extends JFrame {
 
 		public void setColor(int red, int green, int blue) {
 			this.setForeground(new Color(red, green, blue));
-			// FIXME changing the color is not working
 			this.repaint();
-			System.out.println(this.toString());
 		}
 
 		@Override
