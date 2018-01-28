@@ -1,5 +1,5 @@
-green=0
-red=60
+green=60
+red=0
 blue=0
 
 color=string.char(green, red, blue)
