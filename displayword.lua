@@ -1,25 +1,45 @@
 -- Module filling a buffer, sent to the LEDs
 
 function updateColor(data)
-    if (data.usedCharacters <= data.charsPerMinute) then 
+  -- special case, and there are exactly 4 words to display (so each word for each minute)
+  if (data.amountWords == 4) then
+    print ("Amount words are " .. tostring(data.amountWords))
+    if (data.words.min1 == 1 and data.drawnWords == 0) then
+        print "Color1"
+        return data.colorMin1
+    elseif (data.words.min2 == 1 and data.drawnWords == 1) then
+        print "Color2"
+        return data.colorMin2      
+    elseif (data.words.min3 == 1 and data.drawnWords == 2) then
+        print "Color3"
+        return data.colorMin3
+    elseif (data.words.min4 == 1 and data.drawnWords == 3) then
+        print "Color4"
+        return data.colorMin4
+    else
+        print "Color default"
+        return data.colorFg
+    end
+  else -- we must do some magic calculation
+    if (data.drawnCharacters <= data.charsPerMinute) then 
         if (data.words.min1 == 1 or data.words.min2 == 1 or data.words.min3 == 1 or data.words.min4 == 1) then
             return data.colorMin1
         else
             return data.colorFg
         end
-    elseif (data.usedCharacters <= data.charsPerMinute*2) then 
+    elseif (data.drawnCharacters <= data.charsPerMinute*2) then 
         if (data.words.min2 == 1 or data.words.min3 == 1 or data.words.min4 == 1) then
             return data.colorMin2
         else
             return data.colorFg
         end
-    elseif (data.usedCharacters <= data.charsPerMinute*3) then 
+    elseif (data.drawnCharacters <= data.charsPerMinute*3) then 
         if (data.words.min3 == 1 or data.words.min4 == 1) then
             return data.colorMin3
         else
             return data.colorFg
         end
-    elseif (data.usedCharacters > data.charsPerMinute*3) then 
+    elseif (data.drawnCharacters > data.charsPerMinute*3) then 
         if (data.words.min4 == 1) then
             return data.colorMin4
         else
@@ -28,6 +48,7 @@ function updateColor(data)
     else
         return data.colorFg
     end
+  end
 end
 
 function drawLEDs(data, numberNewChars)
@@ -38,9 +59,9 @@ function drawLEDs(data, numberNewChars)
         else
             tmpBuf=tmpBuf .. updateColor(data)
         end
-        data.usedCharacters=data.usedCharacters+1
-        
+        data.drawnCharacters=data.drawnCharacters+1
     end
+    data.drawnWords=data.drawnWords+1 
     return tmpBuf
 end
 
@@ -55,7 +76,9 @@ function generateLEDs(words, colorFg, colorMin1, colorMin2, colorMin3, colorMin4
  data.colorMin2=colorMin2
  data.colorMin3=colorMin3
  data.colorMin4=colorMin4
- data.usedCharacters=0
+ data.drawnCharacters=0
+ data.drawnWords=0
+ data.amountWords=display_countwords_de(words)
  local space=string.char(0,0,0)
  -- update the background color, if set
  if (colorBg ~= nil) then
@@ -66,7 +89,7 @@ function generateLEDs(words, colorFg, colorMin1, colorMin2, colorMin3, colorMin4
  local buf=colorFg
 
  -- line 1----------------------------------------------
- if (words.itis == 1) then
+ if (words.it==1 words.is == 1) then
     buf=drawLEDs(data,2) -- ES
     print(tostring(buf))
     -- K fill character
