@@ -139,7 +139,7 @@ end
 -- @fn display_countcharacters_de
 -- Count the amount of characters, used to describe the current time in words
 -- @param words the same structure, as generated with the function @see display_timestat
--- @return the amount of words, used to describe the time or <code>0</code> on errors
+-- @return the amount of characters, used to describe the time or <code>0</code> on errors
 function display_countcharacters_de(words)
    local amount=0
    if (words.itis == 1) then
@@ -213,4 +213,18 @@ function display_countcharacters_de(words)
    end
 
    return amount 
+end
+
+-- @fn display_countcharacters_de
+-- Count the amount of words, used to describe the current time in words
+-- @param words the same structure, as generated with the function @see display_timestat
+-- @return the amount of words, used to describe the time or <code>0</code> on errors
+function display_countwords_de(words)
+ local amount = 0
+ for k,v in pairs(words) do
+   if (v ~= nil and v == 1) then
+    amount = amount + 1
+   end
+ end   
+ return amount
 end
