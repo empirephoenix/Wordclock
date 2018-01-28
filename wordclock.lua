@@ -136,11 +136,11 @@ function display_timestat(hours, minutes, longmode)
  return ret
 end
 
--- @fn display_countwords
+-- @fn display_countcharacters_de
 -- Count the amount of characters, used to describe the current time in words
 -- @param words the same structure, as generated with the function @see display_timestat
 -- @return the amount of words, used to describe the time or <code>0</code> on errors
-function display_countwords_de(words)
+function display_countcharacters_de(words)
    local amount=0
    if (words.itis == 1) then
     amount = amount + 5

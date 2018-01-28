@@ -50,7 +50,7 @@ function displayTime()
      time = getTime(sec, timezoneoffset)
      words = display_timestat(time.hour, time.minute)
 
-     local charactersOfTime = display_countwords_de(words)
+     local charactersOfTime = display_countcharacters_de(words)
      ledBuf = generateLEDs(words, color, color1, color2, color3, color4, 
 			    charactersOfTime)
      
