@@ -89,18 +89,21 @@ function generateLEDs(words, colorFg, colorMin1, colorMin2, colorMin3, colorMin4
  local buf=colorFg
 
  -- line 1----------------------------------------------
- if (words.it==1 words.is == 1) then
+ if (words.it==1) then
     buf=drawLEDs(data,2) -- ES
-    print(tostring(buf))
-    -- K fill character
-    buf=buf .. space:rep(1)
-    buf=buf .. drawLEDs(data,3) -- IST
-    -- L fill character
-    buf=buf .. space:rep(1)
- else
-    buf=space:rep(7)
+  else
+    buf=space:rep(2)
  end
- if (words.fiveMin== 1) then
+-- K fill character
+buf=buf .. space:rep(1)
+ if (words.is == 1) then
+    buf=buf .. drawLEDs(data,3) -- IST
+ else
+    buf=buf .. space:rep(3)
+ end
+ -- L fill character
+buf=buf .. space:rep(1)
+if (words.fiveMin== 1) then
     buf= buf .. drawLEDs(data,4) -- FUENF
   else
     buf= buf .. space:rep(4)
