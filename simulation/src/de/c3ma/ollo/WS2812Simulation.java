@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
-import javax.management.RuntimeErrorException;
 import javax.swing.SwingUtilities;
 
 import org.luaj.vm2.Globals;
@@ -128,7 +127,7 @@ public class WS2812Simulation implements LuaSimulation {
 
 	private void setWS2812Layout(File file) {
 		if (file.exists()) {
-			ws2812.setLayout(file);
+			ws2812.setLayout(file, this);
 		} else {
 			throw new RuntimeException("WS2812 Layout: " + file.getAbsolutePath() + " does not exists");
 		}

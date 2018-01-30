@@ -10,7 +10,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -18,7 +17,8 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
+
+import de.c3ma.ollo.LuaSimulation;
 
 /**
  * created at 02.01.2018 - 12:57:02<br />
@@ -40,14 +40,20 @@ public class WS2812Layout extends JFrame {
 	private int mRow = 0;
 	private Element[][] mElements;
 
-	public static WS2812Layout parse(File file) {
+    private LuaSimulation nodemcuSimu;
+
+	public WS2812Layout(LuaSimulation nodemcuSimu) {
+	    this.nodemcuSimu = nodemcuSimu;
+    }
+
+    public static WS2812Layout parse(File file, LuaSimulation nodemcuSimu) {
 		WS2812Layout layout = null;
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(file));
 			try {
 				String line = br.readLine();
 				if (line != null) {
-					layout = new WS2812Layout();
+					layout = new WS2812Layout(nodemcuSimu);
 				}
 
 				while (line != null) {
@@ -92,15 +98,18 @@ public class WS2812Layout extends JFrame {
 			}
 		}
 		contentPane.add(ledPanel, BorderLayout.CENTER);
-		JButton button = new JButton("Do something");
-		button.setActionCommand("Do something");
-		button.addActionListener(new ActionListener() {
+		final JButton btnReboot = new JButton("Reboot");
+		btnReboot.setActionCommand("Reboot simulation");
+		btnReboot.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				JButton but = (JButton) ae.getSource();
-				// FIXME some clever logic
+				if (but.equals(btnReboot)) {
+				    System.out.println("[Node] Restart");
+		            nodemcuSimu.rebootTriggered();
+				}
 			}
 		});
-		contentPane.add(button, BorderLayout.SOUTH);
+		contentPane.add(btnReboot, BorderLayout.SOUTH);
 
 		setContentPane(contentPane);
 		pack();

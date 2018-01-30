@@ -11,6 +11,7 @@ import org.luaj.vm2.lib.OneArgFunction;
 import org.luaj.vm2.lib.TwoArgFunction;
 import org.luaj.vm2.lib.ZeroArgFunction;
 
+import de.c3ma.ollo.LuaSimulation;
 import de.c3ma.ollo.mockup.ui.WS2812Layout;
 
 /**
@@ -79,9 +80,9 @@ public class ESP8266Ws2812 extends TwoArgFunction {
 		}
 	}
 
-	public void setLayout(File file) {
+	public void setLayout(File file, LuaSimulation nodemcuSimu) {
 		if (ESP8266Ws2812.layout == null) {
-			ESP8266Ws2812.layout = WS2812Layout.parse(file);
+			ESP8266Ws2812.layout = WS2812Layout.parse(file, nodemcuSimu);
 		}
 	}
 }
