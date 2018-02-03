@@ -220,15 +220,18 @@ function display_countcharacters_de(words)
 end
 
 -- @fn display_countcharacters_de
--- Count the amount of words, used to describe the current time in words
+-- Count the amount of words, used to describe the current time in words!
+-- (min1 to min4 are ignored)
 -- @param words the same structure, as generated with the function @see display_timestat
 -- @return the amount of words, used to describe the time or <code>0</code> on errors
 function display_countwords_de(words)
  local amount = 0
  for k,v in pairs(words) do
    if (v ~= nil and v == 1) then
-    amount = amount + 1
+    if (k ~= "min1" and k ~= "min2" and k ~= "min3" and k ~= "min4") then
+        amount = amount + 1
+    end
    end
- end   
+ end
  return amount
 end
