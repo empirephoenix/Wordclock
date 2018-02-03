@@ -98,6 +98,8 @@ public class WS2812Layout extends JFrame {
 			}
 		}
 		contentPane.add(ledPanel, BorderLayout.CENTER);
+		
+		JPanel bottomPanel = new JPanel();
 		final JButton btnReboot = new JButton("Reboot");
 		btnReboot.setActionCommand("Reboot simulation");
 		btnReboot.addActionListener(new ActionListener() {
@@ -109,7 +111,9 @@ public class WS2812Layout extends JFrame {
 				}
 			}
 		});
-		contentPane.add(btnReboot, BorderLayout.SOUTH);
+		bottomPanel.add(btnReboot);
+		
+		contentPane.add(bottomPanel, BorderLayout.SOUTH);
 
 		setContentPane(contentPane);
 		pack();
