@@ -2,6 +2,7 @@ package de.c3ma.ollo.mockup.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Event;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -10,15 +11,22 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import de.c3ma.ollo.LuaSimulation;
+import javafx.scene.control.DatePicker;
 
 /**
  * created at 02.01.2018 - 12:57:02<br />
@@ -98,8 +106,67 @@ public class WS2812Layout extends JFrame {
 			}
 		}
 		contentPane.add(ledPanel, BorderLayout.CENTER);
-		
+				
 		JPanel bottomPanel = new JPanel();
+		final JTextField dateTime = new JTextField("yyyy-mm-dd HH:MM:SS");
+		dateTime.getDocument().addDocumentListener(new DocumentListener() {
+		    public void changedUpdate(DocumentEvent e) {
+		        warn();
+		      }
+		      public void removeUpdate(DocumentEvent e) {
+		        warn();
+		      }
+		      public void insertUpdate(DocumentEvent e) {
+		        warn();
+		      }
+
+		      public void warn() {
+		         final String pattern = "(\\d{4})-(\\d{2})-(\\d{2}) (\\d{2}):(\\d{2}):(\\d{2})";
+		         final String current = dateTime.getText();
+		        
+		         
+		         
+		         if (!current.matches(pattern)) {
+		             dateTime.setForeground(Color.RED);
+		         } else {
+		             dateTime.setForeground(Color.BLACK);
+		             Pattern dateTimePattern = Pattern.compile(pattern);
+		             Matcher matcher = dateTimePattern.matcher(current);
+		             int year=0;
+		             int month=0;
+		             int day=0;
+		             int hour=0;
+		             int minute=0;
+		             int second=0;
+		             matcher.find();
+		             for (int g = 1; g <= matcher.groupCount(); g++) {
+		                 switch(g) {
+		                 case 1: /* Year */
+		                     year = Integer.parseInt(matcher.group(g));
+		                     break;
+		                 case 2: /* Month */
+                             month = Integer.parseInt(matcher.group(g));
+                             break;
+		                 case 3: /* Day */
+                             day = Integer.parseInt(matcher.group(g));
+                             break;
+		                 case 4: /* Hour */
+                             hour = Integer.parseInt(matcher.group(g));
+                             break;
+		                 case 5: /* Minute */
+                             minute = Integer.parseInt(matcher.group(g));
+                             break;
+		                 case 6: /* Second */
+                             second = Integer.parseInt(matcher.group(g));
+                             break;
+		                 }	
+		             }
+		             System.out.println("Set time to: " + year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second);
+		         }
+		      }
+		    });
+		bottomPanel.add(dateTime);
+		
 		final JButton btnReboot = new JButton("Reboot");
 		btnReboot.setActionCommand("Reboot simulation");
 		btnReboot.addActionListener(new ActionListener() {
