@@ -23,6 +23,8 @@ public class ESP8266Time extends TwoArgFunction {
     
     private static long gSimulationStartTime = 0;
     
+    private static long gOverwrittenTime = 0;
+    
     @Override
     public LuaValue call(LuaValue modname, LuaValue env) {
         env.checkglobals();
@@ -48,11 +50,16 @@ public class ESP8266Time extends TwoArgFunction {
             gSimulationStartTime = System.currentTimeMillis();
         }
         
-        long time = System.currentTimeMillis();
-        if (ESP8266Tmr.gTimingFactor > 1) {
-            time = gSimulationStartTime + ((time - gSimulationStartTime) * ESP8266Tmr.gTimingFactor);
+        if (gOverwrittenTime == 0) {
+            /* Time simulation is disabled -> calculate something according to the speedup factor */
+            long time = System.currentTimeMillis();
+            if (ESP8266Tmr.gTimingFactor > 1) {
+                time = gSimulationStartTime + ((time - gSimulationStartTime) * ESP8266Tmr.gTimingFactor);
+            }
+            return time;
+        } else {
+            return gOverwrittenTime;
         }
-        return time;
     }
 
     private class SyncFunction extends ThreeArgFunction {
@@ -86,6 +93,10 @@ public class ESP8266Time extends TwoArgFunction {
             return LuaValue.varargsOf(v).arg1();
         }
         
+    }
+
+    public static void setOverwrittenTime(long timeInMillis) {
+        gOverwrittenTime = timeInMillis;
     }
     
 }

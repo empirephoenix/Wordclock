@@ -10,4 +10,6 @@ package de.c3ma.ollo;
 public interface LuaSimulation {
 
     public void rebootTriggered();
+
+    public void setSimulationTime(long timeInMillis);    
 }

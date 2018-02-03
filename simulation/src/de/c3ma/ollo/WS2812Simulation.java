@@ -165,4 +165,9 @@ public class WS2812Simulation implements LuaSimulation {
 			throw new RuntimeException("Copy into temporary folder failed; script not available");
 		}
 	}
+
+    @Override
+    public void setSimulationTime(long timeInMillis) {
+        ESP8266Time.setOverwrittenTime(timeInMillis);
+    }
 }
