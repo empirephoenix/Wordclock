@@ -1,6 +1,6 @@
 -- Module filling a buffer, sent to the LEDs
 
-function updateColor(data)
+function updateColor(data, inverseRow=false)
   -- special case, and there are exactly 4 words to display (so each word for each minute)
   if (data.amountWords == 4) then
     print ("Amount words are " .. tostring(data.amountWords))
@@ -20,14 +20,16 @@ function updateColor(data)
         print "Color default"
         return data.colorFg
     end
-  else -- we must do some magic calculation
-    if (data.drawnCharacters <= data.charsPerMinute) then 
+  else -- we must do some magic calculation FIXME the magic should be improved
+    if (((data.drawnCharacters <= data.charsPerMinute) and not inverseRow) or 
+        ((data.drawnCharacters > data.charsPerMinute) and inverseRow) )  then 
         if (data.words.min1 == 1 or data.words.min2 == 1 or data.words.min3 == 1 or data.words.min4 == 1) then
             return data.colorMin1
         else
             return data.colorFg
         end
-    elseif (data.drawnCharacters <= data.charsPerMinute*2) then 
+    elseif ( ((data.drawnCharacters <= data.charsPerMinute*2) and not inverseRow) or
+        ((data.drawnCharacters <= data.charsPerMinute*2) and inverseRow)) then 
         if (data.words.min2 == 1 or data.words.min3 == 1 or data.words.min4 == 1) then
             return data.colorMin2
         else
@@ -51,13 +53,13 @@ function updateColor(data)
   end
 end
 
-function drawLEDs(data, numberNewChars)
+function drawLEDs(data, numberNewChars, inverseRow=false)
     local tmpBuf=nil
     for i=1,numberNewChars do
         if (tmpBuf == nil) then
-            tmpBuf = updateColor(data)
+            tmpBuf = updateColor(data, inverseRow)
         else
-            tmpBuf=tmpBuf .. updateColor(data)
+            tmpBuf=tmpBuf .. updateColor(data, inverseRow)
         end
         data.drawnCharacters=data.drawnCharacters+1
     end
@@ -110,12 +112,12 @@ if (words.fiveMin== 1) then
  end
  -- line 2-- even row (so inverted) --------------------
  if (words.twenty == 1) then
-    buf= buf .. drawLEDs(data,7) -- ZWANZIG
+    buf= buf .. drawLEDs(data,7,true) -- ZWANZIG
   else
     buf= buf .. space:rep(7)
  end
  if (words.tenMin == 1) then
-    buf= buf .. drawLEDs(data,4) -- ZEHN
+    buf= buf .. drawLEDs(data,4,true) -- ZEHN
   else
     buf= buf .. space:rep(4)
  end
@@ -131,12 +133,12 @@ if (words.fiveMin== 1) then
  --line 4-------- even row (so inverted) -------------
  if (words.before == 1) then
     buf=buf .. space:rep(2) 
-    buf= buf .. drawLEDs(data,3) -- VOR
+    buf= buf .. drawLEDs(data,3,true) -- VOR
   else
     buf= buf .. space:rep(5)
  end
  if (words.after == 1) then
-    buf= buf .. drawLEDs(data,4) -- NACH
+    buf= buf .. drawLEDs(data,4,true) -- NACH
     buf= buf .. space:rep(2) -- TG
   else
     buf= buf .. space:rep(6)
@@ -156,19 +158,19 @@ if (words.fiveMin== 1) then
  end
  ------------even row (so inverted) ---------------------
  if (words.seven == 1) then
-    buf= buf .. drawLEDs(data,6) -- SIEBEN
+    buf= buf .. drawLEDs(data,6,true) -- SIEBEN
     buf= buf .. space:rep(5)
  elseif (words.oneLong == 1) then
     buf= buf .. space:rep(5)
-    buf= buf .. drawLEDs(data,4) -- EINS
+    buf= buf .. drawLEDs(data,4,true) -- EINS
     buf= buf .. space:rep(2)
  elseif (words.one == 1) then
     buf= buf .. space:rep(6)
-    buf= buf .. drawLEDs(data,3) -- EIN
+    buf= buf .. drawLEDs(data,3,true) -- EIN
     buf= buf .. space:rep(2)
  elseif (words.two == 1) then
     buf= buf .. space:rep(7)
-    buf= buf .. drawLEDs(data,4) -- ZWEI
+    buf= buf .. drawLEDs(data,4,true) -- ZWEI
  else
     buf= buf .. space:rep(11)
  end
@@ -185,15 +187,15 @@ if (words.fiveMin== 1) then
  end
  ------------even row (so inverted) ---------------------
  if (words.four == 1) then
-    buf= buf .. drawLEDs(data,4) -- VIER
+    buf= buf .. drawLEDs(data,4,true) -- VIER
     buf= buf .. space:rep(7)
   elseif (words.nine == 1) then
     buf= buf .. space:rep(4)
-    buf= buf .. drawLEDs(data,4) -- NEUN
+    buf= buf .. drawLEDs(data,4,true) -- NEUN
     buf= buf .. space:rep(3)
  elseif (words.eleven == 1) then
     buf= buf .. space:rep(8)
-    buf= buf .. drawLEDs(data,3) -- ELEVEN
+    buf= buf .. drawLEDs(data,3,true) -- ELEVEN
  else
     buf= buf .. space:rep(11)
  end
@@ -211,13 +213,13 @@ if (words.fiveMin== 1) then
  end
  ------------even row (so inverted) ---------------------
  if (words.clock == 1) then
-    buf= buf .. drawLEDs(data,3) -- UHR
+    buf= buf .. drawLEDs(data,3,true) -- UHR
   else
     buf= buf .. space:rep(3)
  end
  if (words.six == 1) then
     buf= buf .. space:rep(2)
-    buf= buf .. drawLEDs(data,5) -- SECHS
+    buf= buf .. drawLEDs(data,5,true) -- SECHS
     buf= buf .. space:rep(1)
   else
     buf= buf .. space:rep(8)
