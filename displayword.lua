@@ -1,6 +1,6 @@
 -- Module filling a buffer, sent to the LEDs
 
-function updateColor(data, inverseRow)
+function updateColor(data, inverseRow, characters2draw)
   if (inverseRow == nil) then
     inverseRow=false
   end
@@ -24,48 +24,52 @@ function updateColor(data, inverseRow)
         return data.colorFg
     end
   else -- we must do some magic calculation FIXME the magic should be improved
-    if (((data.drawnCharacters <= data.charsPerMinute) and not inverseRow) or 
-        ((data.drawnCharacters > data.charsPerMinute) and inverseRow) )  then 
-        if (data.words.min1 == 1 or data.words.min2 == 1 or data.words.min3 == 1 or data.words.min4 == 1) then
-            return data.colorMin1
+    if (not inverseRow) then -- nomral row
+        if (data.drawnCharacters < data.charsPerMinute) then
+            if (data.words.min1 == 1 or data.words.min2 == 1 or data.words.min3 == 1 or data.words.min4 == 1) then
+                return data.colorMin1
+            else
+                return data.colorFg
+            end
+        elseif (data.drawnCharacters < data.charsPerMinute*2) then
+            if (data.words.min2 == 1 or data.words.min3 == 1 or data.words.min4 == 1) then
+                return data.colorMin2
+            else
+                return data.colorFg
+            end
+        elseif (data.drawnCharacters < data.charsPerMinute*3) then 
+            if (data.words.min3 == 1 or data.words.min4 == 1) then
+                return data.colorMin3
+            else
+                return data.colorFg
+            end
+        elseif (data.drawnCharacters > data.charsPerMinute*3) then 
+            if (data.words.min4 == 1) then
+                return data.colorMin4
+            else
+                return data.colorFg
+            end
         else
             return data.colorFg
         end
-    elseif ( ((data.drawnCharacters <= data.charsPerMinute*2) and not inverseRow) or
-        ((data.drawnCharacters <= data.charsPerMinute*2) and inverseRow)) then 
-        if (data.words.min2 == 1 or data.words.min3 == 1 or data.words.min4 == 1) then
-            return data.colorMin2
-        else
-            return data.colorFg
-        end
-    elseif (data.drawnCharacters <= data.charsPerMinute*3) then 
-        if (data.words.min3 == 1 or data.words.min4 == 1) then
-            return data.colorMin3
-        else
-            return data.colorFg
-        end
-    elseif (data.drawnCharacters > data.charsPerMinute*3) then 
-        if (data.words.min4 == 1) then
-            return data.colorMin4
-        else
-            return data.colorFg
-        end
-    else
+    else -- inverse row
+        --FIXME magic missing
         return data.colorFg
     end
-  end
+ end
 end
 
 function drawLEDs(data, numberNewChars, inverseRow)
     if (inverseRow == nil) then
          inverseRow=false
     end
+    print("charactes " .. tostring(data.charsPerMinute) .. " per minute; " .. tonumber(data.drawnCharacters) .. " used characters")
     local tmpBuf=nil
     for i=1,numberNewChars do
         if (tmpBuf == nil) then
-            tmpBuf = updateColor(data, inverseRow)
+            tmpBuf = updateColor(data, inverseRow, numberNewChars)
         else
-            tmpBuf=tmpBuf .. updateColor(data, inverseRow)
+            tmpBuf=tmpBuf .. updateColor(data, inverseRow, numberNewChars)
         end
         data.drawnCharacters=data.drawnCharacters+1
     end
@@ -77,7 +81,7 @@ end
 function generateLEDs(words, colorFg, colorMin1, colorMin2, colorMin3, colorMin4, characters)
  -- Set the local variables needed for the colored progress bar
  data={}
- data.charsPerMinute=math.floor(characters/3) -- devide by three (Minute 1 to Minute 3, Minute 4 takes the last chars)
+ data.charsPerMinute=math.floor(characters/4) -- devide by three (Minute 1 to Minute 3, Minute 4 takes the last chars)
  data.words=words
  data.colorFg=colorFg
  data.colorMin1=colorMin1
