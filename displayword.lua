@@ -1,6 +1,9 @@
 -- Module filling a buffer, sent to the LEDs
 
-function updateColor(data, inverseRow=false)
+function updateColor(data, inverseRow)
+  if (inverseRow == nil) then
+    inverseRow=false
+  end
   -- special case, and there are exactly 4 words to display (so each word for each minute)
   if (data.amountWords == 4) then
     print ("Amount words are " .. tostring(data.amountWords))
@@ -53,7 +56,10 @@ function updateColor(data, inverseRow=false)
   end
 end
 
-function drawLEDs(data, numberNewChars, inverseRow=false)
+function drawLEDs(data, numberNewChars, inverseRow)
+    if (inverseRow == nil) then
+         inverseRow=false
+    end
     local tmpBuf=nil
     for i=1,numberNewChars do
         if (tmpBuf == nil) then
