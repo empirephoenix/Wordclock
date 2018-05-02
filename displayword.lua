@@ -1,12 +1,13 @@
 
 -- Module displaying of the words
-function generateLEDs(words, colorFg, colorMin1, colorMin2, colorMin3, colorMin4, characters)
+function generateLEDs(words, colorForground, colorMin1, colorMin2, colorMin3, colorMin4, characters)
  -- Set the local variables needed for the colored progress bar
  local charsPerMinute=math.floor(characters/5)
+ local charsPerLine=11
  -- Space / background has no color by default
  local space=string.char(0,0,0)
  -- set FG to fix value:
- colorFg = string.char(128,128,128)
+ colorFg = string.char(255,255,255)
 
  -- Set the foreground color as the default color
  local buf=colorFg
@@ -168,7 +169,25 @@ if (words.fiveMin== 1) then
   end
   collectgarbage()
 
-  --FIXME function to set some color to the LEDs
+  local bufColored = string.char()
+  --function to set some color to the LEDs
+  for x=0,9 do
+	for y=0, (charsPerLine-1) do
+		local start = ((x * charsPerLine) + y)*3 + 1
+		item=string.byte(buf, start)
+		-- Color
+		if (item > 0) then
+			bufColored = bufColored .. colorForground
+		else
+			-- update the background color, if set
+			if (colorBg ~= nil) then
+				bufColored = bufColored .. colorBg
+			end
+		end	
+		print (x .. "x" .. y .. " : " .. start .. " color " .. tostring(item) .. " len " .. string.len(buf))
+	end
+  end
+  collectgarbage()
 
-  return buf
+  return bufColored
 end
