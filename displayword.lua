@@ -171,14 +171,45 @@ if (words.fiveMin== 1) then
 
   local bufColored = string.char()
   --function to set some color to the LEDs
+  local word=0
+  local firstCharAfterSpace=true
   for x=0,9 do
 	for y=0, (charsPerLine-1) do
 		local start = ((x * charsPerLine) + y)*3 + 1
 		item=string.byte(buf, start)
-		-- Color
+		-- Color the visible words
 		if (item > 0) then
-			bufColored = bufColored .. colorForground
+			if (firstCharAfterSpace == true) then
+				word = word + 1
+			end
+			firstCharAfterSpace=false
+			if (characters == 4) then -- we have a word for each minute to color differently
+				if (words.min4 == 1 and word == 4) then
+					bufColored = bufColored .. colorMin4
+				elseif (words.min3 == 1 and word == 3) then
+                                        bufColored = bufColored .. colorMin3
+        			elseif (words.min2 == 1 and word == 2) then
+                                        bufColored = bufColored .. colorMin2
+				elseif (words.min1 == 1 and word == 1) then
+                                        bufColored = bufColored .. colorMin1
+				else
+					bufColored = bufColored .. colorForground
+				end
+			else -- FIXME some more magic should be added here
+				if (words.min4 == 1) then
+					bufColored = bufColored .. colorMin4
+				elseif (words.min3 == 1) then
+					bufColored = bufColored .. colorMin3
+				elseif (words.min2 == 1) then
+					bufColored = bufColored .. colorMin2
+				elseif (words.min1 == 1) then
+					bufColored = bufColored .. colorMin1
+				else
+					bufColored = bufColored .. colorForground
+				end
+			end
 		else
+			firstCharAfterSpace=true
 			-- update the background color, if set
 			if (colorBg ~= nil) then
 				bufColored = bufColored .. colorBg
