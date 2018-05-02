@@ -215,7 +215,7 @@ if (words.fiveMin== 1) then
 				bufColored = bufColored .. colorBg
 			end
 		end	
-		print (x .. "x" .. y .. " : " .. start .. " color " .. tostring(item) .. " len " .. string.len(buf))
+		print (x .. "x" .. y .. " : " .. start .. " color " .. tostring(item) .. " len " .. string.len(buf) .. " word " .. tostring(word))
 	end
   end
   collectgarbage()
