@@ -58,17 +58,19 @@ function displayTime()
      
      --if lines 4 to 6 are inverted due to hardware-fuckup, unfuck it here
 	  if ((inv46 ~= nil) and (inv46 == "on")) then
-		  tempstring = ledBuf:sub(1,101) -- first 33 leds
+		  tempstring = ledBuf:sub(1,99) -- first 33 leds
 		  rowend = {44,55,66}
 		  for _, startled  in ipairs(rowend) do
 		      for i = 0,10 do
-			      tempstring = tempstring .. ledBuf:sub((startled-i)*3,(startled-i)*3+2)
+			      tempstring = tempstring .. ledBuf:sub((startled-i)*3-2,(startled-i)*3)
 		      end
         end		  
-	     tempstring = tempstring .. ledBuf:sub((67*3),ledBuf:len())
-     	  ws2812.write(tempstring)	
+	     tempstring = tempstring .. ledBuf:sub((67*3)-2,ledBuf:len())
+     	  ws2812.write(tempstring)
+		  tempstring=nil	
 	  else
 		  ws2812.write(ledBuf)
+		  ledBuf=nil
 	  end
 	  
 	  
@@ -82,7 +84,7 @@ function displayTime()
          end
      end
      -- cleanup
-     ledBuf=nil
+
      words=nil
      time=nil
      collectgarbage()
