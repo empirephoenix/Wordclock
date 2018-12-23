@@ -115,7 +115,6 @@ function normalOperation()
             mydofile("webserver")
             startWebServer()
         end)
-
         displayTime()
         -- Start the time Thread
         tmr.alarm(1, 20000, 1 ,function()
