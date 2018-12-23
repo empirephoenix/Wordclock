@@ -51,13 +51,27 @@ function displayTime()
      words = display_timestat(time.hour, time.minute)
 
      local charactersOfTime = display_countwords_de(words)
-     ledBuf = generateLEDs(words, color, color1, color2, color3, color4, 
+     local ledBuf = generateLEDs(words, color, color1, color2, color3, color4, 
 			    charactersOfTime)
      
      print("Local time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second .. " in " .. charactersOfTime .. " chars")
      
-     -- Write the buffer to the LEDs
-     ws2812.write(ledBuf)
+     --if lines 4 to 6 are inverted due to hardware-fuckup, unfuck it here
+	  if ((inv46 ~= nil) and (inv46 == "on")) then
+		  tempstring = ledBuf:sub(1,101) -- first 33 leds
+		  rowend = {44,55,66}
+		  for _, startled  in ipairs(rowend) do
+		      for i = 0,10 do
+			      tempstring = tempstring .. ledBuf:sub((startled-i)*3,(startled-i)*3+2)
+		      end
+        end		  
+	     tempstring = tempstring .. ledBuf:sub((67*3),ledBuf:len())
+     	  ws2812.write(tempstring)	
+	  else
+		  ws2812.write(ledBuf)
+	  end
+	  
+	  
     
      -- Used for debugging
      if (clockdebug ~= nil) then
