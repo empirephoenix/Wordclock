@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -106,6 +107,7 @@ public class WS2812Layout extends JFrame {
 		contentPane.add(ledPanel, BorderLayout.CENTER);
 				
 		JPanel bottomPanel = new JPanel();
+				
 		final JTextField dateTime = new JTextField("yyyy-mm-dd HH:MM:SS");
 		dateTime.getDocument().addDocumentListener(new DocumentListener() {
 		    public void changedUpdate(DocumentEvent e) {
@@ -173,7 +175,20 @@ public class WS2812Layout extends JFrame {
 		      }
 		    });
 		bottomPanel.add(dateTime);
-		
+
+        final JButton btnSetCurrentTime = new JButton("Set time");
+        btnSetCurrentTime.setActionCommand("Set time");
+        btnSetCurrentTime.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                JButton but = (JButton) ae.getSource();
+                if (but.equals(btnSetCurrentTime)) {
+                    GregorianCalendar gc = new GregorianCalendar();
+                    dateTime.setText(""+gc.get(Calendar.YEAR) + "-" + gc.get(Calendar.MONTH) + "-" + gc.get(Calendar.DAY_OF_MONTH) + " " + gc.get(Calendar.HOUR_OF_DAY) + ":" + gc.get(Calendar.MINUTE) + ":" + gc.get(Calendar.SECOND));
+                }
+            }
+        });
+        bottomPanel.add(btnSetCurrentTime);
+        
 		final JButton btnReboot = new JButton("Reboot");
 		btnReboot.setActionCommand("Reboot simulation");
 		btnReboot.addActionListener(new ActionListener() {
