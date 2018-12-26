@@ -5,25 +5,6 @@ function updateColor(data, inverseRow, characters2draw)
     inverseRow=false
   end
   -- special case, and there are exactly 4 words to display (so each word for each minute)
-  if (data.amountWords == 4) then
-    print ("Amount words are " .. tostring(data.amountWords))
-    if (data.words.min1 == 1 and data.drawnWords == 0) then
-        print "Color1"
-        return data.colorMin1
-    elseif (data.words.min2 == 1 and data.drawnWords == 1) then
-        print "Color2"
-        return data.colorMin2      
-    elseif (data.words.min3 == 1 and data.drawnWords == 2) then
-        print "Color3"
-        return data.colorMin3
-    elseif (data.words.min4 == 1 and data.drawnWords == 3) then
-        print "Color4"
-        return data.colorMin4
-    else
-        print "Color default"
-        return data.colorFg
-    end
-  else -- we must do some magic calculation FIXME the magic should be improved
     if (not inverseRow) then -- nomral row
         if (data.drawnCharacters < data.charsPerMinute) then
             if (data.words.min1 == 1 or data.words.min2 == 1 or data.words.min3 == 1 or data.words.min4 == 1) then
@@ -56,7 +37,6 @@ function updateColor(data, inverseRow, characters2draw)
         --FIXME magic missing
         return data.colorFg
     end
- end
 end
 
 function drawLEDs(data, numberNewChars, inverseRow)
@@ -81,7 +61,21 @@ end
 function generateLEDs(words, colorFg, colorMin1, colorMin2, colorMin3, colorMin4, characters)
  -- Set the local variables needed for the colored progress bar
  data={}
- data.charsPerMinute=math.floor(characters/4) -- devide by three (Minute 1 to Minute 3, Minute 4 takes the last chars)
+ 
+ local minutes=1
+ if (words.min1 == 1) then
+   minutes = minutes + 1
+ elseif (words.min2 == 1) then
+   minutes = minutes + 2
+ elseif (words.min3 == 1) then
+   minutes = minutes + 3
+ elseif (words.min4 == 1) then
+   minutes = minutes + 4
+ end
+ print("Minutes : " .. tostring(minutes) )
+ -- data.charsPerMinute=characters - math.floor(characters / minutes) * minutes  -- modulo
+ data.charsPerMinute = math.ceil(characters / minutes)
+ -- devide by five (Minute 0, Minute 1 to Minute 4 takes the last chars)
  data.words=words
  data.colorFg=colorFg
  data.colorMin1=colorMin1
