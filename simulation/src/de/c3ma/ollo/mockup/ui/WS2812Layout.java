@@ -183,7 +183,9 @@ public class WS2812Layout extends JFrame {
                 JButton but = (JButton) ae.getSource();
                 if (but.equals(btnSetCurrentTime)) {
                     GregorianCalendar gc = new GregorianCalendar();
-                    dateTime.setText(""+gc.get(Calendar.YEAR) + "-" + gc.get(Calendar.MONTH) + "-" + gc.get(Calendar.DAY_OF_MONTH) + " " + gc.get(Calendar.HOUR_OF_DAY) + ":" + gc.get(Calendar.MINUTE) + ":" + gc.get(Calendar.SECOND));
+                    dateTime.setText(String.format("%d-%02d-%02d %02d:%02d:%02d",
+                            gc.get(Calendar.YEAR), gc.get(Calendar.MONTH), gc.get(Calendar.DAY_OF_MONTH),
+                            gc.get(Calendar.HOUR_OF_DAY), gc.get(Calendar.MINUTE), gc.get(Calendar.SECOND)));
                 }
             }
         });
