@@ -56,6 +56,19 @@ function drawLEDs(data, numberNewChars, inverseRow)
     return tmpBuf
 end
 
+-- Utility function for round
+function round(num)
+    under = math.floor(num)
+    upper = math.floor(num) + 1
+    underV = -(under - num)
+    upperV = upper - num
+    if (upperV > underV) then
+        return under
+    else
+        return upper
+    end
+end
+
 -- Module displaying of the words
 function generateLEDs(words, colorForground, colorMin1, colorMin2, colorMin3, colorMin4, characters)
  -- Set the local variables needed for the colored progress bar
@@ -71,7 +84,8 @@ function generateLEDs(words, colorForground, colorMin1, colorMin2, colorMin3, co
  elseif (words.min4 == 1) then
    minutes = minutes + 4
  end
- data.charsPerMinute = math.ceil(characters / minutes)
+ data.charsPerMinute = round( (characters / minutes) )
+ 
  -- devide by five (Minute 0, Minute 1 to Minute 4 takes the last chars)
  print("Minutes : " .. tostring(minutes) .. " Char minutes: " .. tostring(data.charsPerMinute) )
  data.words=words
