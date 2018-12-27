@@ -18,10 +18,11 @@ if [ $# -ne 1 ]; then
     exit 1
 fi
 
-FILES="displayword.lua main.lua timecore.lua webpage.lua webserver.lua wordclock.lua init.lua"
+FILES="displayword.lua main.lua timecore.lua webpage.html webserver.lua wordclock.lua init.lua"
+
 # Format filesystem first
 echo "Format the complete ESP"
-$LUATOOL -p $DEVICE -w
+$LUATOOL -p $DEVICE -w -b 115200
 if [ $? -ne 0 ]; then
     echo "STOOOOP"
     exit 1
@@ -36,7 +37,7 @@ for f in $FILES; do
         exit 1
     fi
     echo "------------- $f ------------"
-    $LUATOOL -p $DEVICE -f $f -t $f
+    $LUATOOL -p $DEVICE -f $f -b 115200 -t $f 
     if [ $? -ne 0 ]; then
         echo "STOOOOP"
         exit 1
@@ -44,6 +45,6 @@ for f in $FILES; do
 done
 
 echo "Reboot the ESP"
-$LUATOOL -p $DEVICE -r
+$LUATOOL -p $DEVICE -r -b 115200
 
 exit 0
