@@ -105,7 +105,7 @@ function display_timestat(hours, minutes, longmode)
  end
  
  if (hours == 1) then
-  if (ret.before == 1) then
+  if ((ret.before == 1) or (ret.half == 1))  then
     ret.oneLong = 1
   else
     ret.one=1
