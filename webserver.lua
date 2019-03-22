@@ -47,8 +47,8 @@ function sendPage(conn, nameOfFile, replaceMap)
         end
         buf = buf .. line
         
-        -- Sent after 1k data
-        if (string.len(buf) >= 700) then
+        -- Sent after 500 bytes data
+        if ( (string.len(buf) >= 500) or (node.heap() < 2000) ) then
             line=nil
             conn:send(buf)
             print("Sent part of " .. sentBytes .. "B")
@@ -128,9 +128,10 @@ function startWebServer()
    
    if (payload:find("GET /") ~= nil) then
    --here is code for handling http request from a web-browser
+    collectgarbage()
     
     if (sendPage ~= nil) then
-       print("Sending webpage.html ...")
+       print("Sending webpage.html (" .. tostring(node.heap()) .. "B free) ...")
        -- Load the sendPagewebcontent
        replaceMap=fillDynamicMap()
        sendPage(conn, "webpage.html", replaceMap)
