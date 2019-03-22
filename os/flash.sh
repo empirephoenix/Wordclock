@@ -31,10 +31,7 @@ if [ $? -ne 0 ]; then
  echo "Error reading the MAC -> set the device into the bootloader!"
  exit 1
 fi
-echo "Flashing the old one"
-./esptool.py --port /dev/$DEVICE $BAUD write_flash 0x00000 0x00000.bin 0x10000 0x10000.bin
-sleep 1
 echo "Flashing the new"
-./esptool.py --port /dev/$DEVICE $BAUD write_flash -fm dio 0x00000 nodemcu2.bin
+#./esptool.py --port /dev/$DEVICE $BAUD write_flash -fm dio 0x00000 nodemcu2.bin
 # 0x3fc000 esp_init_data_default_v08.bin 0x07e000 blank.bin 0x3fe000 blank.bin
-#./esptool.py --port /dev/$DEVICE $BAUD write_flash 0x00000 0x00000.bin 0x10000 0x10000.bin
+./esptool.py --port /dev/$DEVICE $BAUD write_flash 0x00000 0x00000.bin 0x10000 0x10000.bin
