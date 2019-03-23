@@ -50,14 +50,31 @@ function displayTime()
      time = getTime(sec, timezoneoffset)
      words = display_timestat(time.hour, time.minute)
 
-     local charactersOfTime = display_countwords_de(words)
+     local charactersOfTime = display_countcharacters_de(words)
+     local wordsOfTime = display_countwords_de(words)
      ledBuf = generateLEDs(words, color, color1, color2, color3, color4, 
 			    charactersOfTime)
      
-     print("Local time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second .. " in " .. charactersOfTime .. " chars")
+     print("Local time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second .. " in " .. charactersOfTime .. " chars " .. wordsOfTime .. " words")
      
-     -- Write the buffer to the LEDs
-     ws2812.write(ledBuf)
+     --if lines 4 to 6 are inverted due to hardware-fuckup, unfuck it here
+	  if ((inv46 ~= nil) and (inv46 == "on")) then
+		  tempstring = ledBuf:sub(1,99) -- first 33 leds
+		  rowend = {44,55,66}
+		  for _, startled  in ipairs(rowend) do
+		      for i = 0,10 do
+			      tempstring = tempstring .. ledBuf:sub((startled-i)*3-2,(startled-i)*3)
+		      end
+        end		  
+	     tempstring = tempstring .. ledBuf:sub((67*3)-2,ledBuf:len())
+     	  ws2812.write(tempstring)
+		  tempstring=nil	
+	  else
+		  ws2812.write(ledBuf)
+		  ledBuf=nil
+	  end
+	  
+	  
     
      -- Used for debugging
      if (clockdebug ~= nil) then
@@ -68,7 +85,7 @@ function displayTime()
          end
      end
      -- cleanup
-     ledBuf=nil
+
      words=nil
      time=nil
      collectgarbage()
@@ -115,7 +132,6 @@ function normalOperation()
             mydofile("webserver")
             startWebServer()
         end)
-
         displayTime()
         -- Start the time Thread
         tmr.alarm(1, 20000, 1 ,function()

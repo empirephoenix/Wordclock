@@ -12,7 +12,7 @@ function display_timestat(hours, minutes, longmode)
  end
 
  -- generate an empty return type
- local ret = { itis=0, fiveMin=0, tenMin=0, after=0, before=0, threeHour=0, quater=0, threequater=0, half=0, s=0, 
+ local ret = { it=0, is=0, fiveMin=0, tenMin=0, after=0, before=0, threeHour=0, quater=0, threequater=0, half=0, s=0, 
                one=0, oneLong=0, two=0, three=0, four=0, five=0, six=0, seven=0, eight=0, nine=0, ten=0, eleven=0, twelve=0,
                twenty=0, 
                clock=0, sr_nc=0, min1=0, min2=0, min3=0, min4=0 }
@@ -31,7 +31,8 @@ function display_timestat(hours, minutes, longmode)
  if ((longmode==1) 
     or (minutes==0)
     or (minutes==6)) then
-        ret.itis=1        
+        ret.it=1
+        ret.is=1        
  end
 
  -- Handle minutes
@@ -104,10 +105,10 @@ function display_timestat(hours, minutes, longmode)
  end
  
  if (hours == 1) then
-  if (ret.before == 1) then
-    ret.oneLong = 1
-  else
+  if (ret.it == 1) then
     ret.one=1
+  else
+    ret.oneLong=1
   end
  elseif (hours == 2) then
   ret.two=1
@@ -136,14 +137,17 @@ function display_timestat(hours, minutes, longmode)
  return ret
 end
 
--- @fn display_countwords
+-- @fn display_countcharacters_de
 -- Count the amount of characters, used to describe the current time in words
 -- @param words the same structure, as generated with the function @see display_timestat
--- @return the amount of words, used to describe the time or <code>0</code> on errors
-function display_countwords_de(words)
+-- @return the amount of characters, used to describe the time or <code>0</code> on errors
+function display_countcharacters_de(words)
    local amount=0
-   if (words.itis == 1) then
-    amount = amount + 5
+   if (words.it == 1) then
+    amount = amount + 2
+   end
+   if (words.is == 1) then
+    amount = amount + 3
    end
    if (words.fiveMin == 1) then
     amount = amount + 4
@@ -213,4 +217,21 @@ function display_countwords_de(words)
    end
 
    return amount 
+end
+
+-- @fn display_countcharacters_de
+-- Count the amount of words, used to describe the current time in words!
+-- (min1 to min4 are ignored)
+-- @param words the same structure, as generated with the function @see display_timestat
+-- @return the amount of words, used to describe the time or <code>0</code> on errors
+function display_countwords_de(words)
+ local amount = 0
+ for k,v in pairs(words) do
+   if (v ~= nil and v == 1) then
+    if (k ~= "min1" and k ~= "min2" and k ~= "min3" and k ~= "min4") then
+        amount = amount + 1
+    end
+   end
+ end
+ return amount
 end

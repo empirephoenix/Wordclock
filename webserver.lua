@@ -47,8 +47,8 @@ function sendPage(conn, nameOfFile, replaceMap)
         end
         buf = buf .. line
         
-        -- Sent after 1k data
-        if (string.len(buf) >= 700) then
+        -- Sent after 500 bytes data
+        if ( (string.len(buf) >= 500) or (node.heap() < 2000) ) then
             line=nil
             conn:send(buf)
             print("Sent part of " .. sentBytes .. "B")
@@ -128,9 +128,10 @@ function startWebServer()
    
    if (payload:find("GET /") ~= nil) then
    --here is code for handling http request from a web-browser
+    collectgarbage()
     
     if (sendPage ~= nil) then
-       print("Sending webpage.html ...")
+       print("Sending webpage.html (" .. tostring(node.heap()) .. "B free) ...")
        -- Load the sendPagewebcontent
        replaceMap=fillDynamicMap()
        sendPage(conn, "webpage.html", replaceMap)
@@ -165,7 +166,9 @@ function startWebServer()
         file.remove(configFile .. ".new")
         sec, _ = rtctime.get()
         file.open(configFile.. ".new", "w+")
-        file.write("-- Config\n" .. "wifi.sta.config(\"" .. _POST.ssid .. "\",[[" .. _POST.password .. "]])\n" .. "sntpserverhostname=\"" .. _POST.sntpserver .. "\"\n" .. "timezoneoffset=\"" .. _POST.timezoneoffset .. "\"\n")
+		  file.write("-- Config\n" .. "station_cfg={}\nstation_cfg.ssid=\"" .. _POST.ssid .. "\"\nstation_cfg.pwd=\"" .. _POST.password .. "\"\nstation_cfg.save=false\nwifi.sta.config(station_cfg)\n")
+		  file.write("sntpserverhostname=\"" .. _POST.sntpserver .. "\"\n" .. "timezoneoffset=\"" .. _POST.timezoneoffset .. "\"\n".. "inv46=\"" .. tostring(_POST.inv46) .. "\"\n")
+        
         if ( _POST.fcolor ~= nil) then
             -- color=string.char(_POST.green, _POST.red, _POST.blue)  
             print ("Got fcolor: " .. _POST.fcolor)
