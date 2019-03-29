@@ -32,8 +32,6 @@ function sendPage(conn, nameOfFile, replaceMap)
     local line = file.readline()
     
     while (line ~= nil) do
-        -- increase the amount of sent bytes
-        sentBytes=sentBytes+string.len(line)
         
         -- all placeholder begin with a $, so search for it in the current line
         if (line:find("$") ~= nil) then
@@ -45,6 +43,9 @@ function sendPage(conn, nameOfFile, replaceMap)
                 end
             end
         end
+        -- increase the amount of sent bytes
+        sentBytes=sentBytes+string.len(line)
+        
         buf = buf .. line
         
         -- Sent after 500 bytes data
