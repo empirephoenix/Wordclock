@@ -138,7 +138,21 @@ function startWebServer()
    httpSending=true
    --here is code for handling http request from a web-browser
     collectgarbage()
+    -- Stop all
+    tmr.stop(0)
+    tmr.stop(1)
+    tmr.stop(2)
+    tmr.stop(3)
+    tmr.stop(4)
+    tmr.stop(5)
     
+    -- Start Time after 1 minute
+    tmr.alarm(6, 60000, 0 ,function()
+    -- Start the time Thread
+        tmr.alarm(1, 20000, 1 ,function()
+             displayTime()
+         end)
+    end)
     if (sendPage ~= nil) then
        print("Sending webpage.html (" .. tostring(node.heap()) .. "B free) ...")
        -- Load the sendPagewebcontent
@@ -298,7 +312,7 @@ function startWebServer()
   conn:on("disconnection", function(c)
           print("Goodbye")
           node.output(nil)        -- un-register the redirect output function, output goes to serial
-          
+          collectgarbage()
           --reset amount of sent bytes, as we reached the end
           sentBytes=0
        end)
