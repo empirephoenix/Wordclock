@@ -1,7 +1,7 @@
 --TODO:
-
 configFile="config.lua"
 
+httpSending=false
 sentBytes=0
 function sendPage(conn, nameOfFile, replaceMap)
   collectgarbage()
@@ -11,8 +11,9 @@ function sendPage(conn, nameOfFile, replaceMap)
         conn:close() 
         print("Page sent")
         collectgarbage()
+        httpSending=false
     else
-        print("Next") 
+        collectgarbage()
         sendPage(conn, nameOfFile, replaceMap)
     end
   end)
@@ -32,7 +33,6 @@ function sendPage(conn, nameOfFile, replaceMap)
     local line = file.readline()
     
     while (line ~= nil) do
-        
         -- all placeholder begin with a $, so search for it in the current line
         if (line:find("$") ~= nil) then
             -- Replace the placeholder with the dynamic content
@@ -43,6 +43,8 @@ function sendPage(conn, nameOfFile, replaceMap)
                 end
             end
         end
+
+        
         -- increase the amount of sent bytes
         sentBytes=sentBytes+string.len(line)
         
@@ -126,8 +128,14 @@ function startWebServer()
  srv=net.createServer(net.TCP)
  srv:listen(80,function(conn)
   conn:on("receive", function(conn,payload)
+   if (httpSending) then
+     print("HTTP sending... be patient!")
+     return
+   end
+
    
    if (payload:find("GET /") ~= nil) then
+   httpSending=true
    --here is code for handling http request from a web-browser
     collectgarbage()
     
@@ -167,8 +175,8 @@ function startWebServer()
         file.remove(configFile .. ".new")
         sec, _ = rtctime.get()
         file.open(configFile.. ".new", "w+")
-		  file.write("-- Config\n" .. "station_cfg={}\nstation_cfg.ssid=\"" .. _POST.ssid .. "\"\nstation_cfg.pwd=\"" .. _POST.password .. "\"\nstation_cfg.save=false\nwifi.sta.config(station_cfg)\n")
-		  file.write("sntpserverhostname=\"" .. _POST.sntpserver .. "\"\n" .. "timezoneoffset=\"" .. _POST.timezoneoffset .. "\"\n".. "inv46=\"" .. tostring(_POST.inv46) .. "\"\n")
+          file.write("-- Config\n" .. "station_cfg={}\nstation_cfg.ssid=\"" .. _POST.ssid .. "\"\nstation_cfg.pwd=\"" .. _POST.password .. "\"\nstation_cfg.save=false\nwifi.sta.config(station_cfg)\n")
+          file.write("sntpserverhostname=\"" .. _POST.sntpserver .. "\"\n" .. "timezoneoffset=\"" .. _POST.timezoneoffset .. "\"\n".. "inv46=\"" .. tostring(_POST.inv46) .. "\"\n")
         
         if ( _POST.fcolor ~= nil) then
             -- color=string.char(_POST.green, _POST.red, _POST.blue)  
@@ -297,3 +305,4 @@ function startWebServer()
  end)
 
 end
+--FileView done.
