@@ -139,13 +139,9 @@ function startWebServer()
    --here is code for handling http request from a web-browser
     collectgarbage()
     -- Stop all
-    tmr.stop(0)
-    tmr.stop(1)
-    tmr.stop(2)
-    tmr.stop(3)
-    tmr.stop(4)
-    tmr.stop(5)
-    
+    for i=0,5 do tmr.stop(i) end
+
+    ws2812.write(string.char(0,0,0):rep(56) .. color:rep(2) .. string.char(0,0,0):rep(4) .. color:rep(2) .. string.char(0,0,0):rep(48))
     -- Start Time after 1 minute
     tmr.alarm(6, 60000, 0 ,function()
     -- Start the time Thread
