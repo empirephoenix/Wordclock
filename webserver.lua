@@ -140,13 +140,17 @@ function startWebServer()
     collectgarbage()
     -- Stop all
     for i=0,5 do tmr.stop(i) end
-
+    -- unload all other modules 
+    package.loaded['displayword.lc']=nil
+    package.loaded['main.lc']=nil
+    package.loaded['wordclock']=nil
+    collectgarbage()
     ws2812.write(string.char(0,0,0):rep(56) .. color:rep(2) .. string.char(0,0,0):rep(4) .. color:rep(2) .. string.char(0,0,0):rep(48))
     -- Start Time after 1 minute
     tmr.alarm(6, 60000, 0 ,function()
     -- Start the time Thread
         tmr.alarm(1, 20000, 1 ,function()
-             displayTime()
+             dofile("main.lc")
          end)
     end)
     if (sendPage ~= nil) then
