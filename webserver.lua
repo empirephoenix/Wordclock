@@ -141,15 +141,11 @@ function startWebServer()
     -- Stop all
     for i=0,5 do tmr.stop(i) end
     -- unload all other functions 
-    -- grep function *.lua | grep -v webserver | cut -f 2 -d ':' | grep "^function" | sed "s/function //g" | grep -o "^[a-zA-Z0-9\_]*"
+    -- grep function *.lua | grep -v webserver | grep -v init.lua | grep -v main.lua | cut -f 2 -d ':' | grep "^function" | sed "s/function //g" | grep -o "^[a-zA-Z0-9\_]*"
     updateColor = nil
     drawLEDs = nil
     round = nil
     generateLEDs = nil
-    startSetupMode = nil
-    syncTimeFromInternet = nil
-    displayTime = nil
-    normalOperation = nil
     isSummerTime = nil
     getUTCtime = nil
     getTime = nil
@@ -160,13 +156,20 @@ function startWebServer()
     ws2812.write(string.char(0,0,0):rep(56) .. color:rep(2) .. string.char(0,0,0):rep(4) .. color:rep(2) .. string.char(0,0,0):rep(48))
     -- Start Time after 1 minute
     tmr.alarm(5, 60000, 0 ,function()
-    -- Start the time Thread
+        dependModules = { "timecore" , "wordclock", "displayword" }
+        for _,mod in pairs(dependModules) do
+            print("Loading " .. mod)
+            mydofile(mod)
+        end
+        -- Start the time Thread
+        displayTime()
+        -- Start the time Thread
         tmr.alarm(1, 20000, 1 ,function()
-             dofile("main.lc")
+             displayTime()
          end)
     end)
     -- send response after 100ms
-    tmr.alarm(5, 100, 0 ,function()
+    tmr.alarm(4, 100, 0 ,function()
         if (sendPage ~= nil) then
            print("Sending webpage.html (" .. tostring(node.heap()) .. "B free) ...")
            -- Load the sendPagewebcontent
