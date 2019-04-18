@@ -51,7 +51,9 @@ tmr.alarm(1, 5000, 0, function()
         (file.open("displayword.lua")) or 
         (file.open("webserver.lua"))
         ) then    
-        ws2812.write(string.char(0,0,0):rep(4) .. string.char(128,0,0) .. string.char(0,0,0) ..string.char(128,0,0) .. string.char(0,0,0):rep(21) .. string.char(0,0,0):rep(30) .. string.char(128,0,0) .. string.char(0,0,0):rep(80))
+        c = string.char(0,128,0)
+        w = string.char(0,0,0)
+        ws2812.write(w:rep(4) .. c .. w:rep(15) .. c .. w:rep(9) .. c .. w:rep(30) .. c .. w:rep(41) .. c )
         recompileAll()
         print("Rebooting ...")
         -- reboot repairs everything
