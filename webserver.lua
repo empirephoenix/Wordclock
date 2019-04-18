@@ -124,20 +124,7 @@ function fillDynamicMap()
     return replaceMap   
 end
 
-function startWebServer()
- srv=net.createServer(net.TCP)
- srv:listen(80,function(conn)
-  conn:on("receive", function(conn,payload)
-   if (httpSending) then
-     print("HTTP sending... be patient!")
-     return
-   end
-
-   
-   if (payload:find("GET /") ~= nil) then
-    httpSending=true
-    --here is code for handling http request from a web-browser
-    collectgarbage()
+function stopWordclock()
     -- Stop all
     for i=0,5 do tmr.stop(i) end
     -- unload all other functions 
@@ -153,6 +140,24 @@ function startWebServer()
     display_countcharacters_de = nil
     display_countwords_de = nil
     collectgarbage()
+end
+
+function startWebServer()
+ srv=net.createServer(net.TCP)
+ srv:listen(80,function(conn)
+  conn:on("receive", function(conn,payload)
+   if (httpSending) then
+     print("HTTP sending... be patient!")
+     return
+   end
+
+   
+   if (payload:find("GET /") ~= nil) then
+    httpSending=true
+    --here is code for handling http request from a web-browser
+    collectgarbage()
+    stopWordclock()
+    
     ws2812.write(string.char(0,0,0):rep(56) .. color:rep(2) .. string.char(0,0,0):rep(4) .. color:rep(2) .. string.char(0,0,0):rep(48))
     -- Start Time after 1 minute
     tmr.alarm(5, 60000, 0 ,function()
