@@ -1,7 +1,7 @@
 --TODO:
-
 configFile="config.lua"
 
+httpSending=false
 sentBytes=0
 function sendPage(conn, nameOfFile, replaceMap)
   collectgarbage()
@@ -11,8 +11,9 @@ function sendPage(conn, nameOfFile, replaceMap)
         conn:close() 
         print("Page sent")
         collectgarbage()
+        httpSending=false
     else
-        print("Next") 
+        collectgarbage()
         sendPage(conn, nameOfFile, replaceMap)
     end
   end)
@@ -32,9 +33,6 @@ function sendPage(conn, nameOfFile, replaceMap)
     local line = file.readline()
     
     while (line ~= nil) do
-        -- increase the amount of sent bytes
-        sentBytes=sentBytes+string.len(line)
-        
         -- all placeholder begin with a $, so search for it in the current line
         if (line:find("$") ~= nil) then
             -- Replace the placeholder with the dynamic content
@@ -45,10 +43,15 @@ function sendPage(conn, nameOfFile, replaceMap)
                 end
             end
         end
+
+        
+        -- increase the amount of sent bytes
+        sentBytes=sentBytes+string.len(line)
+        
         buf = buf .. line
         
-        -- Sent after 1k data
-        if (string.len(buf) >= 700) then
+        -- Sent after 500 bytes data
+        if ( (string.len(buf) >= 500) or (node.heap() < 2000) ) then
             line=nil
             conn:send(buf)
             print("Sent part of " .. sentBytes .. "B")
@@ -125,17 +128,55 @@ function startWebServer()
  srv=net.createServer(net.TCP)
  srv:listen(80,function(conn)
   conn:on("receive", function(conn,payload)
+   if (httpSending) then
+     print("HTTP sending... be patient!")
+     return
+   end
+
    
    if (payload:find("GET /") ~= nil) then
-   --here is code for handling http request from a web-browser
-    
-    if (sendPage ~= nil) then
-       print("Sending webpage.html ...")
-       -- Load the sendPagewebcontent
-       replaceMap=fillDynamicMap()
-       sendPage(conn, "webpage.html", replaceMap)
-    end
-    
+    httpSending=true
+    --here is code for handling http request from a web-browser
+    collectgarbage()
+    -- Stop all
+    for i=0,5 do tmr.stop(i) end
+    -- unload all other functions 
+    -- grep function *.lua | grep -v webserver | grep -v init.lua | grep -v main.lua | cut -f 2 -d ':' | grep "^function" | sed "s/function //g" | grep -o "^[a-zA-Z0-9\_]*"
+    updateColor = nil
+    drawLEDs = nil
+    round = nil
+    generateLEDs = nil
+    isSummerTime = nil
+    getUTCtime = nil
+    getTime = nil
+    display_timestat = nil
+    display_countcharacters_de = nil
+    display_countwords_de = nil
+    collectgarbage()
+    ws2812.write(string.char(0,0,0):rep(56) .. color:rep(2) .. string.char(0,0,0):rep(4) .. color:rep(2) .. string.char(0,0,0):rep(48))
+    -- Start Time after 1 minute
+    tmr.alarm(5, 60000, 0 ,function()
+        dependModules = { "timecore" , "wordclock", "displayword" }
+        for _,mod in pairs(dependModules) do
+            print("Loading " .. mod)
+            mydofile(mod)
+        end
+        -- Start the time Thread
+        displayTime()
+        -- Start the time Thread
+        tmr.alarm(1, 20000, 1 ,function()
+             displayTime()
+         end)
+    end)
+    -- send response after 100ms
+    tmr.alarm(4, 100, 0 ,function()
+        if (sendPage ~= nil) then
+           print("Sending webpage.html (" .. tostring(node.heap()) .. "B free) ...")
+           -- Load the sendPagewebcontent
+           replaceMap=fillDynamicMap()
+           sendPage(conn, "webpage.html", replaceMap)
+        end
+    end)
    else if (payload:find("POST /") ~=nil) then
     --code for handling the POST-request (updating settings)
      _, postdatastart = payload:find("\r\n\r\n")
@@ -165,8 +206,8 @@ function startWebServer()
         file.remove(configFile .. ".new")
         sec, _ = rtctime.get()
         file.open(configFile.. ".new", "w+")
-		  file.write("-- Config\n" .. "station_cfg={}\nstation_cfg.ssid=\"" .. _POST.ssid .. "\"\nstation_cfg.pwd=\"" .. _POST.password .. "\"\nstation_cfg.save=false\nwifi.sta.config(station_cfg)\n")
-		  file.write("sntpserverhostname=\"" .. _POST.sntpserver .. "\"\n" .. "timezoneoffset=\"" .. _POST.timezoneoffset .. "\"\n".. "inv46=\"" .. tostring(_POST.inv46) .. "\"\n")
+          file.write("-- Config\n" .. "station_cfg={}\nstation_cfg.ssid=\"" .. _POST.ssid .. "\"\nstation_cfg.pwd=\"" .. _POST.password .. "\"\nstation_cfg.save=false\nwifi.sta.config(station_cfg)\n")
+          file.write("sntpserverhostname=\"" .. _POST.sntpserver .. "\"\n" .. "timezoneoffset=\"" .. _POST.timezoneoffset .. "\"\n".. "inv46=\"" .. tostring(_POST.inv46) .. "\"\n")
         
         if ( _POST.fcolor ~= nil) then
             -- color=string.char(_POST.green, _POST.red, _POST.blue)  
@@ -288,10 +329,11 @@ function startWebServer()
   conn:on("disconnection", function(c)
           print("Goodbye")
           node.output(nil)        -- un-register the redirect output function, output goes to serial
-          
+          collectgarbage()
           --reset amount of sent bytes, as we reached the end
           sentBytes=0
        end)
  end)
 
 end
+--FileView done.
