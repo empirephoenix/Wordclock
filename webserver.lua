@@ -68,7 +68,6 @@ function sendPage(conn, nameOfFile, replaceMap)
     conn:send(buf)
     print("Sent rest")
   end
-  
 end
 
 function fillDynamicMap()    
@@ -151,38 +150,28 @@ function startWebServer()
      print("HTTP sending... be patient!")
      return
    end
-
-   
    if (payload:find("GET /") ~= nil) then
     httpSending=true
-    --here is code for handling http request from a web-browser
-    collectgarbage()
     stopWordclock()
-    
     ws2812.write(string.char(0,0,0):rep(56) .. color:rep(2) .. string.char(0,0,0):rep(4) .. color:rep(2) .. string.char(0,0,0):rep(48))
-    -- Start Time after 1 minute
-    tmr.alarm(5, 60000, 0 ,function()
+    -- Start Time after 3 minute
+    tmr.alarm(5, 180000, 0 ,function()
         dependModules = { "timecore" , "wordclock", "displayword" }
         for _,mod in pairs(dependModules) do
             print("Loading " .. mod)
             mydofile(mod)
         end
-        -- Start the time Thread
-        displayTime()
-        -- Start the time Thread
+        -- Start the time Thread again
         tmr.alarm(1, 20000, 1 ,function()
              displayTime()
          end)
     end)
-    -- send response after 100ms
-    tmr.alarm(4, 100, 0 ,function()
-        if (sendPage ~= nil) then
-           print("Sending webpage.html (" .. tostring(node.heap()) .. "B free) ...")
-           -- Load the sendPagewebcontent
-           replaceMap=fillDynamicMap()
-           sendPage(conn, "webpage.html", replaceMap)
-        end
-    end)
+    if (sendPage ~= nil) then
+       print("Sending webpage.html (" .. tostring(node.heap()) .. "B free) ...")
+       -- Load the sendPagewebcontent
+       replaceMap=fillDynamicMap()
+       sendPage(conn, "webpage.html", replaceMap)
+    end
    else if (payload:find("POST /") ~=nil) then
     --code for handling the POST-request (updating settings)
      _, postdatastart = payload:find("\r\n\r\n")
@@ -326,12 +315,10 @@ function startWebServer()
        node.output(nil)
        global_c=nil
      end)
-     print("Welcome to Word Clock")
-     
+     print("Welcome to Word Clock") 
     end
    end
    end)
-    
   conn:on("disconnection", function(c)
           print("Goodbye")
           node.output(nil)        -- un-register the redirect output function, output goes to serial
