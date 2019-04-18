@@ -26,6 +26,8 @@ if [ $? -ne 0 ]; then
 fi
 echo "Upgrading $IP"
 
+echo "stopWordclock()" | nc $IP 80
+
 FILES="displayword.lua main.lua timecore.lua webpage.html webserver.lua wordclock.lua init.lua"
 
 echo "Start Flasing ..."

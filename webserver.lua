@@ -125,6 +125,7 @@ function fillDynamicMap()
 end
 
 function stopWordclock()
+    print("Stop all Wordclock")
     -- Stop all
     for i=0,5 do tmr.stop(i) end
     -- unload all other functions 
