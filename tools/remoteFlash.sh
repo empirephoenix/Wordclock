@@ -25,7 +25,6 @@ if [ $? -ne 0 ]; then
  exit 2
 fi
 echo "Upgrading $IP"
-exit 3
 
 FILES="displayword.lua main.lua timecore.lua webpage.html webserver.lua wordclock.lua init.lua"
 
@@ -44,7 +43,7 @@ for f in $FILES; do
     fi
 done
 
-echo "Reboot the ESP"
-echo "node.restart()" | nc $IP 80
+echo "TODO: Reboot the ESP"
+#echo "node.restart()" | nc $IP 80
 
 exit 0

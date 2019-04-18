@@ -87,6 +87,10 @@ def main(nodeip, luafile, volatile=None):
                     print "\rSending " + str(i) + "/" + str(len(contents)) + " ...",
                     sys.stdout.flush()
                     l = line.rstrip()
+		    if ( l.endswith("]") ):
+			l = l + " "
+			print "add a space at the end"
+
                     if (volatile is None):
                         if (not sendCmd(s, "w([[" + l + "]]);")):
                             print "Cannot write line " + str(i)
