@@ -27,6 +27,10 @@ fi
 echo "Upgrading $IP"
 
 echo "stopWordclock()" > /tmp/wordClockCMD.txt
+echo "uart.write(0, tostring(node.heap())" >> /tmp/wordClockCMD.txt
+echo "c = string.char(0,0,128)"  >> /tmp/wordClockCMD.txt
+echo "w = string.char(0,0,0)"  >> /tmp/wordClockCMD.txt
+echo "ws2812.write(w:rep(4) .. c .. w:rep(15) .. c .. w:rep(9) .. c .. w:rep(30) .. c .. w:rep(41) .. c )" >> /tmp/wordClockCMD.txt
 $FLASHTOOL -f /tmp/wordClockCMD.txt -t $IP -v
 
 FILES="displayword.lua main.lua timecore.lua webpage.html webserver.lua wordclock.lua init.lua"
