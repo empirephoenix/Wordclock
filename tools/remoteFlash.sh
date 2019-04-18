@@ -26,7 +26,8 @@ if [ $? -ne 0 ]; then
 fi
 echo "Upgrading $IP"
 
-echo "stopWordclock()" | nc $IP 80
+echo "stopWordclock()" > /tmp/wordClockCMD.txt
+$FLASHTOOL -f /tmp/wordClockCMD.txt -t $IP -v
 
 FILES="displayword.lua main.lua timecore.lua webpage.html webserver.lua wordclock.lua init.lua"
 

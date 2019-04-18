@@ -112,7 +112,7 @@ def main(nodeip, luafile, volatile=None):
                     sys.exit(4)
                 
                 # Check if the file exists:
-                if (not sendRecv(s, "=file.open(\"" + luafile + "\")", "true")):
+                if (not sendRecv(s, "=file.exists(\"" + luafile + "\")", "true")):
                     print("Cannot send " + luafile + " to the ESP")
                     sys.exit(4)
                 else:
