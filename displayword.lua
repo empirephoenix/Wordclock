@@ -42,7 +42,7 @@ function drawLEDs(data, numberNewChars, inverseRow)
     if (numberNewChars == nil) then
         numberNewChars=0
     end
-    print(tostring(numberNewChars)  .. " charactes " .. tostring(data.charsPerMinute) .. " per minute; " .. tonumber(data.drawnCharacters) .. " used characters")
+    --print(tostring(numberNewChars)  .. " charactes " .. tostring(data.charsPerMinute) .. " per minute; " .. tonumber(data.drawnCharacters) .. " used characters")
     local tmpBuf=nil
     for i=1,numberNewChars do
         if (tmpBuf == nil) then
@@ -69,6 +69,9 @@ function round(num)
     end
 end
 
+-- Initial value of percentage
+briPercent=50
+
 -- Module displaying of the words
 function generateLEDs(words, colorForground, colorMin1, colorMin2, colorMin3, colorMin4, characters)
  -- Set the local variables needed for the colored progress bar
@@ -86,13 +89,14 @@ function generateLEDs(words, colorForground, colorMin1, colorMin2, colorMin3, co
  end
  data.charsPerMinute = round( (characters / minutes) )
  if (adc ~= nil) then
-    briPercent=(100*adc.read(0)/900)
-    print("Minutes : " .. tostring(minutes) .. " Char minutes: " .. tostring(data.charsPerMinute) .. " bright: " .. tostring(briPercent) .. "%")
-    data.colorFg   = colorForground
-    data.colorMin1 = colorMin1
-    data.colorMin2 = colorMin2
-    data.colorMin3 = colorMin3
-    data.colorMin4 = colorMin4
+    local per = (100*adc.read(0)/1024)
+    briPercent = ( ((briPercent * 4) +  per) / 5)
+    print("Minutes : " .. tostring(minutes) .. " Char minutes: " .. tostring(data.charsPerMinute) .. " bright: " .. tostring(briPercent) .. "% " .. tostring(per) .. "%")
+    data.colorFg   = string.char(string.byte(colorForground,1) * briPercent / 100, string.byte(colorForground,2) * briPercent / 100, string.byte(colorForground,3) * briPercent / 100) 
+    data.colorMin1 = string.char(string.byte(colorMin1,1) * briPercent / 100, string.byte(colorMin1,2) * briPercent / 100, string.byte(colorMin1,3) * briPercent / 100)
+    data.colorMin2 = string.char(string.byte(colorMin2,1) * briPercent / 100, string.byte(colorMin2,2) * briPercent / 100, string.byte(colorMin2,3) * briPercent / 100)
+    data.colorMin3 = string.char(string.byte(colorMin3,1) * briPercent / 100, string.byte(colorMin3,2) * briPercent / 100, string.byte(colorMin3,3) * briPercent / 100)
+    data.colorMin4 = string.char(string.byte(colorMin4,1) * briPercent / 100, string.byte(colorMin4,2) * briPercent / 100, string.byte(colorMin4,3) * briPercent / 100)
  else
     -- devide by five (Minute 0, Minute 1 to Minute 4 takes the last chars)
     print("Minutes : " .. tostring(minutes) .. " Char minutes: " .. tostring(data.charsPerMinute) )
