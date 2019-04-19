@@ -136,6 +136,7 @@ function normalOperation()
         -- Start the time Thread
         tmr.alarm(1, 20000, 1 ,function()
              displayTime()
+             collectgarbage()
          end)
         
       end
