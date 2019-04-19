@@ -160,3 +160,20 @@ else
     -- Logic for inital setup
     startSetupMode()
 end
+----------- button ---------
+gpio.mode(3, gpio.INPUT)
+btnCounter=0
+-- Start the time Thread
+tmr.alarm(4, 500, 1 ,function()
+     if (gpio.read(3) == 0) then
+        tmr.stop(1) -- stop the LED thread
+        print("Button pressed " .. tostring(btnCounter))
+        btnCounter = btnCounter + 5
+        local ledBuf= string.char(128,0,0):rep(btnCounter) .. string.char(0,0,0):rep(110 - btnCounter)
+        ws2812.write(ledBuf)
+        if (btnCounter >= 110) then
+            file.remove("config.lua")
+            node.restart()
+        end
+     end
+end)
