@@ -1,6 +1,7 @@
 # ESP Wordclock
 ## Setup
 
+### Initial Setup
 Install the firmware on the ESP:
 The ESP must be set into the bootloader mode, like [this](https://www.ccc-mannheim.de/wiki/ESP8266#Boot_Modi)
 
@@ -20,6 +21,13 @@ node.reboot()
 Then disconnect the serial terminal and copy the required files to the microcontroller:
 <pre>
 ./tools/initialFlash.sh /dev/ttyUSB0
+</pre>
+
+### Upgrade
+
+Determine the IP address of your clock and execute the following script:
+<pre>
+./tools/remoteFlash.sh IP-Address
 </pre>
 
 ## Internal Setup

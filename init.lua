@@ -11,8 +11,9 @@ tmr.alarm(2, 85, 1, function()
     ws2812.write(string.char(128,0,0):rep(counter1) .. string.char(0,0,0):rep(spaceLeds) .. string.char(0,0,64):rep(counter1))
 end)
 
-local blacklistfile="init.lua config.lua config.lua.new"
+local blacklistfile="init.lua config.lua config.lua.new webpage.html"
 function recompileAll()
+    for i=0,5 do tmr.stop(i) end
     -- compile all files
     l = file.list();
     for k,_ in pairs(l) do
@@ -43,7 +44,16 @@ end
 
 tmr.alarm(1, 5000, 0, function()
     tmr.stop(2)
-    if (file.open("main.lua")) then    
+    if (
+        (file.open("main.lua")) or 
+        (file.open("timecore.lua")) or 
+        (file.open("wordclock.lua")) or 
+        (file.open("displayword.lua")) or 
+        (file.open("webserver.lua"))
+        ) then    
+        c = string.char(0,128,0)
+        w = string.char(0,0,0)
+        ws2812.write(w:rep(4) .. c .. w:rep(15) .. c .. w:rep(9) .. c .. w:rep(30) .. c .. w:rep(41) .. c )
         recompileAll()
         print("Rebooting ...")
         -- reboot repairs everything

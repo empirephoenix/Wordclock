@@ -85,15 +85,24 @@ function generateLEDs(words, colorForground, colorMin1, colorMin2, colorMin3, co
    minutes = minutes + 4
  end
  data.charsPerMinute = round( (characters / minutes) )
- 
- -- devide by five (Minute 0, Minute 1 to Minute 4 takes the last chars)
- print("Minutes : " .. tostring(minutes) .. " Char minutes: " .. tostring(data.charsPerMinute) )
+ if (adc ~= nil) then
+    briPercent=(100*adc.read(0)/900)
+    print("Minutes : " .. tostring(minutes) .. " Char minutes: " .. tostring(data.charsPerMinute) .. " bright: " .. tostring(briPercent) .. "%")
+    data.colorFg   = colorForground
+    data.colorMin1 = colorMin1
+    data.colorMin2 = colorMin2
+    data.colorMin3 = colorMin3
+    data.colorMin4 = colorMin4
+ else
+    -- devide by five (Minute 0, Minute 1 to Minute 4 takes the last chars)
+    print("Minutes : " .. tostring(minutes) .. " Char minutes: " .. tostring(data.charsPerMinute) )
+    data.colorFg=colorForground
+    data.colorMin1=colorMin1
+    data.colorMin2=colorMin2
+    data.colorMin3=colorMin3
+    data.colorMin4=colorMin4
+ end
  data.words=words
- data.colorFg=colorForground
- data.colorMin1=colorMin1
- data.colorMin2=colorMin2
- data.colorMin3=colorMin3
- data.colorMin4=colorMin4
  data.drawnCharacters=0
  data.drawnWords=0
  data.amountWords=display_countwords_de(words)

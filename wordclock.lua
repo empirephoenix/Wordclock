@@ -105,10 +105,10 @@ function display_timestat(hours, minutes, longmode)
  end
  
  if (hours == 1) then
-  if (ret.before == 1) then
-    ret.oneLong = 1
-  else
+  if ((ret.it == 1) and (ret.half == 0) ) then
     ret.one=1
+  else
+    ret.oneLong=1
   end
  elseif (hours == 2) then
   ret.two=1
