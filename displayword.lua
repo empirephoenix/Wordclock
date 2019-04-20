@@ -1,38 +1,8 @@
 -- Module filling a buffer, sent to the LEDs
 
-function updateColor(data, inverseRow, characters2draw)
-  if (inverseRow == nil) then
-    inverseRow=false
-  end
-  -- special case, and there are exactly 4 words to display (so each word for each minute)
-    if (not inverseRow) then -- nomral row
-         if (data.drawnCharacters < data.charsPerMinute) then
-            return data.colorFg
-        elseif (data.drawnCharacters < data.charsPerMinute*2) then
-            return data.colorMin1
-        elseif (data.drawnCharacters < data.charsPerMinute*3) then 
-            return data.colorMin2
-        elseif (data.drawnCharacters > data.charsPerMinute*4) then 
-            return data.colorMin3
-        elseif (data.drawnCharacters > data.charsPerMinute*5) then 
-            return data.colorMin4
-        else
-            return data.colorFg
-        end
-    else -- inverse row
-        --FIXME magic missing to start on the left side
-         if (data.drawnCharacters < data.charsPerMinute) then
-                return data.colorMin1
-        elseif (data.drawnCharacters < data.charsPerMinute*2) then
-                return data.colorMin2
-        elseif (data.drawnCharacters < data.charsPerMinute*3) then 
-                return data.colorMin3
-        elseif (data.drawnCharacters > data.charsPerMinute*4) then 
-                return data.colorMin4
-        else
-            return data.colorFg
-        end
-    end
+function updateColor(data, inverseRow)
+    --FIXME magic missing to start on the left side
+    return data.colorFg
 end
 
 function drawLEDs(data, numberNewChars, inverseRow)
@@ -42,17 +12,15 @@ function drawLEDs(data, numberNewChars, inverseRow)
     if (numberNewChars == nil) then
         numberNewChars=0
     end
-    --print(tostring(numberNewChars)  .. " charactes " .. tostring(data.charsPerMinute) .. " per minute; " .. tonumber(data.drawnCharacters) .. " used characters")
     local tmpBuf=nil
     for i=1,numberNewChars do
         if (tmpBuf == nil) then
-            tmpBuf = updateColor(data, inverseRow, numberNewChars)
+            tmpBuf = updateColor(data, inverseRow)
         else
-            tmpBuf=tmpBuf .. updateColor(data, inverseRow, numberNewChars)
+            tmpBuf=tmpBuf .. updateColor(data, inverseRow)
         end
         data.drawnCharacters=data.drawnCharacters+1
     end
-    data.drawnWords=data.drawnWords+1 
     return tmpBuf
 end
 
@@ -73,7 +41,7 @@ end
 briPercent=50
 
 -- Module displaying of the words
-function generateLEDs(words, colorForground, colorMin1, colorMin2, colorMin3, colorMin4, characters)
+function generateLEDs(words, colorForground, colorMin1, colorMin2, colorMin3, colorMin4)
  -- Set the local variables needed for the colored progress bar
  data={}
  
@@ -87,11 +55,10 @@ function generateLEDs(words, colorForground, colorMin1, colorMin2, colorMin3, co
  elseif (words.min4 == 1) then
    minutes = minutes + 4
  end
- data.charsPerMinute = round( (characters / minutes) )
  if (adc ~= nil) then
     local per = (100*adc.read(0)/1024)
     briPercent = ( ((briPercent * 4) +  per) / 5)
-    print("Minutes : " .. tostring(minutes) .. " Char minutes: " .. tostring(data.charsPerMinute) .. " bright: " .. tostring(briPercent) .. "% " .. tostring(per) .. "%")
+    print("Minutes : " .. tostring(minutes) .. " bright: " .. tostring(briPercent) .. "% current: " .. tostring(per) .. "%")
     data.colorFg   = string.char(string.byte(colorForground,1) * briPercent / 100, string.byte(colorForground,2) * briPercent / 100, string.byte(colorForground,3) * briPercent / 100) 
     data.colorMin1 = string.char(string.byte(colorMin1,1) * briPercent / 100, string.byte(colorMin1,2) * briPercent / 100, string.byte(colorMin1,3) * briPercent / 100)
     data.colorMin2 = string.char(string.byte(colorMin2,1) * briPercent / 100, string.byte(colorMin2,2) * briPercent / 100, string.byte(colorMin2,3) * briPercent / 100)
@@ -99,7 +66,6 @@ function generateLEDs(words, colorForground, colorMin1, colorMin2, colorMin3, co
     data.colorMin4 = string.char(string.byte(colorMin4,1) * briPercent / 100, string.byte(colorMin4,2) * briPercent / 100, string.byte(colorMin4,3) * briPercent / 100)
  else
     -- devide by five (Minute 0, Minute 1 to Minute 4 takes the last chars)
-    print("Minutes : " .. tostring(minutes) .. " Char minutes: " .. tostring(data.charsPerMinute) )
     data.colorFg=colorForground
     data.colorMin1=colorMin1
     data.colorMin2=colorMin2
@@ -109,7 +75,6 @@ function generateLEDs(words, colorForground, colorMin1, colorMin2, colorMin3, co
  data.words=words
  data.drawnCharacters=0
  data.drawnWords=0
- data.amountWords=display_countwords_de(words)
  local charsPerLine=11
  -- Space / background has no color by default
  local space=string.char(0,0,0)
@@ -275,7 +240,5 @@ if (words.fiveMin== 1) then
     buf= buf .. space:rep(1)
   end
   collectgarbage()
-
   return buf
 end
-

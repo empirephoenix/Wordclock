@@ -137,8 +137,6 @@ function stopWordclock()
     getUTCtime = nil
     getTime = nil
     display_timestat = nil
-    display_countcharacters_de = nil
-    display_countwords_de = nil
     collectgarbage()
 end
 
