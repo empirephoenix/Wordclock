@@ -93,9 +93,16 @@ public class WS2812Simulation implements LuaSimulation {
 							if (args.length >= 3) {
 								File additionalFile = new File(args[2]);
 								if (additionalFile.exists() && (simu.doFile != null)) {
-
-									Files.copy(additionalFile.toPath(), new File(simu.doFile.getWorkingDirectory()
-											+ File.separator + additionalFile.getName()).toPath());
+									File targetFile = new File(simu.doFile.getWorkingDirectory()
+											+ File.separator + additionalFile.getName());
+									if (targetFile.exists()) {
+										if (targetFile.delete()) {
+											System.out.println("Removed original " + targetFile.getName() + "");
+										} else {
+											System.err.println("Cannot removed original " + targetFile.getName() + "");
+										}
+									}
+									Files.copy(additionalFile.toPath(), targetFile.toPath());
 									System.out.println("Integrate " + additionalFile.getName() + " into simulation");
 								} else {
 									System.err.println("Script " + args[2] + " cannot be found");
