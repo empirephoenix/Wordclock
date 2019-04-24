@@ -11,6 +11,7 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.jse.JsePlatform;
 
 import de.c3ma.ollo.mockup.DoFileFunction;
+import de.c3ma.ollo.mockup.ESP8266Adc;
 import de.c3ma.ollo.mockup.ESP8266File;
 import de.c3ma.ollo.mockup.ESP8266Net;
 import de.c3ma.ollo.mockup.ESP8266Node;
@@ -36,6 +37,7 @@ public class WS2812Simulation implements LuaSimulation {
 	private ESP8266Node espNode = new ESP8266Node(this);
 	private DoFileFunction doFile = new DoFileFunction(globals);
 	private ESP8266Ws2812 ws2812 = new ESP8266Ws2812();
+	private ESP8266Adc adc = new ESP8266Adc();
 	private String scriptName;
 
 	public WS2812Simulation(File sourceFolder) {
@@ -44,6 +46,7 @@ public class WS2812Simulation implements LuaSimulation {
 		globals.load(espTmr);
 		globals.load(espFile);
 		globals.load(espNode);
+		globals.load(adc);
 		globals.load(new ESP8266Wifi());
 		globals.load(new ESP8266Net());
 		globals.load(new ESP8266Time());
@@ -177,4 +180,9 @@ public class WS2812Simulation implements LuaSimulation {
     public void setSimulationTime(long timeInMillis) {
         ESP8266Time.setOverwrittenTime(timeInMillis);
     }
+
+	@Override
+	public void setADC(int value) {
+		adc.setADC(value);
+	}
 }

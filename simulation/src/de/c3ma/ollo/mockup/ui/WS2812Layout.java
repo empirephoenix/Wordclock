@@ -122,8 +122,7 @@ public class WS2812Layout extends JFrame {
 			
 			@Override
 			public void stateChanged(ChangeEvent e) {
-				// TODO Auto-generated method stub
-				
+				nodemcuSimu.setADC(adc.getValue());
 			}
 		});
 		
