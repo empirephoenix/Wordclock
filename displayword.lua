@@ -43,7 +43,7 @@ briPercent=50
 -- Module displaying of the words
 function generateLEDs(words, colorForground, colorMin1, colorMin2, colorMin3, colorMin4)
  -- Set the local variables needed for the colored progress bar
- data={}
+ local data={}
  
  local minutes=1
  if (words.min1 == 1) then
@@ -56,7 +56,7 @@ function generateLEDs(words, colorForground, colorMin1, colorMin2, colorMin3, co
    minutes = minutes + 4
  end
  if (adc ~= nil) then
-    local per = (100*adc.read(0)/1024)
+    local per = math.floor(100*adc.read(0)/1000)
     briPercent = math.floor( ((briPercent * 4) +  per) / 5)
     print("Minutes : " .. tostring(minutes) .. " bright: " .. tostring(briPercent) .. "% current: " .. tostring(per) .. "%")
     data.colorFg   = string.char(string.byte(colorForground,1) * briPercent / 100, string.byte(colorForground,2) * briPercent / 100, string.byte(colorForground,3) * briPercent / 100) 
