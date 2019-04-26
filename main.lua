@@ -52,7 +52,7 @@ function displayTime()
 
      ledBuf = generateLEDs(words, color, color1, color2, color3, color4)
      
-     print("Local time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second)
+     print("Local time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second .. " char: " .. tostring(data.drawnCharacters))
      
      --if lines 4 to 6 are inverted due to hardware-fuckup, unfuck it here
 	  if ((inv46 ~= nil) and (inv46 == "on")) then

@@ -39,11 +39,12 @@ end
 
 -- Initial value of percentage
 briPercent=50
+data={}
 
 -- Module displaying of the words
 function generateLEDs(words, colorForground, colorMin1, colorMin2, colorMin3, colorMin4)
  -- Set the local variables needed for the colored progress bar
- local data={}
+ data={}
  
  local minutes=1
  if (words.min1 == 1) then
