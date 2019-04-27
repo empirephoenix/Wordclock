@@ -42,18 +42,20 @@ function syncTimeFromInternet()
 end
 
 function displayTime()
-     sec, usec = rtctime.get()
+     local sec, usec = rtctime.get()
      -- Handle lazy programmer:
      if (timezoneoffset == nil) then
         timezoneoffset=0
      end
-     time = getTime(sec, timezoneoffset)
-     words = display_timestat(time.hour, time.minute)
+     local time = getTime(sec, timezoneoffset)
+     local words = display_timestat(time.hour, time.minute)
+     print(package.path)
+     dp = require("displayword")
 
-     ledBuf = generateLEDs(words, color, color1, color2, color3, color4)
+     ledBuf = dp.generateLEDs(words, color, color1, color2, color3, color4)
      
-     print("Local time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second .. " char: " .. tostring(data.drawnCharacters))
-     
+     print("Local time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second .. " char: " .. tostring(dp.data.drawnCharacters))
+    dp = nil 
      --if lines 4 to 6 are inverted due to hardware-fuckup, unfuck it here
 	  if ((inv46 ~= nil) and (inv46 == "on")) then
 		  tempstring = ledBuf:sub(1,99) -- first 33 leds
@@ -115,7 +117,7 @@ function normalOperation()
         print('IP: ',wifi.sta.getip())
         -- Here the WLAN is found, and something is done
         print("Solving dependencies")
-        local dependModules = { "timecore" , "wordclock", "displayword" }
+        local dependModules = { "timecore" , "wordclock" }
         for _,mod in pairs(dependModules) do
             print("Loading " .. mod)
             mydofile(mod)

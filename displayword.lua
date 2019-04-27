@@ -1,11 +1,16 @@
 -- Module filling a buffer, sent to the LEDs
 
-function updateColor(data, inverseRow)
+local moduleName = ...
+local M = {} -- public interface
+_G[moduleName] = M
+
+
+function M.updateColor(data, inverseRow)
     --FIXME magic missing to start on the left side
     return data.colorFg
 end
 
-function drawLEDs(data, numberNewChars, inverseRow)
+function M.drawLEDs(data, numberNewChars, inverseRow)
     if (inverseRow == nil) then
          inverseRow=false
     end
@@ -25,7 +30,7 @@ function drawLEDs(data, numberNewChars, inverseRow)
 end
 
 -- Utility function for round
-function round(num)
+function M.round(num)
     under = math.floor(num)
     upper = math.floor(num) + 1
     underV = -(under - num)
@@ -38,11 +43,11 @@ function round(num)
 end
 
 -- Initial value of percentage
-briPercent=50
-data={}
+local briPercent=50
+local data={}
 
 -- Module displaying of the words
-function generateLEDs(words, colorForground, colorMin1, colorMin2, colorMin3, colorMin4)
+function M.generateLEDs(words, colorForground, colorMin1, colorMin2, colorMin3, colorMin4)
  -- Set the local variables needed for the colored progress bar
  data={}
  
