@@ -50,12 +50,13 @@ function displayTime()
      local time = getTime(sec, timezoneoffset)
      local words = display_timestat(time.hour, time.minute)
      print(package.path)
-     dp = require("displayword")
-
-     ledBuf = dp.generateLEDs(words, color, color1, color2, color3, color4)
-     
-     print("Local time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second .. " char: " .. tostring(dp.data.drawnCharacters))
-    dp = nil 
+     dp = dofile("displayword.lc")
+     if (dp ~= nil) then
+        ledBuf = dp.generateLEDs(words, color, color1, color2, color3, color4)
+        print("Local time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second .. " char: " .. tostring(dp.data.drawnCharacters))
+     end
+     dp = nil
+     if (ledBuf ~= nil) then
      --if lines 4 to 6 are inverted due to hardware-fuckup, unfuck it here
 	  if ((inv46 ~= nil) and (inv46 == "on")) then
 		  tempstring = ledBuf:sub(1,99) -- first 33 leds
@@ -72,9 +73,7 @@ function displayTime()
 		  ws2812.write(ledBuf)
 		  ledBuf=nil
 	  end
-	  
-	  
-    
+	end
      -- Used for debugging
      if (clockdebug ~= nil) then
          for key,value in pairs(words) do 
