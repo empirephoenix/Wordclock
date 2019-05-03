@@ -102,15 +102,37 @@ function normalOperation()
    
     connect_counter=0
     -- Wait to be connect to the WiFi access point. 
-    tmr.alarm(0, 1000, 1, function()
+    tmr.alarm(0, 500, 1, function()
       connect_counter=connect_counter+1
       if wifi.sta.status() ~= 5 then
          print(connect_counter ..  "/60 Connecting to AP...")
-         if (connect_counter % 2 == 0) then
+         if (connect_counter % 5 ~= 4) then
             local wlanColor=string.char((connect_counter % 6)*20,(connect_counter % 5)*20,(connect_counter % 3)*20)
             local space=string.char(0,0,0)
-            local buf=space:rep(6) .. wlanColor .. space:rep(4)
-            buf= buf .. space:rep(3) .. wlanColor:rep(3)
+            local buf=space:rep(6)
+            if ((connect_counter % 5) >= 1) then
+                buf = buf .. wlanColor
+            else
+                buf = buf .. space
+            end
+            buf = buf .. space:rep(4)
+            buf= buf .. space:rep(3) 
+            if ((connect_counter % 5) >= 3) then
+                buf = buf .. wlanColor
+            else
+                buf = buf .. space
+            end
+            if ((connect_counter % 5) >= 2) then
+                buf = buf .. wlanColor
+            else
+                buf = buf .. space
+            end
+            if ((connect_counter % 5) >= 0) then
+                buf = buf .. wlanColor
+            else
+                buf = buf .. space
+            end
+            buf = buf .. space:rep(100)
             ws2812.write(buf)
          else
            ws2812.write(string.char(0,0,0):rep(114))
