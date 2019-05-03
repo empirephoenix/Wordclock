@@ -49,11 +49,6 @@ local generateLEDs = function(words, colorForground, colorMin1, colorMin2, color
    return nil
  end
 
- -- Initial value of percentage
- if (words.briPercent == nil) then
-    words.briPercent=50
- end
- 
  local minutes=1
  if (words.min1 == 1) then
    minutes = minutes + 1
@@ -64,7 +59,7 @@ local generateLEDs = function(words, colorForground, colorMin1, colorMin2, color
  elseif (words.min4 == 1) then
    minutes = minutes + 4
  end
- if (adc ~= nil) then
+ if ( (adc ~= nil) and (words.briPercent ~= nil) ) then
     local per = math.floor(100*adc.read(0)/1000)
     words.briPercent = tonumber( ((words.briPercent * 4) +  per) / 5)
     print("Minutes : " .. tostring(minutes) .. " bright: " .. tostring(words.briPercent) .. "% current: " .. tostring(per) .. "%")

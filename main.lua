@@ -49,7 +49,11 @@ function displayTime()
      end
      local time = getTime(sec, timezoneoffset)
      local words = display_timestat(time.hour, time.minute)
-     words.briPercent=briPercent
+     if ((dim ~= nil) and (dim == "on")) then
+        words.briPercent=briPercent
+     else
+        words.briPercent=nil
+     end
      dp = dofile("displayword.lc")
      if (dp ~= nil) then
         ledBuf = dp.generateLEDs(words, color, color1, color2, color3, color4)
