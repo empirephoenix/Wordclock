@@ -49,7 +49,6 @@ function displayTime()
      end
      local time = getTime(sec, timezoneoffset)
      local words = display_timestat(time.hour, time.minute)
-     print(package.path)
      dp = dofile("displayword.lc")
      if (dp ~= nil) then
         ledBuf = dp.generateLEDs(words, color, color1, color2, color3, color4)
@@ -132,7 +131,7 @@ function normalOperation()
         end)
         displayTime()
         -- Start the time Thread
-        tmr.alarm(1, 20000, 1 ,function()
+        tmr.alarm(1, 10000, 1 ,function()
              displayTime()
              collectgarbage()
          end)
