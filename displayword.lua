@@ -46,6 +46,10 @@ local data={}
 local generateLEDs = function(words, colorForground, colorMin1, colorMin2, colorMin3, colorMin4)
  -- Set the local variables needed for the colored progress bar
  data={}
+
+ if (words == nil) then
+   return nil
+ end
  
  local minutes=1
  if (words.min1 == 1) then
@@ -249,6 +253,7 @@ M = {
     round        = round,
     drawLEDs     = drawLEDs,
     updateColor  = updateColor,
+    data         = data,
 }
 end
 return M
