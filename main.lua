@@ -40,7 +40,7 @@ function syncTimeFromInternet()
      end
    )
 end
-
+briPercent = 50
 function displayTime()
      local sec, usec = rtctime.get()
      -- Handle lazy programmer:
@@ -49,6 +49,7 @@ function displayTime()
      end
      local time = getTime(sec, timezoneoffset)
      local words = display_timestat(time.hour, time.minute)
+     words.briPercent=briPercent
      dp = dofile("displayword.lc")
      if (dp ~= nil) then
         ledBuf = dp.generateLEDs(words, color, color1, color2, color3, color4)
@@ -82,7 +83,7 @@ function displayTime()
          end
      end
      -- cleanup
-
+     briPercent=words.briPercent
      words=nil
      time=nil
      collectgarbage()

@@ -38,8 +38,6 @@ local round = function(num)
     end
 end
 
--- Initial value of percentage
-local briPercent=50
 local data={}
 
 -- Module displaying of the words
@@ -49,6 +47,11 @@ local generateLEDs = function(words, colorForground, colorMin1, colorMin2, color
 
  if (words == nil) then
    return nil
+ end
+
+ -- Initial value of percentage
+ if (words.briPercent == nil) then
+    words.briPercent=50
  end
  
  local minutes=1
@@ -63,8 +66,8 @@ local generateLEDs = function(words, colorForground, colorMin1, colorMin2, color
  end
  if (adc ~= nil) then
     local per = math.floor(100*adc.read(0)/1000)
-    briPercent = math.floor( ((briPercent * 4) +  per) / 5)
-    print("Minutes : " .. tostring(minutes) .. " bright: " .. tostring(briPercent) .. "% current: " .. tostring(per) .. "%")
+    words.briPercent = tonumber( ((words.briPercent * 4) +  per) / 5)
+    print("Minutes : " .. tostring(minutes) .. " bright: " .. tostring(words.briPercent) .. "% current: " .. tostring(per) .. "%")
     data.colorFg   = string.char(string.byte(colorForground,1) * briPercent / 100, string.byte(colorForground,2) * briPercent / 100, string.byte(colorForground,3) * briPercent / 100) 
     data.colorMin1 = string.char(string.byte(colorMin1,1) * briPercent / 100, string.byte(colorMin1,2) * briPercent / 100, string.byte(colorMin1,3) * briPercent / 100)
     data.colorMin2 = string.char(string.byte(colorMin2,1) * briPercent / 100, string.byte(colorMin2,2) * briPercent / 100, string.byte(colorMin2,3) * briPercent / 100)
