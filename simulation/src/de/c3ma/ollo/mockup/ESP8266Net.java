@@ -1,20 +1,15 @@
 package de.c3ma.ollo.mockup;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.file.Files;
 
 import org.luaj.vm2.LuaFunction;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.lib.OneArgFunction;
+import org.luaj.vm2.lib.ThreeArgFunction;
 import org.luaj.vm2.lib.TwoArgFunction;
-import org.luaj.vm2.lib.ZeroArgFunction;
-
-import de.c3ma.ollo.LuaSimulation;
 
 /**
  * created at 29.12.2017 - 01:29:40<br />
@@ -30,7 +25,7 @@ public class ESP8266Net extends TwoArgFunction {
     @Override
     public LuaValue call(LuaValue modname, LuaValue env) {
         env.checkglobals();
-        final LuaTable net = new LuaTable();
+        LuaValue net = LuaValue.tableOf();
         net.set("createServer", new CreateServerFunction());
         
         //FIXME net.set("send", new SendFunction());
@@ -40,21 +35,25 @@ public class ESP8266Net extends TwoArgFunction {
         return net;
     }
     
-    private class CreateServerFunction extends OneArgFunction {
+    private class CreateServerFunction extends TwoArgFunction {
 
         @Override
-        public LuaValue call(LuaValue arg) {
-            final LuaTable srv = new LuaTable();
-            srv.set("listen", new ListenFunction());
-            return srv;
+        public LuaValue call(LuaValue modname, LuaValue globalEnv) {
+        	LuaValue cs = LuaValue.tableOf();
+        	cs.set("listen", new ListenFunction());
+        	return cs;
         }
         
     }
     
-    private class ListenFunction extends TwoArgFunction {
+    private class ListenFunction extends ThreeArgFunction {
 
         @Override
-        public LuaValue call(LuaValue port, LuaValue function) {
+        public LuaValue call(LuaValue self, LuaValue port, LuaValue function) {
+        	if(!self.istable()) {
+        		return NIL;
+        	}
+        	
             int portnumber = port.checkint();
             LuaFunction onListenFunction = function.checkfunction();
 
