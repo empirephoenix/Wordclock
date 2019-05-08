@@ -160,9 +160,8 @@ public class WS2812Simulation implements LuaSimulation {
 				callScript(this.scriptName);
 			}
 		} catch (InterruptedException e) {
-
+			
 		}
-
 	}
 
 	private void callScript(String filename) {

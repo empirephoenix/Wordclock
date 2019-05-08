@@ -254,4 +254,4 @@ M = {
     data         = data,
 }
 end
-return M
+displayword = M
