@@ -1,7 +1,5 @@
 -- Main Module
 
-displayword = {}
-
 function startSetupMode()
     tmr.stop(0)
     tmr.stop(1)
@@ -56,12 +54,12 @@ function displayTime()
      else
         words.briPercent=nil
      end
-     dofile("displayword.lc")
-     if (displayword ~= nil) then
-        ledBuf = displayword.generateLEDs(words, color, color1, color2, color3, color4)
+     dp = dofile("displayword.lc")
+     if (dp ~= nil) then
+        ledBuf = dp.generateLEDs(words, color, color1, color2, color3, color4)
         print("Local time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second .. " char: " .. tostring(displayword.data.drawnCharacters))
      end
-     displayword = nil
+     dp = nil
      if (ledBuf ~= nil) then
      --if lines 4 to 6 are inverted due to hardware-fuckup, unfuck it here
 	  if ((inv46 ~= nil) and (inv46 == "on")) then

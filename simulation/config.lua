@@ -12,3 +12,4 @@ color4=string.char(tonumber(green2*0.2), 0, 0)
 colorBg=string.char(0,0,0) -- black is the default background color
 sntpserverhostname="ptbtime1.ptb.de"
 timezoneoffset=1
+dim="on"

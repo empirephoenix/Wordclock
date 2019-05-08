@@ -13,6 +13,7 @@ import org.luaj.vm2.lib.jse.JsePlatform;
 import de.c3ma.ollo.mockup.DoFileFunction;
 import de.c3ma.ollo.mockup.ESP8266Adc;
 import de.c3ma.ollo.mockup.ESP8266File;
+import de.c3ma.ollo.mockup.ESP8266GPIO;
 import de.c3ma.ollo.mockup.ESP8266Net;
 import de.c3ma.ollo.mockup.ESP8266Node;
 import de.c3ma.ollo.mockup.ESP8266Time;
@@ -46,11 +47,13 @@ public class WS2812Simulation implements LuaSimulation {
 		globals.load(espTmr);
 		globals.load(espFile);
 		globals.load(espNode);
+		globals.load(new ESP8266GPIO());
 		globals.load(adc);
 		globals.load(new ESP8266Wifi());
 		globals.load(new ESP8266Net());
 		globals.load(new ESP8266Time());
 		globals.set("dofile", doFile);
+		adc.setADC(50);
 
 		try {
 			File tempFile = File.createTempFile("NodemcuSimuFile", "");
