@@ -1,7 +1,7 @@
 -- Module filling a buffer, sent to the LEDs
 local M
 do
-local updateColor = function (data, inverseRow)
+local updateColor = function (data)
     --FIXME magic missing to start on the left side
     return data.colorFg
 end
@@ -13,9 +13,9 @@ local drawLEDs = function(data, numberNewChars)
     local tmpBuf=nil
     for i=1,numberNewChars do
         if (tmpBuf == nil) then
-            tmpBuf = updateColor(data, inverseRow)
+            tmpBuf = updateColor(data)
         else
-            tmpBuf=tmpBuf .. updateColor(data, inverseRow)
+            tmpBuf=tmpBuf .. updateColor(data)
         end
         data.drawnCharacters=data.drawnCharacters+1
     end
@@ -134,8 +134,8 @@ if (words.fiveMin== 1) then
  buf = buf .. line
  --line 4-------- even row (so inverted) -------------
  if (words.after == 1) then
-    line= line .. space:rep(2) -- TG
-    line= drawLEDs(data,4) -- NACH
+    line= space:rep(2) -- TG
+    line= line .. drawLEDs(data,4) -- NACH
   else
     line= space:rep(6)
  end
