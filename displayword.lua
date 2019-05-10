@@ -6,10 +6,7 @@ local updateColor = function (data, inverseRow)
     return data.colorFg
 end
 
-local drawLEDs = function(data, numberNewChars, inverseRow)
-    if (inverseRow == nil) then
-         inverseRow=false
-    end
+local drawLEDs = function(data, numberNewChars)
     if (numberNewChars == nil) then
         numberNewChars=0
     end
@@ -87,7 +84,7 @@ local generateLEDs = function(words, colorForground, colorMin1, colorMin2, color
 
  -- Set the foreground color as the default color
  local buf=colorFg
-
+ local line=space
  -- line 1----------------------------------------------
  if (words.it==1) then
     buf=drawLEDs(data,2) -- ES
@@ -109,120 +106,145 @@ if (words.fiveMin== 1) then
     buf= buf .. space:rep(4)
  end
  -- line 2-- even row (so inverted) --------------------
- if (words.twenty == 1) then
-    buf= buf .. drawLEDs(data,7,true) -- ZWANZIG
-  else
-    buf= buf .. space:rep(7)
- end
  if (words.tenMin == 1) then
-    buf= buf .. drawLEDs(data,4,true) -- ZEHN
+    line= drawLEDs(data,4) -- ZEHN
   else
-    buf= buf .. space:rep(4)
+    line= space:rep(4)
  end
+ if (words.twenty == 1) then
+    line= line .. drawLEDs(data,7) -- ZWANZIG
+  else
+    line= line .. space:rep(7)
+ end
+ -- fill, the buffer
+ for i = 0,10 do
+      buf = buf .. line:sub((11-i)*3-2,(11-i)*3)
+ end
+
  -- line3----------------------------------------------
  if (words.threequater == 1) then
-    buf= buf .. drawLEDs(data,11) -- Dreiviertel
+    line= drawLEDs(data,11) -- Dreiviertel
   elseif (words.quater == 1) then
-    buf= buf .. space:rep(4)
-    buf= buf .. drawLEDs(data,7) -- VIERTEL
+    line= space:rep(4)
+    line= line .. drawLEDs(data,7) -- VIERTEL
  else
-    buf= buf .. space:rep(11)
+    line= space:rep(11)
  end
+ -- fill, the buffer
+ buf = buf .. line
  --line 4-------- even row (so inverted) -------------
- if (words.before == 1) then
-    buf=buf .. space:rep(2) 
-    buf= buf .. drawLEDs(data,3,true) -- VOR
-  else
-    buf= buf .. space:rep(5)
- end
  if (words.after == 1) then
-    buf= buf .. drawLEDs(data,4,true) -- NACH
-    buf= buf .. space:rep(2) -- TG
+    line= line .. space:rep(2) -- TG
+    line= drawLEDs(data,4) -- NACH
   else
-    buf= buf .. space:rep(6)
+    line= space:rep(6)
+ end
+ if (words.before == 1) then
+    line= line .. drawLEDs(data,3) -- VOR
+    line= line .. space:rep(2) 
+  else
+    line= line .. space:rep(5)
+ end
+ for i = 0,10 do
+      buf = buf .. line:sub((11-i)*3-2,(11-i)*3)
  end
  ------------------------------------------------
  if (words.half == 1) then
-    buf= buf .. drawLEDs(data,4) -- HALB
-    buf= buf .. space:rep(1) -- X
+    line= drawLEDs(data,4) -- HALB
+    line= line .. space:rep(1) -- X
   else
-    buf= buf .. space:rep(5)
+    line= space:rep(5)
  end
  if (words.twelve == 1) then
-    buf= buf .. drawLEDs(data,5) -- ZWOELF
-    buf= buf .. space:rep(1) -- P
+    line= line .. drawLEDs(data,5) -- ZWOELF
+    line= line .. space:rep(1) -- P
   else
-    buf= buf .. space:rep(6)
+    line= line .. space:rep(6)
  end
+ buf=buf .. line
  ------------even row (so inverted) ---------------------
  if (words.seven == 1) then
-    buf= buf .. drawLEDs(data,6,true) -- SIEBEN
-    buf= buf .. space:rep(5)
+    line= space:rep(5)
+    line= line .. drawLEDs(data,6) -- SIEBEN
  elseif (words.oneLong == 1) then
-    buf= buf .. space:rep(5)
-    buf= buf .. drawLEDs(data,4,true) -- EINS
-    buf= buf .. space:rep(2)
+    line= space:rep(2)
+    line= line .. drawLEDs(data,4) -- EINS
+    line= line .. space:rep(5)
  elseif (words.one == 1) then
-    buf= buf .. space:rep(6)
-    buf= buf .. drawLEDs(data,3,true) -- EIN
-    buf= buf .. space:rep(2)
+    line= space:rep(2)
+    line= line .. drawLEDs(data,3) -- EIN
+    line= line .. space:rep(6)
  elseif (words.two == 1) then
-    buf= buf .. space:rep(7)
-    buf= buf .. drawLEDs(data,4,true) -- ZWEI
+    line= drawLEDs(data,4) -- ZWEI
+    line= line .. space:rep(7)
  else
-    buf= buf .. space:rep(11)
+    line= space:rep(11)
+ end
+
+ for i = 0,10 do
+      buf = buf .. line:sub((11-i)*3-2,(11-i)*3)
  end
  ------------------------------------------------
  if (words.three == 1) then
-    buf= buf .. space:rep(1)
-    buf= buf .. drawLEDs(data,4) -- DREI
-    buf= buf .. space:rep(6)
-  elseif (words.five == 1) then
-    buf= buf .. space:rep(7)
-    buf= buf .. drawLEDs(data,4) -- FUENF
+    line= space:rep(1)
+    line= line .. drawLEDs(data,4) -- DREI
+    line= line .. space:rep(6)
+ elseif (words.five == 1) then
+    line= space:rep(7)
+    line= line .. drawLEDs(data,4) -- FUENF
  else
-    buf= buf .. space:rep(11)
+    line= space:rep(11)
  end
+ buf = buf .. line
  ------------even row (so inverted) ---------------------
  if (words.four == 1) then
-    buf= buf .. drawLEDs(data,4,true) -- VIER
-    buf= buf .. space:rep(7)
+    line= space:rep(7)
+    line= line .. drawLEDs(data,4) -- VIER
   elseif (words.nine == 1) then
-    buf= buf .. space:rep(4)
-    buf= buf .. drawLEDs(data,4,true) -- NEUN
-    buf= buf .. space:rep(3)
+    line= space:rep(3)
+    line= line .. drawLEDs(data,4) -- NEUN
+    line= line .. space:rep(4)
  elseif (words.eleven == 1) then
-    buf= buf .. space:rep(8)
-    buf= buf .. drawLEDs(data,3,true) -- ELEVEN
+    line= drawLEDs(data,3) -- ELEVEN
+    line= line .. space:rep(8)
  else
-    buf= buf .. space:rep(11)
+    line= space:rep(11)
+ end
+
+ for i = 0,10 do
+      buf = buf .. line:sub((11-i)*3-2,(11-i)*3)
  end
  ------------------------------------------------
  if (words.eight == 1) then
-    buf= buf .. space:rep(1)
-    buf= buf .. drawLEDs(data,4) -- ACHT
-    buf= buf .. space:rep(6)
+    line= space:rep(1)
+    line= line .. drawLEDs(data,4) -- ACHT
+    line= line .. space:rep(6)
   elseif (words.ten == 1) then
-    buf= buf .. space:rep(5)
-    buf= buf .. drawLEDs(data,4) -- ZEHN
-    buf= buf .. space:rep(2)
+    line= space:rep(5)
+    line= line .. drawLEDs(data,4) -- ZEHN
+    line= line .. space:rep(2)
  else
-    buf= buf .. space:rep(11)
+    line= space:rep(11)
  end
+ buf = buf .. line
  ------------even row (so inverted) ---------------------
- if (words.clock == 1) then
-    buf= buf .. drawLEDs(data,3,true) -- UHR
-  else
-    buf= buf .. space:rep(3)
- end
  if (words.six == 1) then
-    buf= buf .. space:rep(2)
-    buf= buf .. drawLEDs(data,5,true) -- SECHS
-    buf= buf .. space:rep(1)
+    line= space:rep(1)
+    line= line .. drawLEDs(data,5) -- SECHS
+    line= line .. space:rep(2)
   else
-    buf= buf .. space:rep(8)
+    line= space:rep(8)
  end
- 
+ if (words.clock == 1) then
+    line= line .. drawLEDs(data,3) -- UHR
+  else
+    line= line .. space:rep(3)
+ end
+
+ for i = 0,10 do
+      buf = buf .. line:sub((11-i)*3-2,(11-i)*3)
+ end
+------ Minutes -----------
  if (words.min1 == 1) then
     buf= buf .. colorFg
   else
