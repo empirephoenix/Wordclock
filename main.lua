@@ -58,26 +58,26 @@ function displayTime()
      end
      dofile("displayword.lc")
      if (displayword ~= nil) then
-        ledBuf = displayword.generateLEDs(words, color, color1, color2, color3, color4)
+        --if lines 4 to 6 are inverted due to hardware-fuckup, unfuck it here
+        local invertRows=false
+	    if ((inv46 ~= nil) and (inv46 == "on")) then
+            invertRows=true
+        end 
+        ledBuf = displayword.generateLEDs(words, color, color1, color2, color3, color4, invertRows)
         print("Local time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second .. " char: " .. tostring(displayword.data.drawnCharacters))
      end
      displayword = nil
      if (ledBuf ~= nil) then
-     --if lines 4 to 6 are inverted due to hardware-fuckup, unfuck it here
-	  if ((inv46 ~= nil) and (inv46 == "on")) then
-		  tempstring = ledBuf:sub(1,99) -- first 33 leds
-		  rowend = {44,55,66}
-		  for _, startled  in ipairs(rowend) do
-		      for i = 0,10 do
-			      tempstring = tempstring .. ledBuf:sub((startled-i)*3-2,(startled-i)*3)
-		      end
-        end		  
-	     tempstring = tempstring .. ledBuf:sub((67*3)-2,ledBuf:len())
-     	  ws2812.write(tempstring)
-		  tempstring=nil	
+     	  ws2812.write(ledBuf)
 	  else
-		  ws2812.write(ledBuf)
-		  ledBuf=nil
+          if ((colorBg ~= nil) and (color ~= nil)) then
+    		  ws2812.write(colorBg:rep(107) .. color:rep(3))
+          else
+             local space=string.char(0,0,0)
+             -- set FG to fix value:
+             colorFg = string.char(255,0,0)
+             ws2812.write(space:rep(107) .. colorFg:rep(3))
+          end
 	  end
 	end
      -- Used for debugging

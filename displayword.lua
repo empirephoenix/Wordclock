@@ -38,11 +38,17 @@ end
 local data={}
 
 -- Module displaying of the words
-local generateLEDs = function(words, colorForground, colorMin1, colorMin2, colorMin3, colorMin4)
+local generateLEDs = function(words, colorForground, colorMin1, colorMin2, colorMin3, colorMin4, invertRows)
  -- Set the local variables needed for the colored progress bar
  if (words == nil) then
    return nil
  end
+ if (invertRows == nil) then
+    invertRows=false
+ end
+
+ -- DEBUG code, to determine, if the color argmuments are necessary or not
+ print(tostring(color) .. " " .. tostring(color1))
 
  local minutes=0
  if (words.min1 == 1) then
@@ -141,8 +147,12 @@ if (words.fiveMin== 1) then
   else
     line= line .. space:rep(5)
  end
- for i = 0,10 do
-      buf = buf .. line:sub((11-i)*3-2,(11-i)*3)
+ if (invertRows == true) then
+     buf = buf .. line
+ else
+     for i = 0,10 do
+          buf = buf .. line:sub((11-i)*3-2,(11-i)*3)
+     end
  end
  ------------------------------------------------
  if (words.half == 1) then
@@ -157,7 +167,13 @@ if (words.fiveMin== 1) then
   else
     line= line .. space:rep(6)
  end
- buf=buf .. line
+ if (invertRows == true) then
+     for i = 0,10 do
+          buf = buf .. line:sub((11-i)*3-2,(11-i)*3)
+     end
+ else
+    buf=buf .. line
+ end
  ------------even row (so inverted) ---------------------
  if (words.seven == 1) then
     line= space:rep(5)
@@ -176,9 +192,12 @@ if (words.fiveMin== 1) then
  else
     line= space:rep(11)
  end
-
- for i = 0,10 do
-      buf = buf .. line:sub((11-i)*3-2,(11-i)*3)
+ if (invertRows == true) then
+     buf = buf .. line
+ else
+     for i = 0,10 do
+          buf = buf .. line:sub((11-i)*3-2,(11-i)*3)
+     end
  end
  ------------------------------------------------
  if (words.three == 1) then
