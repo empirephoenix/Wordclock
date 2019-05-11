@@ -44,7 +44,7 @@ local generateLEDs = function(words, colorForground, colorMin1, colorMin2, color
    return nil
  end
 
- local minutes=1
+ local minutes=0
  if (words.min1 == 1) then
    minutes = minutes + 1
  elseif (words.min2 == 1) then
