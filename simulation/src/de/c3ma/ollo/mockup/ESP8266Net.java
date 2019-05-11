@@ -22,6 +22,8 @@ public class ESP8266Net extends TwoArgFunction {
     
     public static final int PORTNUMBER_OFFSET = 4000;
     
+    protected boolean mServerRunning = true;
+    
     @Override
     public LuaValue call(LuaValue modname, LuaValue env) {
         env.checkglobals();
@@ -49,22 +51,41 @@ public class ESP8266Net extends TwoArgFunction {
     private class ListenFunction extends ThreeArgFunction {
 
         @Override
-        public LuaValue call(LuaValue self, LuaValue port, LuaValue function) {
+        public LuaValue call(LuaValue self, LuaValue port, final LuaValue function) {
         	if(!self.istable()) {
         		return NIL;
         	}
         	
-            int portnumber = port.checkint();
+            final int portnumber = port.checkint();
+
+            if ((portnumber > 0) && ((portnumber + PORTNUMBER_OFFSET) < 65000)) {
+                System.out.println("[Net] listening " + portnumber + "(simulating at " + (PORTNUMBER_OFFSET+ portnumber) + ")");
+                //FIXME open a new Thread to start the TCP connection
+            }
+            
+            return LuaValue.valueOf(true);
+        }
+        
+    }
+    /*FIXME first idea
+    private class TcpServer extends Thread {
+
+        @Override
+        public void run() {
+
             LuaFunction onListenFunction = function.checkfunction();
 
-            System.out.println("[Net] listening " + portnumber + "(simulating at " + (PORTNUMBER_OFFSET+ portnumber) + ")");
+            
             
             try
             {
                 ServerSocket serverSocket = new ServerSocket(PORTNUMBER_OFFSET+portnumber);
                 serverSocket.setSoTimeout( 60000 ); // Timeout after one minute
             
-                Socket client = serverSocket.accept();
+                while(mServerRunning) {
+                    Socket client = serverSocket.accept();
+                    System.out.println("[Net] connection from " + client.getInetAddress());
+                }
                 
             }
             catch ( InterruptedIOException iioe )
@@ -74,9 +95,9 @@ public class ESP8266Net extends TwoArgFunction {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            System.out.println("[Net] server running");
-            return LuaValue.valueOf(true);
+            System.out.println("[Net] server stopped");
         }
         
     }
+    */
 }
