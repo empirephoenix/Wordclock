@@ -40,8 +40,6 @@ local data={}
 -- Module displaying of the words
 local generateLEDs = function(words, colorForground, colorMin1, colorMin2, colorMin3, colorMin4)
  -- Set the local variables needed for the colored progress bar
- data={}
-
  if (words == nil) then
    return nil
  end
@@ -73,9 +71,7 @@ local generateLEDs = function(words, colorForground, colorMin1, colorMin2, color
     data.colorMin3=colorMin3
     data.colorMin4=colorMin4
  end
- data.words=words
  data.drawnCharacters=0
- data.drawnWords=0
  local charsPerLine=11
  -- Space / background has no color by default
  local space=string.char(0,0,0)
