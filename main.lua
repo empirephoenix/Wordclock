@@ -78,7 +78,6 @@ function displayTime()
              colorFg = string.char(255,0,0)
              ws2812.write(space:rep(107) .. colorFg:rep(3))
           end
-	  end
 	end
      -- Used for debugging
      if (clockdebug ~= nil) then
