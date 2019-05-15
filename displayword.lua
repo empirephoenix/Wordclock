@@ -60,18 +60,25 @@ local generateLEDs = function(words, colorForground, colorMin1, colorMin2, color
  elseif (words.min4 == 1) then
    minutes = minutes + 4
  end
+ -- always set a foreground value
+ local colorFg = string.char(255,255,255)
+
+ if (colorForground ~= nil) then
+	colorFg = colorForground
+ end
+
  if ( (adc ~= nil) and (words.briPercent ~= nil) ) then
     local per = math.floor(100*adc.read(0)/1000)
     words.briPercent = tonumber( ((words.briPercent * 4) +  per) / 5)
     print("Minutes : " .. tostring(minutes) .. " bright: " .. tostring(words.briPercent) .. "% current: " .. tostring(per) .. "%")
-    data.colorFg   = string.char(string.byte(colorForground,1) * briPercent / 100, string.byte(colorForground,2) * briPercent / 100, string.byte(colorForground,3) * briPercent / 100) 
+    data.colorFg   = string.char(string.byte(colorFg,1) * briPercent / 100, string.byte(colorFg,2) * briPercent / 100, string.byte(colorFg,3) * briPercent / 100) 
     data.colorMin1 = string.char(string.byte(colorMin1,1) * briPercent / 100, string.byte(colorMin1,2) * briPercent / 100, string.byte(colorMin1,3) * briPercent / 100)
     data.colorMin2 = string.char(string.byte(colorMin2,1) * briPercent / 100, string.byte(colorMin2,2) * briPercent / 100, string.byte(colorMin2,3) * briPercent / 100)
     data.colorMin3 = string.char(string.byte(colorMin3,1) * briPercent / 100, string.byte(colorMin3,2) * briPercent / 100, string.byte(colorMin3,3) * briPercent / 100)
     data.colorMin4 = string.char(string.byte(colorMin4,1) * briPercent / 100, string.byte(colorMin4,2) * briPercent / 100, string.byte(colorMin4,3) * briPercent / 100)
  else
     -- devide by five (Minute 0, Minute 1 to Minute 4 takes the last chars)
-    data.colorFg=colorForground
+    data.colorFg=colorFg
     data.colorMin1=colorMin1
     data.colorMin2=colorMin2
     data.colorMin3=colorMin3
@@ -81,11 +88,9 @@ local generateLEDs = function(words, colorForground, colorMin1, colorMin2, color
  local charsPerLine=11
  -- Space / background has no color by default
  local space=string.char(0,0,0)
- -- set FG to fix value:
- colorFg = string.char(255,255,255)
 
  -- Set the foreground color as the default color
- local buf=colorFg
+ local buf=data.colorFg
  local line=space
  -- line 1----------------------------------------------
  if (words.it==1) then
