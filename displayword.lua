@@ -38,7 +38,7 @@ end
 local data={}
 
 -- Module displaying of the words
-local generateLEDs = function(words, colorForground, colorMin1, colorMin2, colorMin3, colorMin4, invertRows)
+local generateLEDs = function(words, colorForground, colorMin1, colorMin2, colorMin3, colorMin4, invertRows, amountOfChars)
  -- Set the local variables needed for the colored progress bar
  if (words == nil) then
    return nil
@@ -46,9 +46,6 @@ local generateLEDs = function(words, colorForground, colorMin1, colorMin2, color
  if (invertRows == nil) then
     invertRows=false
  end
-
- -- DEBUG code, to determine, if the color argmuments are necessary or not
- print(tostring(color) .. " " .. tostring(color1))
 
  local minutes=0
  if (words.min1 == 1) then
@@ -62,9 +59,14 @@ local generateLEDs = function(words, colorForground, colorMin1, colorMin2, color
  end
  -- always set a foreground value
  local colorFg = string.char(255,255,255)
-
  if (colorForground ~= nil) then
 	colorFg = colorForground
+ end
+
+ if (amountOfChars ~= nil) then
+   data.amountOfChars = amountOfChars
+ else
+   data.amountOfChars = 0
  end
 
  if ( (adc ~= nil) and (words.briPercent ~= nil) ) then

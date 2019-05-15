@@ -63,7 +63,8 @@ function displayTime()
 	    if ((inv46 ~= nil) and (inv46 == "on")) then
             invertRows=true
         end 
-        ledBuf = displayword.generateLEDs(words, color, color1, color2, color3, color4, invertRows)
+        displayword.generateLEDs(words, color, color1, color2, color3, color4, invertRows)
+        ledBuf = displayword.generateLEDs(words, color, color1, color2, color3, color4, invertRows, displayword.data.drawnCharacters)
         print("Local time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second .. " char: " .. tostring(displayword.data.drawnCharacters))
      end
      displayword = nil
