@@ -64,8 +64,10 @@ function displayTime()
             invertRows=true
         end 
         displayword.generateLEDs(words, color, color1, color2, color3, color4, invertRows)
-        ledBuf = displayword.generateLEDs(words, color, color1, color2, color3, color4, invertRows, displayword.data.drawnCharacters)
-        print("Local time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second .. " char: " .. tostring(displayword.data.drawnCharacters))
+	if (displayword.data.drawnCharacters ~= nil) then
+          ledBuf = displayword.generateLEDs(words, color, color1, color2, color3, color4, invertRows, displayword.data.drawnCharacters)
+          print("Local time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second .. " char: " .. tostring(displayword.data.drawnCharacters))
+	end
      end
      displayword = nil
      if (ledBuf ~= nil) then
@@ -101,6 +103,7 @@ function normalOperation()
         -- Color is defined as GREEN, RED, BLUE
         color=string.char(0,0,250)
     end
+    print("Fg Color: " .. tostring(string.byte(color,1)) .. "x" .. tostring(string.byte(color,2)) .. "x" .. tostring(string.byte(color,3)) )
    
     connect_counter=0
     -- Wait to be connect to the WiFi access point. 

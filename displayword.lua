@@ -2,8 +2,30 @@
 local M
 do
 local updateColor = function (data)
-    --FIXME magic missing to start on the left side
-    return data.colorFg
+    if (data.amountOfChars > 0) then   
+	local div = tonumber(data.drawnCharacters/data.amountOfChars)
+	if (div < 1) then
+	    print(tostring(data.drawnCharacters) .. " blocks: " .. tostring(data.amountOfChars) .. " FG " .. tostring(string.byte(data.colorFg,1)) .. "x" .. tostring(string.byte(data.colorFg,2)) .. "x" .. tostring(string.byte(data.colorFg,3)) )
+	    return data.colorFg
+	elseif (div < 2) then 
+	    print(tostring(data.drawnCharacters) .. " blocks: " .. tostring(data.amountOfChars) .. " C1")
+	    return data.colorMin1
+	elseif (div < 3) then 
+	    print(tostring(data.drawnCharacters) .. " blocks: " .. tostring(data.amountOfChars) .. " C2")
+	    return data.colorMin2
+	elseif (div < 4) then 
+	    print(tostring(data.drawnCharacters) .. " blocks: " .. tostring(data.amountOfChars) .. " C3")
+	    return data.colorMin3
+	elseif (div < 5) then 
+	    print(tostring(data.drawnCharacters) .. " blocks: " .. tostring(data.amountOfChars) .. " C4")
+	    return data.colorMin4
+	else
+	    print(tostring(data.drawnCharacters) .. " blocks: " .. tostring(data.amountOfChars) .. " ELSE")
+	    return data.colorFg
+	end
+    else
+	    return data.colorFg
+    end
 end
 
 local drawLEDs = function(data, numberNewChars)
@@ -38,7 +60,7 @@ end
 local data={}
 
 -- Module displaying of the words
-local generateLEDs = function(words, colorForground, colorMin1, colorMin2, colorMin3, colorMin4, invertRows, amountOfChars)
+local generateLEDs = function(words, colorFg, colorMin1, colorMin2, colorMin3, colorMin4, invertRows, amountOfChars)
  -- Set the local variables needed for the colored progress bar
  if (words == nil) then
    return nil
@@ -47,7 +69,7 @@ local generateLEDs = function(words, colorForground, colorMin1, colorMin2, color
     invertRows=false
  end
 
- local minutes=0
+ local minutes=1
  if (words.min1 == 1) then
    minutes = minutes + 1
  elseif (words.min2 == 1) then
@@ -58,13 +80,12 @@ local generateLEDs = function(words, colorForground, colorMin1, colorMin2, color
    minutes = minutes + 4
  end
  -- always set a foreground value
- local colorFg = string.char(255,255,255)
- if (colorForground ~= nil) then
-	colorFg = colorForground
+ if (colorFg == nil) then
+	colorFg = string.char(255,255,255)
  end
 
  if (amountOfChars ~= nil) then
-   data.amountOfChars = amountOfChars
+   data.amountOfChars = amountOfChars/minutes
  else
    data.amountOfChars = 0
  end
