@@ -65,8 +65,10 @@ function sendPage(conn, nameOfFile, replaceMap)
     --reset amount of sent bytes, as we reached the end
     sentBytes=0
     -- send the rest
-    conn:send(buf)
-    print("Sent rest")
+    if (string.len(buf) > 0) then
+        conn:send(buf)
+        print("Sent rest")
+    end
   end
 end
 
@@ -153,6 +155,9 @@ function startWebServer()
    if (payload:find("GET /") ~= nil) then
     httpSending=true
     stopWordclock()
+   if (color == nil) then
+        color=string.char(0,128,0)
+    end
     ws2812.write(string.char(0,0,0):rep(56) .. color:rep(2) .. string.char(0,0,0):rep(4) .. color:rep(2) .. string.char(0,0,0):rep(48))
     -- Start Time after 3 minute
     tmr.alarm(5, 180000, 0 ,function()
