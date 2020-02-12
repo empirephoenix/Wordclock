@@ -157,9 +157,8 @@ function normalOperation()
             syncTimeFromInternet()
         end)
         tmr.alarm(3, 2000, 0 ,function()
-            print("Start webserver...")
-            mydofile("webserver")
-            startWebServer()
+            -- FIXME start telent server
+	    print("Load telnet")
         end)
         displayTime()
         -- Start the time Thread
