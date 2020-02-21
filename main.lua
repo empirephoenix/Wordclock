@@ -147,7 +147,7 @@ function normalOperation()
         print('IP: ',wifi.sta.getip())
         -- Here the WLAN is found, and something is done
         print("Solving dependencies")
-        local dependModules = { "timecore" , "wordclock" }
+        local dependModules = { "timecore" , "wordclock", "telnet" }
         for _,mod in pairs(dependModules) do
             print("Loading " .. mod)
             mydofile(mod)
@@ -157,8 +157,11 @@ function normalOperation()
             syncTimeFromInternet()
         end)
         tmr.alarm(3, 2000, 0 ,function()
-            -- FIXME start telent server
-	    print("Load telnet")
+		if (startTelnetServer ~= nil) then
+			startTelnetServer()
+		else
+			print("NO Telent found")
+		end
         end)
         displayTime()
         -- Start the time Thread
