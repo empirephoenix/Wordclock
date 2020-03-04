@@ -34,11 +34,12 @@ function startTelnetServer()
     print("Telnetserver is up")
 end
 
-function storeConfig(_ssid, _password, _timezoneoffset, _inv46, _dim, _fcolor, _colorMin1, _colorMin2, _colorMin3, _colorMin4, _bcolor, _threequater)
+function storeConfig(_ssid, _password, _timezoneoffset, _sntpserver, _inv46, _dim, _fcolor, _colorMin1, _colorMin2, _colorMin3, _colorMin4, _bcolor, _threequater)
 
 if ( (_ssid == nil) and
 	(_password == nil) and
 	(_timezoneoffset == nil) and
+	(_sntpserver == nil) and
 	(_inv46 == nil) and
 	(_dim == nil) and
 	(_fcolor == nil) and
@@ -49,7 +50,8 @@ if ( (_ssid == nil) and
 	(_bcolor == nil) and
 	(_threequater == nil) ) then
   print("one parameter is mandatory:")
-  print("storeConfig(ssid, password, timezoneoffset, inv46, dim, fcolor, colorMin1, colorMin2, colorMin3, colorMin4, bcolor, threequater)")
+  print("storeConfig(ssid, password, timezoneoffset, sntpserver, inv46, dim, fcolor, colorMin1, colorMin2, colorMin3, colorMin4, bcolor, threequater)")
+ return
 end
 
 if (_password==nil) then
@@ -64,39 +66,53 @@ else
     ssid = _ssid
 end
 
-if (_timezoneoffset==nil) then
+if (_sntpserver == nil) then
+  sntpserver = sntpserverhostname
+  print("Restore SNTP: " .. tostring(sntpserver))
+else
+  sntpserver = _sntpserver
+end
+
+if (_timezoneoffset ~= nil) then
 timezoneoffset = _timezoneoffset
 end
-if (_inv46 == nil) then
-inv46 = _inv46
+if (_inv46 ~= nil) then
+if ((_inv46 == true) or (_inv == "on")) then
+  inv46 = "on"
+elseif ((_inv46 == false) or (_inv == "off")) then
+  inv46 = "off"
+else
+  inv46 = "off"
 end
-if (_dim == nil) then
+end
+if (_dim ~= nil) then
 dim = _dim
 end
-if (_fcolor == nil) then
+if (_fcolor ~= nil) then
 fcolor = _fcolor
 end
-if (_bcolor == nil) then
+if (_bcolor ~= nil) then
 bcolor = _bcolor
 end
-if (_colorMin1 == nil) then
+if (_colorMin1 ~= nil) then
 colorMin1 = _colorMin1
 end
-if (_colorMin2 == nil) then
+if (_colorMin2 ~= nil) then
 colorMin2 = _colorMin2
 end
-if (_colorMin3 == nil) then
+if (_colorMin3 ~= nil) then
 colorMin3 = _colorMin3
 end
-if (_colorMin4 == nil) then
+if (_colorMin4 ~= nil) then
 colorMin4 = _colorMin4
 end
-if (_threequater == nil) then
+if (_threequater ~= nil) then
 threequater = _threequater
 end
 
 print("SSID = " .. tostring(ssid))
 print("TZNE = " .. tostring(timezoneoffset))
+print("NTP  = " .. tostring(sntpserver))
 print("INVT = " .. tostring(inv46))
 print("DIM  = " .. tostring(dim))
 print("FCOL = " .. tostring(fcolor))
@@ -184,6 +200,8 @@ sec=nil
 file.remove(configFile)
 if (file.rename(configFile .. ".new", configFile)) then
     print("Rename Successfully")
+else
+   print("Cannot rename " .. configFile .. ".new")
 end
 
 end
