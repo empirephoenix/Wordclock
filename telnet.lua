@@ -50,7 +50,22 @@ if ( (_ssid == nil) and
 	(_bcolor == nil) and
 	(_threequater == nil) ) then
   print("one parameter is mandatory:")
-  print("storeConfig(ssid, password, timezoneoffset, sntpserver, inv46, dim, fcolor, colorMin1, colorMin2, colorMin3, colorMin4, bcolor, threequater)")
+  print("storeConfig(ssid, ")
+  print(" password,")
+  print(" timezoneoffset,")
+  print(" sntpserver,")
+  print(" inv46,")
+  print(" dim,")
+  print(" fcolor,")
+  print(" colorMin1,")
+  print(" colorMin2,")
+  print(" colorMin3,")
+  print(" colorMin4,")
+  print(" bcolor,")
+  print(" threequater)")
+  print(" ")
+  print("e.g.:")
+  print('storeConfig(nil, nil, 1, nil, "on", true, "00FF00", "00FF88", "008888", "00FF44", "004488", "000000", true)')
  return
 end
 

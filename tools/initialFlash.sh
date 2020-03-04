@@ -59,6 +59,6 @@ for f in $FILES; do
 done
 
 echo "Reboot the ESP"
-$LUATOOL -p $DEVICE -r -b 115200
+echo "node.restart()" >> $DEVICE
 
 exit 0

@@ -94,7 +94,7 @@ def main(nodeip, luafile, volatile=None):
 			print "add a space at the end"
 
                     if (volatile is None):
-                        if (not sendCmd(s, "w([[" + l + "]]);")):
+                        if (not sendCmd(s, "w([==[" + l + "]==]);")):
                             print "Cannot write line " + str(i)
                             s.close()
                             sys.exit(4)
