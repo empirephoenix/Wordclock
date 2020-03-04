@@ -5,22 +5,16 @@ local updateColor = function (data)
     if (data.amountOfChars > 0) then   
 	local div = tonumber(data.drawnCharacters/data.amountOfChars)
 	if (div < 1) then
-	    print(tostring(data.drawnCharacters) .. " blocks: " .. tostring(data.amountOfChars) .. " FG " .. tostring(string.byte(data.colorFg,1)) .. "x" .. tostring(string.byte(data.colorFg,2)) .. "x" .. tostring(string.byte(data.colorFg,3)) )
 	    return data.colorFg
 	elseif (div < 2) then 
-	    print(tostring(data.drawnCharacters) .. " blocks: " .. tostring(data.amountOfChars) .. " C1")
 	    return data.colorMin1
 	elseif (div < 3) then 
-	    print(tostring(data.drawnCharacters) .. " blocks: " .. tostring(data.amountOfChars) .. " C2")
 	    return data.colorMin2
 	elseif (div < 4) then 
-	    print(tostring(data.drawnCharacters) .. " blocks: " .. tostring(data.amountOfChars) .. " C3")
 	    return data.colorMin3
 	elseif (div < 5) then 
-	    print(tostring(data.drawnCharacters) .. " blocks: " .. tostring(data.amountOfChars) .. " C4")
 	    return data.colorMin4
 	else
-	    print(tostring(data.drawnCharacters) .. " blocks: " .. tostring(data.amountOfChars) .. " ELSE")
 	    return data.colorFg
 	end
     else
