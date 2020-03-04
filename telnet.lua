@@ -107,6 +107,7 @@ print("MIN3 = " .. tostring(colorMin3))
 print("MIN4 = " .. tostring(colorMin4))
 print("3QRT = " .. tostring(threequater))
 
+local configFile="config.lua"
 -- Safe configuration:
 file.remove(configFile .. ".new")
 sec, _ = rtctime.get()
