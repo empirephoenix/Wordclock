@@ -3,6 +3,7 @@
 LUATOOL=./tools/luatool.py
 
 DEVICE=$1
+BAUD=115200
 
 # check the serial connection
 
@@ -19,30 +20,31 @@ if [ $# -eq 0 ]; then
 fi
 
 if [ $# -eq 1 ]; then
-	FILES="displayword.lua main.lua timecore.lua webpage.html webserver.lua wordclock.lua init.lua"
+	FILES="displayword.lua main.lua timecore.lua webpage.html webserver.lua telnet.lua wordclock.lua init.lua"
 else
 	FILES=$2
 fi
 
 
 # Format filesystem first
-#echo "Format the complete ESP"
-#$LUATOOL -p $DEVICE -w -b 115200
-#if [ $? -ne 0 ]; then
-#    echo "STOOOOP"
-#    exit 1
-#fi
+echo "Format the complete ESP"
+$LUATOOL -p $DEVICE -w -b $BAUD
+if [ $? -ne 0 ]; then
+    echo "STOOOOP"
+    exit 1
+fi
 
-echo "Reboot the ESP"
-echo "node.restart()" >> $DEVICE
-sleep 1
-for i in $(seq 0 5); do
-	echo "Stop TMR $i"
-	echo "tmr.stop($i)" >> $DEVICE
-	sleep 1
-done
+#stty -F $DEVICE $BAUD
+#echo "Reboot the ESP"
+#echo "node.restart()" >> $DEVICE
+#sleep 1
+#for i in $(seq 0 5); do
+#	echo "Stop TMR $i"
+#	echo "tmr.stop($i)" >> $DEVICE
+#	sleep 1
+#done
 
-echo 
+#echo 
 echo "Start Flasing ..."
 for f in $FILES; do
     if [ ! -f $f ]; then
@@ -51,7 +53,7 @@ for f in $FILES; do
         exit 1
     fi
     echo "------------- $f ------------"
-    $LUATOOL -p $DEVICE -f $f -b 115200 -t $f 
+    $LUATOOL -p $DEVICE -f $f -b $BAUD -t $f 
     if [ $? -ne 0 ]; then
         echo "STOOOOP"
         exit 1

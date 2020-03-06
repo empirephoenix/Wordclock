@@ -100,29 +100,29 @@ else
   inv46 = "off"
 end
 end
-if (_dim ~= nil) then
-dim = _dim
+if ( _dim ~= nil) then
+ dim = _dim
 end
 if (_fcolor ~= nil) then
-fcolor = _fcolor
+ fcolor = _fcolor
 end
 if (_bcolor ~= nil) then
-bcolor = _bcolor
+ bcolor = _bcolor
 end
 if (_colorMin1 ~= nil) then
-colorMin1 = _colorMin1
+ colorMin1 = _colorMin1
 end
 if (_colorMin2 ~= nil) then
-colorMin2 = _colorMin2
+ colorMin2 = _colorMin2
 end
 if (_colorMin3 ~= nil) then
-colorMin3 = _colorMin3
+ colorMin3 = _colorMin3
 end
 if (_colorMin4 ~= nil) then
-colorMin4 = _colorMin4
+ colorMin4 = _colorMin4
 end
 if (_threequater ~= nil) then
-threequater = _threequater
+ threequater = _threequater
 end
 
 print("SSID = " .. tostring(ssid))
