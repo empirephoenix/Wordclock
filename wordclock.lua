@@ -6,16 +6,51 @@
 -- @param hours the current hours (0-23)
 -- @param minutes the current minute (0-59)
 -- @param longmode (optional parameter) 0: no long mode, 1: long mode (itis will be set)
-function display_timestat(hours, minutes, longmode)
- if (longmode == nil) then
-   longmode=0
- end
 
  -- generate an empty return type
- local ret = { it=0, is=0, fiveMin=0, tenMin=0, after=0, before=0, threeHour=0, quater=0, threequater=0, half=0, s=0, 
-               one=0, oneLong=0, two=0, three=0, four=0, five=0, six=0, seven=0, eight=0, nine=0, ten=0, eleven=0, twelve=0,
-               twenty=0, 
-               clock=0, sr_nc=0, min1=0, min2=0, min3=0, min4=0 }
+local ret = {}
+
+local function clear()
+  ret.it=0
+  ret.is=0
+  ret.fiveMin=0
+  ret.tenMin=0
+  ret.after=0
+  ret.before=0
+  ret.threeHour=0
+  ret.quater=0
+  ret.threequater=0
+  ret.half=0
+  ret.s=0
+  ret.one=0
+  ret.oneLong=0
+  ret.two=0
+  ret.three=0
+  ret.four=0
+  ret.five=0
+  ret.six=0
+  ret.seven=0
+  ret.eight=0
+  ret.nine=0
+  ret.ten=0
+  ret.eleven=0
+  ret.twelve=0
+  ret.twenty=0
+  ret.clock=0
+  ret.sr_nc=0
+  ret.min1=0
+  ret.min2=0
+  ret.min3=0
+  ret.min4=0
+end
+
+function display_timestat(hours, minutes, longmode)
+  clear()
+  if (longmode == nil) then
+    longmode=0
+  end
+
+
 
  -- return black screen if there is no real time given
  if (hours == nil or minutes == nil) then

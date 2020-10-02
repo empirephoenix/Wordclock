@@ -1,34 +1,21 @@
--- Main Module
+nightMode = true
 
-function startSetupMode()
-    tmr.stop(0)
-    tmr.stop(1)
-    -- start the webserver module 
-    mydofile("webserver")
-    
-    wifi.setmode(wifi.SOFTAP)
-    cfg={}
-    cfg.ssid="wordclock"
-    cfg.pwd="wordclock"
-    wifi.ap.config(cfg)
+colors = {}
+colors.misc={}
+colors.misc.r = 64
+colors.misc.g = 64
+colors.min={}
+colors.min.g = 64
+colors.min.b = 64
+colors.part={}
+colors.part.r = 64
+colors.part.b = 64
+colors.seperator={}
+colors.seperator.r=128
+colors.hour={}
+colors.hour.g=128
 
-    -- Write the buffer to the LEDs
-    local color=string.char(0,128,0)
-    local white=string.char(0,0,0)
-    local ledBuf= white:rep(6) .. color .. white:rep(7) .. color:rep(3) .. white:rep(44) .. color:rep(3) .. white:rep(50)
-    ws2812.write(ledBuf)
-    color=nil
-    white=nil
-    ledBuf=nil
-    
-    print("Waiting in access point >wordclock< for Clients")
-    print("Please visit 192.168.4.1")
-    startWebServer()
-    collectgarbage()
-end
-
-
-function syncTimeFromInternet()
+local function syncTimeFromInternet()
 --ptbtime1.ptb.de
     sntp.sync(sntpserverhostname,
      function(sec,usec,server)
@@ -41,122 +28,157 @@ function syncTimeFromInternet()
    )
 end
 
-function displayTime()
+function displayTimeUnsafe()
      sec, usec = rtctime.get()
      -- Handle lazy programmer:
      if (timezoneoffset == nil) then
-        timezoneoffset=0
+        timezoneoffset=1
      end
-     time = getTime(sec, timezoneoffset)
-     words = display_timestat(time.hour, time.minute)
+     local time = getTime(sec, timezoneoffset)
+     local words = display_timestat(time.hour, time.minute)
 
      local charactersOfTime = display_countcharacters_de(words)
      local wordsOfTime = display_countwords_de(words)
-     ledBuf = generateLEDs(words, color, color1, color2, color3, color4, 
-			    charactersOfTime)
-     
-     print("Local time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second .. " in " .. charactersOfTime .. " chars " .. wordsOfTime .. " words")
-     
-     --if lines 4 to 6 are inverted due to hardware-fuckup, unfuck it here
-	  if ((inv46 ~= nil) and (inv46 == "on")) then
-		  tempstring = ledBuf:sub(1,99) -- first 33 leds
-		  rowend = {44,55,66}
-		  for _, startled  in ipairs(rowend) do
-		      for i = 0,10 do
-			      tempstring = tempstring .. ledBuf:sub((startled-i)*3-2,(startled-i)*3)
-		      end
-        end		  
-	     tempstring = tempstring .. ledBuf:sub((67*3)-2,ledBuf:len())
-     	  ws2812.write(tempstring)
-		  tempstring=nil	
-	  else
-		  ws2812.write(ledBuf)
-		  ledBuf=nil
-	  end
-	  
-	  
-    
-     -- Used for debugging
-     if (clockdebug ~= nil) then
-         for key,value in pairs(words) do 
-            if (value > 0) then
-              print(key,value) 
-            end
-         end
-     end
-     -- cleanup
+     generateLEDs(words, charactersOfTime)
 
-     words=nil
-     time=nil
-     collectgarbage()
+    print("Local time : " .. time.year .. "-" .. time.month .. "-" .. time.day .. " " .. time.hour .. ":" .. time.minute .. ":" .. time.second .. " in " .. charactersOfTime .. " chars " .. wordsOfTime .. " words")
+
+    drawLEDs()
+    collectgarbage()
 end
 
-function normalOperation()
-    -- use default color, if nothing is defined
-    if (color == nil) then
-        -- Color is defined as GREEN, RED, BLUE
-        color=string.char(0,0,250)
+function displayTime()
+    local ran, errorMsg = pcall(displayTimeUnsafe)
+    if not ran then
+        print("updateDisplay " .. errorMsg)
     end
-   
-    connect_counter=0
-    -- Wait to be connect to the WiFi access point. 
-    tmr.alarm(0, 1000, 1, function()
-      connect_counter=connect_counter+1
-      if wifi.sta.status() ~= 5 then
-         print(connect_counter ..  "/60 Connecting to AP...")
-         if (connect_counter % 2 == 0) then
-            local wlanColor=string.char((connect_counter % 6)*20,(connect_counter % 5)*20,(connect_counter % 3)*20)
-            local space=string.char(0,0,0)
-            local buf=space:rep(6) .. wlanColor .. space:rep(4)
-            buf= buf .. space:rep(3) .. wlanColor:rep(3)
-            ws2812.write(buf)
-         else
-           ws2812.write(string.char(0,0,0):rep(114))
-         end
-      else
-        tmr.stop(0)
-        print('IP: ',wifi.sta.getip())
-        -- Here the WLAN is found, and something is done
-        print("Solving dependencies")
-        local dependModules = { "timecore" , "wordclock", "displayword" }
-        for _,mod in pairs(dependModules) do
-            print("Loading " .. mod)
-            mydofile(mod)
-        end
-        
-        tmr.alarm(2, 500, 0 ,function()
-            syncTimeFromInternet()
-        end)
-        tmr.alarm(3, 2000, 0 ,function()
-            print("Start webserver...")
-            mydofile("webserver")
-            startWebServer()
-        end)
-        displayTime()
-        -- Start the time Thread
-        tmr.alarm(1, 20000, 1 ,function()
-             displayTime()
-         end)
-        
+      
+end
+
+
+local mqttReady = false
+local mqttReconnectTimer = tmr.create()
+local mqqtCurrentClient = nil
+local function mqttConnectedCallback()
+  mqqtCurrentClient:publish("wordclock/tele/error","", 0, 1)
+
+  local tbl = {}
+  tbl.colors = colors
+  tbl.nightmode = nightMode
+  local data = sjson.encode(tbl)
+  mqqtCurrentClient:publish("wordclock/samplecommand/", data, 0, 1)
+  mqqtCurrentClient:subscribe("wordclock/command", 0)
+  mqttReady = true
+end
+
+local function mqttErrorCallback(mqttClient, errorCode)
+  print("Error connecting mqtt: "..errorCode)
+  mqttReady = false
+  mqttReconnectTimer:alarm(mqtt_cfg.reconnectRetryDelay or 10,tmr.ALARM_SINGLE, connectMqtt)
+end
+
+function connectMqtt()
+    print("Connecting mqtt to " .. mqtt_cfg.host .. " port " .. mqtt_cfg.port)
+    mqqtCurrentClient:connect(mqtt_cfg.host, mqtt_cfg.port,false, mqttConnectedCallback,mqttErrorCallback)
+end
+
+local function decodeData(data)
+  local msg = sjson.decode(data)
+  nightMode = msg.nightmode
+  if(msg.colors)then
+    colors = msg.colors
+  end
+  displayTime()
+end
+
+local function loadStuff()
+    dofile("timecore.lua")
+    dofile("wordclock.lua")
+    dofile("displayword.lua")
+    print("after files")
+    mqqtCurrentClient = mqtt.Client(mqtt_cfg.clientId, mqtt_cfg.keepAlive or 10, mqtt_cfg.userName, mqtt_cfg.password , true, 256)
+    mqqtCurrentClient:lwt("wordclock/tele/error","Wordclock testament executed", 0, 1)
+    local consolePrint = print
+    print = function(msg)
+      consolePrint(msg)
+      if(mqttReady)then
+        local json = {}
+        json.msg = msg
+        local data = sjson.encode(json)
+        mqqtCurrentClient:publish("wordclock/tele/log", data, 0, 0)
       end
-      -- when no wifi available, open an accesspoint and ask the user
-      if (connect_counter >= 60) then -- 300 is 30 sec in 100ms cycle
-        startSetupMode()
+    end
+
+    mqqtCurrentClient:on("message", function(client, topic, data)
+      if data ~= nil then
+        local ran, errorMsg = pcall(decodeData,data)
+        if not ran then
+            print("mqqtread " .. errorMsg)
+        end
       end
     end)
-    
-    
+
+    mqqtCurrentClient:on("overflow", function(client, topic, data)
+      print(topic .. " partial overflowed message: " .. data )
+    end)
+
+
+    connectMqtt()
+    loadStuff = nil
 end
 
--------------------main program -----------------------------
-ws2812.init() -- WS2812 LEDs initialized on GPIO2
+local function normalOperation()
+  clearLED()
+  drawLEDs()
 
-if ( file.open("config.lua") ) then
-    --- Normal operation
-    wifi.setmode(wifi.STATION)
-    dofile("config.lua")
-    normalOperation()
-else
-    -- Logic for inital setup
-    startSetupMode()
+  local connect_counter=0
+  -- Wait to be connect to the WiFi access point. 
+  timer1:alarm(1000, tmr.ALARM_AUTO, function()
+    connect_counter=connect_counter+1
+    if wifi.sta.status() ~= 5 then
+        print(connect_counter ..  "/60 Connecting to AP...")
+        local r = (connect_counter % 6) * 20
+        local g = (connect_counter % 5)*20
+        local b = (connect_counter % 3)*20
+        clearLED()
+        if (connect_counter % 2 == 0) then
+          xy(7,1,r,g,b,0)
+          xy(6,2,r,g,b,0)
+          xy(7,2,r,g,b,0)
+          xy(8,2,r,g,b,0)
+          drawLEDs()
+        else
+          xy(7,5,r,g,b,0)
+          xy(7,6,r,g,b,0)
+          xy(8,7,r,g,b,0)
+          xy(9,8,r,g,b,0)
+          drawLEDs()
+        end
+    else
+      timer1:stop()
+      print('IP: ',wifi.sta.getip())
+      local ran, errorMsg = pcall(loadStuff)
+      if ran then
+        local syncTimer = tmr.create()
+        syncTimer:alarm(500, tmr.ALARM_SINGLE ,function()
+          syncTimeFromInternet()
+        end)
+        displayTime()
+            -- Start the time Thread
+        timer1:alarm(20000, tmr.ALARM_AUTO ,function()
+          displayTime()
+        end)
+      else
+        print("loadingFiles " .. errorMsg)
+      end
+    end
+  end)
+
 end
+
+wifi.setmode(wifi.STATION)
+dofile("config.lua")
+wifi.sta.config(station_cfg)
+
+normalOperation()
+

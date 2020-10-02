@@ -1,277 +1,192 @@
--- Module filling a buffer, sent to the LEDs
+local r = 0
+local g = 0
+local b = 0
+local w = 0
 
-function updateColor(data, inverseRow, characters2draw)
-  if (inverseRow == nil) then
-    inverseRow=false
-  end
-  -- special case, and there are exactly 4 words to display (so each word for each minute)
-    if (not inverseRow) then -- nomral row
-         if (data.drawnCharacters < data.charsPerMinute) then
-            return data.colorFg
-        elseif (data.drawnCharacters < data.charsPerMinute*2) then
-            return data.colorMin1
-        elseif (data.drawnCharacters < data.charsPerMinute*3) then 
-            return data.colorMin2
-        elseif (data.drawnCharacters > data.charsPerMinute*4) then 
-            return data.colorMin3
-        elseif (data.drawnCharacters > data.charsPerMinute*5) then 
-            return data.colorMin4
-        else
-            return data.colorFg
-        end
-    else -- inverse row
-        --FIXME magic missing to start on the left side
-         if (data.drawnCharacters < data.charsPerMinute) then
-                return data.colorMin1
-        elseif (data.drawnCharacters < data.charsPerMinute*2) then
-                return data.colorMin2
-        elseif (data.drawnCharacters < data.charsPerMinute*3) then 
-                return data.colorMin3
-        elseif (data.drawnCharacters > data.charsPerMinute*4) then 
-                return data.colorMin4
-        else
-            return data.colorFg
-        end
+local function adjustNightMode()
+    if nightMode then
+        r = r / 4
+        g = g / 4
+        b = b / 4
+        w = w / 4
     end
 end
 
-function drawLEDs(data, numberNewChars, inverseRow)
-    if (inverseRow == nil) then
-         inverseRow=false
-    end
-    if (numberNewChars == nil) then
-        numberNewChars=0
-    end
-    print(tostring(numberNewChars)  .. " charactes " .. tostring(data.charsPerMinute) .. " per minute; " .. tonumber(data.drawnCharacters) .. " used characters")
-    local tmpBuf=nil
-    for i=1,numberNewChars do
-        if (tmpBuf == nil) then
-            tmpBuf = updateColor(data, inverseRow, numberNewChars)
-        else
-            tmpBuf=tmpBuf .. updateColor(data, inverseRow, numberNewChars)
-        end
-        data.drawnCharacters=data.drawnCharacters+1
-    end
-    data.drawnWords=data.drawnWords+1 
-    return tmpBuf
+local function color(type)
+    r = colors[type].r or 0
+    g = colors[type].g or 0
+    b = colors[type].b or 0
+    w = colors[type].w or 0
+    adjustNightMode()
 end
 
--- Utility function for round
-function round(num)
-    under = math.floor(num)
-    upper = math.floor(num) + 1
-    underV = -(under - num)
-    upperV = upper - num
-    if (upperV > underV) then
-        return under
-    else
-        return upper
+function generateLEDs(words, characters)
+    clearLED()
+    
+    color("misc")
+    if (words.it==1) then
+        xy(1,1,r,g,b,w)
+        xy(2,1,r,g,b,w)
+    end
+
+    if (words.is == 1) then
+        xy(4,1,r,g,b,w)
+        xy(5,1,r,g,b,w)
+        xy(6,1,r,g,b,w)
+    end
+    if (words.clock == 1) then -- UHR
+        xy(9,10,r,g,b,w)
+        xy(10,10,r,g,b,w)
+        xy(11,10,r,g,b,w)
+    end
+
+    color("min")
+    if (words.fiveMin== 1) then
+        xy(8,1,r,g,b,w)
+        xy(9,1,r,g,b,w)
+        xy(10,1,r,g,b,w)
+        xy(11,1,r,g,b,w)
+    end
+
+    if (words.twenty == 1) then
+        xy(5,2,r,g,b,w)
+        xy(6,2,r,g,b,w)
+        xy(7,2,r,g,b,w)
+        xy(8,2,r,g,b,w)
+        xy(9,2,r,g,b,w)
+        xy(10,2,r,g,b,w)
+        xy(11,2,r,g,b,w)
+    end
+
+    if (words.tenMin == 1) then
+        xy(1,2,r,g,b,w)
+        xy(2,2,r,g,b,w)
+        xy(3,2,r,g,b,w)
+        xy(4,2,r,g,b,w)
+    end
+
+    color("part")
+    if (words.threequater == 1) then
+        xy(1,3,r,g,b,w)
+        xy(2,3,r,g,b,w)
+        xy(3,3,r,g,b,w)
+        xy(4,3,r,g,b,w)
+        xy(5,3,r,g,b,w)
+        xy(6,3,r,g,b,w)
+        xy(7,3,r,g,b,w)
+        xy(8,3,r,g,b,w)
+        xy(9,3,r,g,b,w)
+        xy(10,3,r,g,b,w)
+        xy(11,3,r,g,b,w)
+    elseif (words.quater == 1) then -- VIERTEL
+        xy(5,3,r,g,b,w)
+        xy(6,3,r,g,b,w)
+        xy(7,3,r,g,b,w)
+        xy(8,3,r,g,b,w)
+        xy(9,3,r,g,b,w)
+        xy(10,3,r,g,b,w)
+        xy(11,3,r,g,b,w)
+    end
+    
+    if (words.half == 1) then
+        xy(1,5,r,g,b,w)
+        xy(2,5,r,g,b,w)
+        xy(3,5,r,g,b,w)
+        xy(4,5,r,g,b,w)
+    end
+
+    color("seperator")
+    if (words.before == 1) then     
+        xy(7,4,r,g,b,w)
+        xy(8,4,r,g,b,w)
+        xy(9,4,r,g,b,w)
+    end
+
+    if (words.after == 1) then
+        xy(3,4,r,g,b,w)
+        xy(4,4,r,g,b,w)
+        xy(5,4,r,g,b,w)
+        xy(6,4,r,g,b,w)
+    end
+
+
+    color("hour")
+    if (words.twelve == 1) then
+        xy(6,5,r,g,b,w)
+        xy(7,5,r,g,b,w)
+        xy(8,5,r,g,b,w)
+        xy(9,5,r,g,b,w)
+        xy(10,5,r,g,b,w)
+    end
+
+    if (words.seven == 1) then
+        xy(6,6,r,g,b,w)
+        xy(7,6,r,g,b,w)
+        xy(8,6,r,g,b,w)
+        xy(9,6,r,g,b,w)
+        xy(10,6,r,g,b,w)
+        xy(11,6,r,g,b,w)
+    elseif (words.oneLong == 1) then -- EINS
+        xy(3,6,r,g,b,w)
+        xy(4,6,r,g,b,w)
+        xy(5,6,r,g,b,w)
+        xy(6,6,r,g,b,w)
+    elseif (words.one == 1) then -- EIN
+        xy(3,6,r,g,b,w)
+        xy(4,6,r,g,b,w)
+        xy(5,6,r,g,b,w)
+    elseif (words.two == 1) then -- ZWEI
+        xy(1,6,r,g,b,w)
+        xy(2,6,r,g,b,w)
+        xy(3,6,r,g,b,w)
+        xy(4,6,r,g,b,w)
+    end
+
+    if (words.three == 1) then
+        xy(2,7,r,g,b,w)
+        xy(3,7,r,g,b,w)
+        xy(4,7,r,g,b,w)
+        xy(5,7,r,g,b,w)
+    elseif (words.five == 1) then
+        xy(8,7,r,g,b,w)
+        xy(9,7,r,g,b,w)
+        xy(10,7,r,g,b,w)
+        xy(11,7,r,g,b,w)
+    end
+
+    if (words.four == 1) then
+        xy(8,8,r,g,b,w)
+        xy(9,8,r,g,b,w)
+        xy(10,8,r,g,b,w)
+        xy(11,8,r,g,b,w)
+    elseif (words.nine == 1) then
+        xy(4,8,r,g,b,w)
+        xy(5,8,r,g,b,w)
+        xy(6,8,r,g,b,w)
+        xy(7,8,r,g,b,w)
+    elseif (words.eleven == 1) then
+        xy(1,8,r,g,b,w)
+        xy(2,8,r,g,b,w)
+        xy(3,8,r,g,b,w)
+    end
+
+    if (words.eight == 1) then
+        xy(2,9,r,g,b,w)
+        xy(3,9,r,g,b,w)
+        xy(4,9,r,g,b,w)
+        xy(5,9,r,g,b,w)
+    elseif (words.ten == 1) then
+        xy(6,9,r,g,b,w)
+        xy(7,9,r,g,b,w)
+        xy(8,9,r,g,b,w)
+        xy(9,9,r,g,b,w)
+    end
+
+    if (words.six == 1) then
+        xy(2,10,r,g,b,w)
+        xy(3,10,r,g,b,w)
+        xy(4,10,r,g,b,w)
+        xy(5,10,r,g,b,w)
+        xy(6,10,r,g,b,w)
     end
 end
-
--- Module displaying of the words
-function generateLEDs(words, colorForground, colorMin1, colorMin2, colorMin3, colorMin4, characters)
- -- Set the local variables needed for the colored progress bar
- data={}
- 
- local minutes=1
- if (words.min1 == 1) then
-   minutes = minutes + 1
- elseif (words.min2 == 1) then
-   minutes = minutes + 2
- elseif (words.min3 == 1) then
-   minutes = minutes + 3
- elseif (words.min4 == 1) then
-   minutes = minutes + 4
- end
- data.charsPerMinute = round( (characters / minutes) )
- if (adc ~= nil) then
-    briPercent=(100*adc.read(0)/900)
-    print("Minutes : " .. tostring(minutes) .. " Char minutes: " .. tostring(data.charsPerMinute) .. " bright: " .. tostring(briPercent) .. "%")
-    data.colorFg   = colorForground
-    data.colorMin1 = colorMin1
-    data.colorMin2 = colorMin2
-    data.colorMin3 = colorMin3
-    data.colorMin4 = colorMin4
- else
-    -- devide by five (Minute 0, Minute 1 to Minute 4 takes the last chars)
-    print("Minutes : " .. tostring(minutes) .. " Char minutes: " .. tostring(data.charsPerMinute) )
-    data.colorFg=colorForground
-    data.colorMin1=colorMin1
-    data.colorMin2=colorMin2
-    data.colorMin3=colorMin3
-    data.colorMin4=colorMin4
- end
- data.words=words
- data.drawnCharacters=0
- data.drawnWords=0
- data.amountWords=display_countwords_de(words)
- local charsPerLine=11
- -- Space / background has no color by default
- local space=string.char(0,0,0)
- -- set FG to fix value:
- colorFg = string.char(255,255,255)
-
- -- Set the foreground color as the default color
- local buf=colorFg
-
- -- line 1----------------------------------------------
- if (words.it==1) then
-    buf=drawLEDs(data,2) -- ES
-  else
-    buf=space:rep(2)
- end
--- K fill character
-buf=buf .. space:rep(1)
- if (words.is == 1) then
-    buf=buf .. drawLEDs(data,3) -- IST
- else
-    buf=buf .. space:rep(3)
- end
- -- L fill character
-buf=buf .. space:rep(1)
-if (words.fiveMin== 1) then
-    buf= buf .. drawLEDs(data,4) -- FUENF
-  else
-    buf= buf .. space:rep(4)
- end
- -- line 2-- even row (so inverted) --------------------
- if (words.twenty == 1) then
-    buf= buf .. drawLEDs(data,7,true) -- ZWANZIG
-  else
-    buf= buf .. space:rep(7)
- end
- if (words.tenMin == 1) then
-    buf= buf .. drawLEDs(data,4,true) -- ZEHN
-  else
-    buf= buf .. space:rep(4)
- end
- -- line3----------------------------------------------
- if (words.threequater == 1) then
-    buf= buf .. drawLEDs(data,11) -- Dreiviertel
-  elseif (words.quater == 1) then
-    buf= buf .. space:rep(4)
-    buf= buf .. drawLEDs(data,7) -- VIERTEL
- else
-    buf= buf .. space:rep(11)
- end
- --line 4-------- even row (so inverted) -------------
- if (words.before == 1) then
-    buf=buf .. space:rep(2) 
-    buf= buf .. drawLEDs(data,3,true) -- VOR
-  else
-    buf= buf .. space:rep(5)
- end
- if (words.after == 1) then
-    buf= buf .. drawLEDs(data,4,true) -- NACH
-    buf= buf .. space:rep(2) -- TG
-  else
-    buf= buf .. space:rep(6)
- end
- ------------------------------------------------
- if (words.half == 1) then
-    buf= buf .. drawLEDs(data,4) -- HALB
-    buf= buf .. space:rep(1) -- X
-  else
-    buf= buf .. space:rep(5)
- end
- if (words.twelve == 1) then
-    buf= buf .. drawLEDs(data,5) -- ZWOELF
-    buf= buf .. space:rep(1) -- P
-  else
-    buf= buf .. space:rep(6)
- end
- ------------even row (so inverted) ---------------------
- if (words.seven == 1) then
-    buf= buf .. drawLEDs(data,6,true) -- SIEBEN
-    buf= buf .. space:rep(5)
- elseif (words.oneLong == 1) then
-    buf= buf .. space:rep(5)
-    buf= buf .. drawLEDs(data,4,true) -- EINS
-    buf= buf .. space:rep(2)
- elseif (words.one == 1) then
-    buf= buf .. space:rep(6)
-    buf= buf .. drawLEDs(data,3,true) -- EIN
-    buf= buf .. space:rep(2)
- elseif (words.two == 1) then
-    buf= buf .. space:rep(7)
-    buf= buf .. drawLEDs(data,4,true) -- ZWEI
- else
-    buf= buf .. space:rep(11)
- end
- ------------------------------------------------
- if (words.three == 1) then
-    buf= buf .. space:rep(1)
-    buf= buf .. drawLEDs(data,4) -- DREI
-    buf= buf .. space:rep(6)
-  elseif (words.five == 1) then
-    buf= buf .. space:rep(7)
-    buf= buf .. drawLEDs(data,4) -- FUENF
- else
-    buf= buf .. space:rep(11)
- end
- ------------even row (so inverted) ---------------------
- if (words.four == 1) then
-    buf= buf .. drawLEDs(data,4,true) -- VIER
-    buf= buf .. space:rep(7)
-  elseif (words.nine == 1) then
-    buf= buf .. space:rep(4)
-    buf= buf .. drawLEDs(data,4,true) -- NEUN
-    buf= buf .. space:rep(3)
- elseif (words.eleven == 1) then
-    buf= buf .. space:rep(8)
-    buf= buf .. drawLEDs(data,3,true) -- ELEVEN
- else
-    buf= buf .. space:rep(11)
- end
- ------------------------------------------------
- if (words.eight == 1) then
-    buf= buf .. space:rep(1)
-    buf= buf .. drawLEDs(data,4) -- ACHT
-    buf= buf .. space:rep(6)
-  elseif (words.ten == 1) then
-    buf= buf .. space:rep(5)
-    buf= buf .. drawLEDs(data,4) -- ZEHN
-    buf= buf .. space:rep(2)
- else
-    buf= buf .. space:rep(11)
- end
- ------------even row (so inverted) ---------------------
- if (words.clock == 1) then
-    buf= buf .. drawLEDs(data,3,true) -- UHR
-  else
-    buf= buf .. space:rep(3)
- end
- if (words.six == 1) then
-    buf= buf .. space:rep(2)
-    buf= buf .. drawLEDs(data,5,true) -- SECHS
-    buf= buf .. space:rep(1)
-  else
-    buf= buf .. space:rep(8)
- end
- 
- if (words.min1 == 1) then
-    buf= buf .. colorFg
-  else
-    buf= buf .. space:rep(1)
- end
- if (words.min2 == 1) then
-    buf= buf .. colorFg
-  else
-    buf= buf .. space:rep(1)
-  end
- if (words.min3 == 1) then
-    buf= buf .. colorFg
-  else
-    buf= buf .. space:rep(1)
-  end
- if (words.min4 == 1) then
-    buf= buf .. colorFg
-  else
-    buf= buf .. space:rep(1)
-  end
-  collectgarbage()
-
-  return buf
-end
-

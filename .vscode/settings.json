@@ -1,0 +1,24 @@
+{
+    "Lua.diagnostics.globals": [
+        "uart",
+        "tmr",
+        "ws2812",
+        "isSummerTime",
+        "getUTCtime",
+        "getTime",
+        "sntp",
+        "wifi",
+        "rtctime",
+        "display_countcharacters_de",
+        "display_timestat",
+        "file",
+        "setLED",
+        "drawLED",
+        "drawLEDs",
+        "mqtt",
+        "sjson"
+    ],
+    "Lua.diagnostics.disable": [
+        "lowercase-global"
+    ]
+}
